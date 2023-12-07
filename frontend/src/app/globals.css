@@ -25,3 +25,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.dark-main-background-color {
+  background-color: #343541;
+}

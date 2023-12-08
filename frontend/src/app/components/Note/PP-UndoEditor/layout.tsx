@@ -5,15 +5,16 @@ import "@tldraw/tldraw/tldraw.css";
 import { useCallback, useEffect, useState } from "react";
 import { CardShapeUtil } from "./CardShape/CardShapeUtil";
 import { uiOverrides } from "./ui-overrides";
-import { EraserTool } from "./EraseTool/EraserTool";
-import { ToolPressureEraseIcon } from "./EraseTool/icon/tool-pressure-erase";
+import { PressureEraserTool } from "./PressureEraseTool/PressureEraserTool";
+import { ToolPressureEraseIcon } from "./PressureEraseTool/icon/tool-pressure-erase";
 import { getAverageOfNumberList } from "@/app/modules/common/getAcerageOfNumberList";
 import { strokePressureInfoAtom, useStrokePressureInfo } from "@/app/hooks";
 import { useAtom } from "jotai";
 import PPUndoGraph from "./PP-UndoGraph/layout";
+import { getGradientColor } from "@/app/modules/note/getGradientColor";
 
 const customShapeUtils = [CardShapeUtil];
-const customTools = [EraserTool];
+const customTools = [PressureEraserTool];
 let isFinishedDraw = false;
 let drawingStrokeId: string = "";
 let drawingPressureList: number[] = [];
@@ -46,6 +47,8 @@ export default function PPUndoEditor(props: Props) {
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
+	const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
+	const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
   const { clearStrokePressureInfo, addStrokePressureInfo } =
     useStrokePressureInfo();
 
@@ -64,6 +67,7 @@ export default function PPUndoEditor(props: Props) {
     addStrokePressureInfo(drawingStrokeId, 0, avgPressure, groupPressure);
     drawingStrokeId = "";
     drawingPressureList = [];
+		setPointerPosition({ x: 0, y: 0 });
   };
 
   const drawing = (allRecords: any) => {
@@ -71,15 +75,21 @@ export default function PPUndoEditor(props: Props) {
       allRecords[allRecords.length - 1].type === "draw" &&
       allRecords[allRecords.length - 1].props.isComplete === false
     ) {
+			if (drawingPressureList.length === 0) {
+				setPointerPosition({ x: allRecords[allRecords.length - 1].x, y: allRecords[allRecords.length-1].y });
+			}
       isFinishedDraw = false;
       // console.log(allRecords[allRecords.length - 1]);
       // 筆圧を取得
+			console.log(allRecords);
       const segments = allRecords[allRecords.length - 1].props.segments;
       const points = segments[0].points;
       const lastPoints = points[points.length - 1];
       const drawingPressure = lastPoints.z;
       drawingStrokeId = allRecords[allRecords.length - 1].id;
       drawingPressureList.push(drawingPressure);
+			setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
+			// setNowAvgPressure(Math.random());
     }
 
     if (
@@ -111,12 +121,20 @@ export default function PPUndoEditor(props: Props) {
       // setStoreEvents((events) => [eventName, ...events])
     }
 
+		// const handlePointerDown = (event: PointerEvent) => {
+    //   setPointerPosition({ x: event.clientX, y: event.clientY });
+    // };
+
+		// const handlePointerMove = (event: PointerEvent) => {
+		// 	// setPointerPosition({ x: event.clientX, y: event.clientY });
+		// }
+
+
     // 何かChangeが行われたら発火
     const handleChangeEvent: TLEventMapHandler<"change"> = (change) => {
       const allRecords: any = editor.store.allRecords();
 
       // 筆記中
-      // TODO: 消しゴムの筆圧はeraser.tsxの方で
       drawing(allRecords);
 
       if (change.source === "user") {
@@ -124,7 +142,6 @@ export default function PPUndoEditor(props: Props) {
         for (const record of Object.values(change.changes.added)) {
           if (record.typeName === "shape") {
             if (Object.keys(change.changes.updated).length === 0) {
-              console.log("redo");
               handleResetStrokePressureInfo(allRecords);
             }
           }
@@ -146,7 +163,6 @@ export default function PPUndoEditor(props: Props) {
         // Removed
         for (const record of Object.values(change.changes.removed)) {
           if (record.typeName === "shape") {
-            console.log("undo or erase");
             handleResetStrokePressureInfo(allRecords);
           }
         }
@@ -154,6 +170,9 @@ export default function PPUndoEditor(props: Props) {
     };
 
     editor.on("change", handleChangeEvent);
+		// window.addEventListener('pointerdown', handlePointerDown);
+		// window.addEventListener('pointermove', handlePointerMove);
+		// window.addEventListener('pointerup', handlePointerUp);
 
     // ボタンの表示
     const toolPressureEraesrButton = document.querySelector(
@@ -171,6 +190,23 @@ export default function PPUndoEditor(props: Props) {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: width, height: height }}>
+				{
+					pointerPosition.x !== 0 && pointerPosition.y !== 0 &&
+					<div className="moveNowBorderLinearProgress" style={{ 
+						left: pointerPosition.x - 60, 
+						top: pointerPosition.y - 40,
+					}}>
+						<div className="bar" style={{backgroundColor: getGradientColor(nowAvgPressure) + "aa", width: `${nowAvgPressure*100}px`}}></div>
+					</div>
+					// <div style={{ position: "absolute", left: pointerPosition.x, top: pointerPosition.y, zIndex: 999, width: `${nowAvgPressure}%`, // ゲージの幅を値に応じて変更
+					// backgroundColor: "#f00",
+					// height: '20px',
+					// borderRadius: '4px',
+					// background: 'linear-gradient(to right, blue, green, red)', // 青から緑、そして赤へのグラデーション
+					// overflow: 'hidden'
+					// }}>
+					// </div>
+				}
         <Tldraw
           onMount={setAppToState}
           shapeUtils={isIncludePressureEraser ? customShapeUtils : undefined}

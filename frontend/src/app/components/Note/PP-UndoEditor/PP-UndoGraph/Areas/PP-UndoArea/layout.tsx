@@ -1,6 +1,7 @@
 import { Editor } from "@tldraw/tldraw";
 import PPUndoLineGraph from "../../LineGraph/PP-Undo/layout";
 import PPUndoSlider from "../../Slider/layout";
+import "../area.css";
 
 interface Props { 
   editor?: Editor;

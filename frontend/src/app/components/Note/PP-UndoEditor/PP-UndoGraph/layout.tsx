@@ -1,5 +1,6 @@
 import { Editor } from "@tldraw/tldraw";
 import PPUndoArea from "./Areas/PP-UndoArea/layout";
+import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphArea/layout";
 
 interface Props {
   width: string | number;
@@ -8,6 +9,8 @@ interface Props {
   background: string;
   isDebugMode?: boolean;
   editor?: Editor;
+  hideAllAveragePressurePieGraph?: boolean;
+  allAveragePressurePieGraphWidth?: string | number;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -17,6 +20,8 @@ export default function PPUndoGraph(props: Props) {
     padding,
     background,
     isDebugMode = false,
+    hideAllAveragePressurePieGraph = false,
+    allAveragePressurePieGraphWidth = "50%",
     editor
   } = props;
   return (
@@ -35,6 +40,14 @@ export default function PPUndoGraph(props: Props) {
         }}
       >
         <PPUndoArea editor={editor} />
+        <div>
+          {
+            !hideAllAveragePressurePieGraph &&
+            <div style={{ width: allAveragePressurePieGraphWidth }}>
+              <AllAveragePressurePieGraphArea />
+            </div>
+          }
+        </div>
       </div>
     </div>
   );

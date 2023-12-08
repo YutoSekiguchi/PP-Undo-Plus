@@ -26,10 +26,10 @@ export const PPUndoGraphConfig = () => {
     scales: {
       x: {
         ticks: {
-          color: defaultColor,
+          color: defaultColor+"aa",
         },
         title: {
-          color: defaultColor,
+          color: defaultColor+"aa",
           display: true,
           text: "筆圧値",
         },

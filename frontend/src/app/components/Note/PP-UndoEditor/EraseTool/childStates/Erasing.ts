@@ -104,6 +104,8 @@ export class Erasing extends StateNode {
 			const geometry = this.editor.getShapeGeometry(shape)
 			const A = this.editor.getPointInShapeSpace(shape, previousPagePoint)
 			const B = this.editor.getPointInShapeSpace(shape, currentPagePoint)
+			// shapeでid取得可能
+			console.log(shape)
 
 			if (geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)) {
 				erasing.add(this.editor.getOutermostSelectableShape(shape).id)
@@ -111,8 +113,7 @@ export class Erasing extends StateNode {
 		}
 
 		// Remove the hit shapes, except if they're in the list of excluded shapes
-		// (these excluded shapes will be any frames or groups the pointer was inside of
-		// when the user started erasing)
+		// (these excluded shapes will be any frames or groups the pointer was inside of when the user started erasing)
 		this.editor.setErasingShapes(Array.from(erasing).filter((id) => !excludedShapeIds.has(id)))
 	}
 

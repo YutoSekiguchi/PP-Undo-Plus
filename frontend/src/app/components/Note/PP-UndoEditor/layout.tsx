@@ -12,6 +12,7 @@ import { strokePressureInfoAtom, useStrokePressureInfo } from "@/app/hooks";
 import { useAtom } from "jotai";
 import PPUndoGraph from "./PP-UndoGraph/layout";
 import NowAvgPressureGauge from "./NowAvgPressureGauge/layout";
+import { EditorUtils } from "./util";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -29,6 +30,7 @@ interface Props {
   defaultCurrentTool?: "eraser" | "draw" | "select" | "hand";
   isDebugMode?: boolean;
   isIncludePressureEraser?: boolean;
+  isDisplayChangePageButton? :boolean;
   isHideUI?: boolean;
 }
 
@@ -43,6 +45,7 @@ export default function PPUndoEditor(props: Props) {
     defaultCurrentTool = "draw",
     isDebugMode = false,
     isIncludePressureEraser = true,
+    isDisplayChangePageButton = true,
     isHideUI = false,
   } = props;
   const [editor, setEditor] = useState<Editor>();
@@ -51,12 +54,14 @@ export default function PPUndoEditor(props: Props) {
 	const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
   const { clearStrokePressureInfo, addStrokePressureInfo } =
     useStrokePressureInfo();
+  const [editorUtils, setEditorUtils] = useState<EditorUtils>();
 
   const setAppToState = useCallback((editor: Editor) => {
     // debugMode解除
     editor.updateInstanceState({ isDebugMode: isDebugMode });
     editor.setCurrentTool(defaultCurrentTool);
     setEditor(editor);
+    setEditorUtils(new EditorUtils(editor));
   }, []);
 
   const finishDrawing = () => {
@@ -114,25 +119,14 @@ export default function PPUndoEditor(props: Props) {
     });
   };
 
-	// TODO: いつかクラスにまとめる
-	const loadNote = (snapshot: StoreSnapshot<TLRecord>) => {
-		if (!editor) return;
-		editor.store.loadSnapshot(snapshot);
-	}
-	const getNote = () => {
-		if (!editor) return;
-		return editor.store.getSnapshot();
-	}
-
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || !editorUtils) return;
     // 何かChangeが行われたら発火
-    const handleChangeEvent: TLEventMapHandler<"change"> = (change) => {
-      const allRecords: any = editor.store.allRecords();
+    const handleChangeEvent: TLEventMapHandler<"change"> = async(change) => {
+      const allRecords: TLRecord[] = editorUtils.getAllRecords();
 
-      // 筆記中
       drawing(allRecords);
-
+      
       if (change.source === "user") {
         // Added
         for (const record of Object.values(change.changes.added)) {
@@ -150,6 +144,7 @@ export default function PPUndoEditor(props: Props) {
             to.typeName === "instance" &&
             from.currentPageId !== to.currentPageId
           ) {
+            console.log(from, to)
           }
         }
 
@@ -159,6 +154,8 @@ export default function PPUndoEditor(props: Props) {
             handleResetStrokePressureInfo(allRecords);
           }
         }
+      } else {
+        console.log(change)
       }
     };
 
@@ -171,6 +168,14 @@ export default function PPUndoEditor(props: Props) {
     if (toolPressureEraesrButton) {
       toolPressureEraesrButton.innerHTML = `<div style="display: flex; width: 18px; height: 18px; justify-content: center; align-items: center;">${ToolPressureEraseIcon}</div>`;
     }
+
+    if (!isDisplayChangePageButton) {
+      const changePageButton: any = document.querySelector('.tlui-page-menu__trigger');
+      if (changePageButton) {
+        changePageButton.style.display = 'none';
+      }
+    }
+
 
     return () => {
       editor.off("change", handleChangeEvent);

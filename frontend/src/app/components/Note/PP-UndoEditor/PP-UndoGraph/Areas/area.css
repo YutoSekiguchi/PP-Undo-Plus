@@ -1,0 +1,14 @@
+.area {
+  border: 2px double transparent;
+  border-radius: 10px;
+  padding: 0.3rem 0.7rem;
+  background-image: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)), radial-gradient(circle at left top, rgb(1, 110, 218), rgb(217, 0, 192));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.doughnut-graph-value {
+  transform: translateY(-50%) translateX(-50%);
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  margin: auto;
+}

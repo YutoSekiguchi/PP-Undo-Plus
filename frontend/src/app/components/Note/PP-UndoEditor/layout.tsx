@@ -1,9 +1,9 @@
 "use client";
 
-import { Editor, TLEventMapHandler, Tldraw } from "@tldraw/tldraw";
+import { Editor, StoreSnapshot, TLEventMapHandler, TLRecord, Tldraw } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useCallback, useEffect, useState } from "react";
-import { CardShapeUtil } from "./CardShape/CardShapeUtil";
+// import { CardShapeUtil } from "./CardShape/CardShapeUtil";
 import { uiOverrides } from "./ui-overrides";
 import { PressureEraserTool } from "./PressureEraseTool/PressureEraserTool";
 import { ToolPressureEraseIcon } from "./PressureEraseTool/icon/tool-pressure-erase";
@@ -11,9 +11,9 @@ import { getAverageOfNumberList } from "@/app/modules/common/getAcerageOfNumberL
 import { strokePressureInfoAtom, useStrokePressureInfo } from "@/app/hooks";
 import { useAtom } from "jotai";
 import PPUndoGraph from "./PP-UndoGraph/layout";
-import { getGradientColor } from "@/app/modules/note/getGradientColor";
+import NowAvgPressureGauge from "./NowAvgPressureGauge/layout";
 
-const customShapeUtils = [CardShapeUtil];
+// const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
 let isFinishedDraw = false;
 let drawingStrokeId: string = "";
@@ -114,22 +114,18 @@ export default function PPUndoEditor(props: Props) {
     });
   };
 
+	// TODO: いつかクラスにまとめる
+	const loadNote = (snapshot: StoreSnapshot<TLRecord>) => {
+		if (!editor) return;
+		editor.store.loadSnapshot(snapshot);
+	}
+	const getNote = () => {
+		if (!editor) return;
+		return editor.store.getSnapshot();
+	}
+
   useEffect(() => {
     if (!editor) return;
-
-    function logChangeEvent(eventName: string) {
-      // setStoreEvents((events) => [eventName, ...events])
-    }
-
-		// const handlePointerDown = (event: PointerEvent) => {
-    //   setPointerPosition({ x: event.clientX, y: event.clientY });
-    // };
-
-		// const handlePointerMove = (event: PointerEvent) => {
-		// 	// setPointerPosition({ x: event.clientX, y: event.clientY });
-		// }
-
-
     // 何かChangeが行われたら発火
     const handleChangeEvent: TLEventMapHandler<"change"> = (change) => {
       const allRecords: any = editor.store.allRecords();
@@ -154,9 +150,6 @@ export default function PPUndoEditor(props: Props) {
             to.typeName === "instance" &&
             from.currentPageId !== to.currentPageId
           ) {
-            logChangeEvent(
-              `changed page (${from.currentPageId}, ${to.currentPageId})`
-            );
           }
         }
 
@@ -170,9 +163,6 @@ export default function PPUndoEditor(props: Props) {
     };
 
     editor.on("change", handleChangeEvent);
-		// window.addEventListener('pointerdown', handlePointerDown);
-		// window.addEventListener('pointermove', handlePointerMove);
-		// window.addEventListener('pointerup', handlePointerUp);
 
     // ボタンの表示
     const toolPressureEraesrButton = document.querySelector(
@@ -192,24 +182,11 @@ export default function PPUndoEditor(props: Props) {
       <div style={{ width: width, height: height }}>
 				{
 					pointerPosition.x !== 0 && pointerPosition.y !== 0 &&
-					<div className="moveNowBorderLinearProgress" style={{ 
-						left: pointerPosition.x - 60, 
-						top: pointerPosition.y - 40,
-					}}>
-						<div className="bar" style={{backgroundColor: getGradientColor(nowAvgPressure) + "aa", width: `${nowAvgPressure*100}px`}}></div>
-					</div>
-					// <div style={{ position: "absolute", left: pointerPosition.x, top: pointerPosition.y, zIndex: 999, width: `${nowAvgPressure}%`, // ゲージの幅を値に応じて変更
-					// backgroundColor: "#f00",
-					// height: '20px',
-					// borderRadius: '4px',
-					// background: 'linear-gradient(to right, blue, green, red)', // 青から緑、そして赤へのグラデーション
-					// overflow: 'hidden'
-					// }}>
-					// </div>
+					<NowAvgPressureGauge pointerPosition={pointerPosition} nowAvgPressure={nowAvgPressure} />
 				}
         <Tldraw
           onMount={setAppToState}
-          shapeUtils={isIncludePressureEraser ? customShapeUtils : undefined}
+          // shapeUtils={isIncludePressureEraser ? customShapeUtils : undefined}
           tools={isIncludePressureEraser ? customTools : undefined}
           overrides={isIncludePressureEraser ? uiOverrides : undefined}
           hideUi={isHideUI}

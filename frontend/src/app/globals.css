@@ -29,3 +29,21 @@ body {
 .dark-main-background-color {
   background-color: #343541;
 }
+
+.moveNowBorderLinearProgress {
+  pointer-events: none;
+  border-radius: 5px;
+  height: 20px;
+  width: 100px;
+  background-color: #eeeeeecc;
+  z-index: 999;
+  position: fixed;
+}
+
+.moveNowBorderLinearProgress .bar {
+  border-radius: 5px;
+}
+.bar {
+  z-index: 9999;
+  height: 20px;
+}

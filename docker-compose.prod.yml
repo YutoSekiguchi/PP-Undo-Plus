@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    container_name: ppundo-plus-frontend
+    container_name: ppundo-plus--frontend
     build:
       context: ./frontend
       dockerfile: prod.Dockerfile

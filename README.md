@@ -50,9 +50,7 @@
 |     | 7173 | Database Management, PHPMyAdmin | ppundo-plus--phpmyadmin    |
 
 
-# 日本語版
-
-# PP-Undo+
+# PP-Undo+（日本語版）
 
 **概要**
 

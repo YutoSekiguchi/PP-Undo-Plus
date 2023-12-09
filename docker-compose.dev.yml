@@ -1,0 +1,19 @@
+version: '3'
+services:
+  frontend:
+    container_name: ppundo-plus-frontend
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+    env_file: ./.env
+    ports:
+      - 7170:3000
+    networks:
+      - ppundo-plus-network
+
+# volumes:
+#   mysql:
+
+networks:
+  ppundo-plus-network:
+    driver: bridge

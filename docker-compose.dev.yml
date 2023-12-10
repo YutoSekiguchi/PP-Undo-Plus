@@ -1,5 +1,29 @@
 version: '3'
 services:
+  mysql:
+    container_name: ppundo-plus--mysql
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    env_file: ./.env
+    volumes:
+      - ./db/data:/var/lib/mysql
+    ports:
+      - "7172:3306"
+    networks:
+      - ppundo-plus-network
+
+  phpmyadmin:
+    container_name: ppundo-plus--phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 7173:80
+    env_file: ./.env
+    depends_on:
+      - mysql
+    networks:
+      - ppundo-plus-network
+
   frontend:
     container_name: ppundo-plus--frontend
     build:
@@ -10,9 +34,24 @@ services:
       - 7170:3000
     networks:
       - ppundo-plus-network
+  
+  backend:
+    container_name: ppundo-plus--backend
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+    env_file: ./.env
+    volumes:
+      - ./backend/:/app
+    ports:
+      - 7171:8080
+    depends_on:
+      - mysql
+    networks:
+      - ppundo-plus-network
 
-# volumes:
-#   mysql:
+volumes:
+  mysql:
 
 networks:
   ppundo-plus-network:

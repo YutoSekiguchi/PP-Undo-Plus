@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import PPUndoGraph from "./PP-UndoGraph/layout";
 import NowAvgPressureGauge from "./NowAvgPressureGauge/layout";
 import { EditorUtils } from "./util";
+import uploadSvg from "@/app/services/upload/svg";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -119,6 +120,16 @@ export default function PPUndoEditor(props: Props) {
     });
   };
 
+  const getSvgAsString = async () => {
+    if (!editorUtils) return;
+    const svg = await editorUtils.getSvg().then((svg) => svg);
+    if (svg) {
+      const svgString = new XMLSerializer().serializeToString(svg);
+      return svgString;
+    }
+    return;
+  }
+
   useEffect(() => {
     if (!editor || !editorUtils) return;
     // 何かChangeが行われたら発火
@@ -133,6 +144,11 @@ export default function PPUndoEditor(props: Props) {
           if (record.typeName === "shape") {
             if (Object.keys(change.changes.updated).length === 0) {
               handleResetStrokePressureInfo(allRecords);
+              // const svg = await getSvgAsString();
+              // if (svg) {
+              //   const res = await uploadSvg(svg, "test");
+              //   console.log(res)
+              // }
             }
           }
         }

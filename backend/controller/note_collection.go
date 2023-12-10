@@ -36,3 +36,11 @@ func (ctrl Controller) HandleUpdateNoteCollection(c echo.Context) error {
 
 	return Res(c, nc, err)
 }
+
+// Delete a note collection
+func (ctrl Controller) HandleDeleteNoteCollectionByID(c echo.Context) error {
+	var s service.NoteCollectionService
+	err := s.DeleteNoteCollectionByID(ctrl.Db, c)
+
+	return ResForOneResponse(c, err)
+}

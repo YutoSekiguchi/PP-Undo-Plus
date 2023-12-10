@@ -40,6 +40,7 @@ func InitRouter(db *gorm.DB) {
 		noteCollection.GET("/user/:user_id", ctrl.HandleGetNoteCollectionsByUserID)
 		noteCollection.POST("", ctrl.HandleCreateNoteCollection)
 		noteCollection.PUT("/:id", ctrl.HandleUpdateNoteCollection)
+		noteCollection.DELETE("/:id", ctrl.HandleDeleteNoteCollectionByID)
 	}
 
 	// Routing

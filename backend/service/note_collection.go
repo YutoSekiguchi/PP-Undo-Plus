@@ -72,7 +72,7 @@ func (s NoteCollectionService) UpdateNoteCollection(db *gorm.DB, c echo.Context)
 // DELETE
 // /note_collections/:id
 // Delete a note_collection
-func (s NoteCollectionService) DeleteNoteCollection(db *gorm.DB, c echo.Context) error {
+func (s NoteCollectionService) DeleteNoteCollectionByID(db *gorm.DB, c echo.Context) error {
 	var nc NoteCollection
 
 	id := c.Param("id")

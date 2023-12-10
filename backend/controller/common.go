@@ -26,3 +26,12 @@ func Res(c echo.Context, p interface{}, err error) error {
 		return c.JSON(200, p)
 	}
 }
+
+func ResForOneResponse(c echo.Context, err error) error {
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusNotFound, err.Error())
+	} else {
+		return c.JSON(200, "ok")
+	}
+}

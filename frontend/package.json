@@ -12,6 +12,7 @@
     "@tldraw/tldraw": "2.0.0-alpha.18",
     "jotai": "^2.6.0",
     "next": "14.0.3",
+    "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18"
   },

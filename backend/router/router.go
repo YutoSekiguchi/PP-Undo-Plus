@@ -33,6 +33,15 @@ func InitRouter(db *gorm.DB) {
 		user.PUT("/:id", ctrl.HandleUpdateUser)
 	}
 
+	// NoteCollection
+	noteCollection := e.Group("/note_collections")
+	{
+		noteCollection.GET("/:id", ctrl.HandleGetNoteCollectionByID)
+		noteCollection.GET("/user/:user_id", ctrl.HandleGetNoteCollectionsByUserID)
+		noteCollection.POST("", ctrl.HandleCreateNoteCollection)
+		noteCollection.PUT("/:id", ctrl.HandleUpdateNoteCollection)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")

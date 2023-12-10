@@ -54,6 +54,18 @@ func InitRouter(db *gorm.DB) {
 		note.DELETE("/:id", ctrl.HandleDeleteNoteByID)
 	}
 
+	// note_pressure
+	notePressure := e.Group("/note_pressures")
+	{
+		notePressure.GET("/:id", ctrl.HandleGetNotePressureByID)
+		notePressure.GET("/note/:note_id", ctrl.HandleGetNotePressuresByNoteID)
+		notePressure.GET("/shape/:shape_id", ctrl.HandleGetNotePressureByShapeID)
+		notePressure.POST("", ctrl.HandleCreateNotePressure)
+		notePressure.PUT("/:id", ctrl.HandleUpdateNotePressure)
+		notePressure.DELETE("/:id", ctrl.HandleDeleteNotePressureByID)
+		notePressure.DELETE("/note/:note_id", ctrl.HandleDeleteNotePressuresByNoteID)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")

@@ -26,6 +26,7 @@ export const options: NextAuthOptions = {
         Name: profile.name!,
         DisplayName: profile.name!,
         Email: profile.email!,
+        Password: "",
         Image: params.user.image!,
       };
       const userData = await signin(data);

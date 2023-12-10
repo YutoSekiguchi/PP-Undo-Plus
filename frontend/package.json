@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tldraw/tldraw": "2.0.0-alpha.18",
+    "dotenv": "^16.3.1",
     "jotai": "^2.6.0",
     "next": "14.0.3",
     "next-auth": "^4.24.5",

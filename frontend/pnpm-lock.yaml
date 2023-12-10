@@ -8,6 +8,9 @@ dependencies:
   '@tldraw/tldraw':
     specifier: 2.0.0-alpha.18
     version: 2.0.0-alpha.18(@types/react-dom@18.2.17)(@types/react@18.2.39)(react-dom@18.2.0)(react@18.2.0)
+  dotenv:
+    specifier: ^16.3.1
+    version: 16.3.1
   jotai:
     specifier: ^2.6.0
     version: 2.6.0(@types/react@18.2.39)(react@18.2.0)
@@ -1792,6 +1795,11 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dotenv@16.3.1:
+    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /electron-to-chromium@1.4.595:
     resolution: {integrity: sha512-+ozvXuamBhDOKvMNUQvecxfbyICmIAwS4GpLmR0bsiSBlGnLaOcs2Cj7J8XSbW+YEaN3Xl3ffgpm+srTUWFwFQ==}

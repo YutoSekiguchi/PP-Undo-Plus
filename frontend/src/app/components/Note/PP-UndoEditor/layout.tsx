@@ -39,6 +39,7 @@ interface Props {
   isIncludePressureEraser?: boolean;
   isDisplayChangePageButton?: boolean;
   isHideUI?: boolean;
+  isDemo?: boolean;
 }
 
 export default function PPUndoEditor(props: Props) {
@@ -54,6 +55,7 @@ export default function PPUndoEditor(props: Props) {
     isIncludePressureEraser = true,
     isDisplayChangePageButton = true,
     isHideUI = false,
+    isDemo = false,
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);

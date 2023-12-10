@@ -1,0 +1,38 @@
+.fuwafuwa {
+  animation: fuwafuwa 3s ease-in-out infinite alternate;
+  transition: 1.5s ease-in-out;
+  margin-top: 15px;
+}
+
+@keyframes fuwafuwa {
+  0% {
+    transform:translate(0, 0) rotate(-10deg);
+  }
+  50% {
+    transform:translate(0, -14px) rotate(0deg);
+  }
+  100% {
+    transform:translate(0, 0) rotate(10deg);
+  }
+}
+
+.smooth {
+  clip-path: inset(0 100% 0 0);
+  animation: textanimation 5s 0s forwards;
+}
+
+.slow-start-smooth {
+  clip-path: inset(0 100% 0 0);
+  animation: textanimation 5s 1s forwards;
+
+}
+
+@keyframes textanimation {
+  0% {
+      clip-path: inset(0 100% 0 0);
+  }
+
+  100% {
+      clip-path: inset(0);
+  }
+}

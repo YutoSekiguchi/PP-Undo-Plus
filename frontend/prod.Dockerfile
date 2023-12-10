@@ -1,39 +1,39 @@
-# 本番環境用Dockerfile
-# ビルドステージ
+# Dockerfile for production
+# Build stage
 FROM node:20:10 as builder
 
 WORKDIR /app
 
-# pnpmをインストール
+# Install pnpm
 RUN npm install -g pnpm
 
-# 依存関係をコピー
+# Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
-# 依存関係をインストール
+# Install dependencies
 RUN pnpm install
 
-# ソースコードをコピー
+# Copy the application's source code
 COPY . .
 
-# ビルド
+# Build
 RUN pnpm run build
 
-# 本番ステージ
+# Production stage
 FROM node:20:10
 
 WORKDIR /app
 
-# pnpmをインストール
+# Install pnpm
 RUN npm install -g pnpm
 
-# ビルドしたファイルと必要な依存関係のみをコピー
+# Copy the built files and the necessary dependencies
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
-# 本番用の依存関係をインストール
+# Install production dependencies
 RUN pnpm install --production
 
-# 本番用サーバーを起動
+# Start the production server
 CMD ["pnpm", "start"]

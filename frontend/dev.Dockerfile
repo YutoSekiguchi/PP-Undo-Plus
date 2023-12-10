@@ -1,19 +1,19 @@
 FROM node:20:10
 
-# 作業ディレクトリを設定
+# Set the working directory
 WORKDIR /app
 
-# pnpmをインストール
+# Install pnpm
 RUN npm install -g pnpm
 
-# package.json と pnpm-lock.yaml をコピー
+# Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
-# 依存関係をインストール
+# Install dependencies
 RUN pnpm install
 
-# アプリケーションのソースコードをコピー
+# Copy the application's source code
 COPY . .
 
-# 開発サーバーを起動
+# Start the development server
 CMD ["pnpm", "run", "dev"]

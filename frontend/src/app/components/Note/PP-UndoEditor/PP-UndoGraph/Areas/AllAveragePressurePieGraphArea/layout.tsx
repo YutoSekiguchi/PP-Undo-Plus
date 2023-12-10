@@ -5,23 +5,22 @@ import { AllPressureAveragePieGraphConfig } from "../../configs/all-pressure-ave
 import { useAtom } from "jotai";
 import { strokePressureInfoAtom } from "@/app/hooks";
 
-
 export default function AllAveragePressurePieGraphArea() {
   const [value, setValue] = useState<number>(0);
-  const [strokePressureInfo, ] = useAtom(strokePressureInfoAtom);
-  
-  const { datasets, graphLabel, doughnutOptions } = AllPressureAveragePieGraphConfig();
+  const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
 
+  const { datasets, graphLabel, doughnutOptions } =
+    AllPressureAveragePieGraphConfig();
 
   const graphData = {
     labels: graphLabel,
     datasets: [
       {
         ...datasets,
-        ...{data: [value, 1-value]}
-      }
-    ]
-  }
+        ...{ data: [value, 1 - value] },
+      },
+    ],
+  };
 
   useEffect(() => {
     if (strokePressureInfo) {
@@ -33,7 +32,7 @@ export default function AllAveragePressurePieGraphArea() {
 
       setValue(Math.round(avgTmp * 100) / 100 || 0);
     }
-  }, [strokePressureInfo])
+  }, [strokePressureInfo]);
 
   return (
     <div className="area">
@@ -44,9 +43,12 @@ export default function AllAveragePressurePieGraphArea() {
       </div>
       <div className="text-center relative w-full">
         <div className="absolute text-center top-1/2 left-1/2 doughnut-graph-value">
-          <p className="font-bold">{ value }</p>
+          <p className="font-bold">{value}</p>
         </div>
-        <AllPressureAveragePieGraph data={graphData} options={doughnutOptions} />
+        <AllPressureAveragePieGraph
+          data={graphData}
+          options={doughnutOptions}
+        />
       </div>
     </div>
   );

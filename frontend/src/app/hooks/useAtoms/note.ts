@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { strokePressureInfoAtom } from "@/app/hooks/atoms/note";
-import { TLStrokePressureInfo } from "@/app/types/note";
+import { TLStrokePressureInfo } from "@/@types/note";
 
 export const useStrokePressureInfo = () => {
   const [strokePressureInfo, setStrokePressureInfo] = useAtom(

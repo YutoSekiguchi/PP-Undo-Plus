@@ -1,6 +1,12 @@
 "use client";
 
-import { Editor, StoreSnapshot, TLEventMapHandler, TLRecord, Tldraw } from "@tldraw/tldraw";
+import {
+  Editor,
+  StoreSnapshot,
+  TLEventMapHandler,
+  TLRecord,
+  Tldraw,
+} from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useCallback, useEffect, useState } from "react";
 // import { CardShapeUtil } from "./CardShape/CardShapeUtil";
@@ -31,7 +37,7 @@ interface Props {
   defaultCurrentTool?: "eraser" | "draw" | "select" | "hand";
   isDebugMode?: boolean;
   isIncludePressureEraser?: boolean;
-  isDisplayChangePageButton? :boolean;
+  isDisplayChangePageButton?: boolean;
   isHideUI?: boolean;
 }
 
@@ -51,8 +57,8 @@ export default function PPUndoEditor(props: Props) {
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
-	const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
-	const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
+  const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
+  const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
   const { clearStrokePressureInfo, addStrokePressureInfo } =
     useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
@@ -73,7 +79,7 @@ export default function PPUndoEditor(props: Props) {
     addStrokePressureInfo(drawingStrokeId, 0, avgPressure, groupPressure);
     drawingStrokeId = "";
     drawingPressureList = [];
-		setPointerPosition({ x: 0, y: 0 });
+    setPointerPosition({ x: 0, y: 0 });
   };
 
   const drawing = (allRecords: any) => {
@@ -81,21 +87,24 @@ export default function PPUndoEditor(props: Props) {
       allRecords[allRecords.length - 1].type === "draw" &&
       allRecords[allRecords.length - 1].props.isComplete === false
     ) {
-			if (drawingPressureList.length === 0) {
-				setPointerPosition({ x: allRecords[allRecords.length - 1].x, y: allRecords[allRecords.length-1].y });
-			}
+      if (drawingPressureList.length === 0) {
+        setPointerPosition({
+          x: allRecords[allRecords.length - 1].x,
+          y: allRecords[allRecords.length - 1].y,
+        });
+      }
       isFinishedDraw = false;
       // console.log(allRecords[allRecords.length - 1]);
       // 筆圧を取得
-			console.log(allRecords);
+      console.log(allRecords);
       const segments = allRecords[allRecords.length - 1].props.segments;
       const points = segments[0].points;
       const lastPoints = points[points.length - 1];
       const drawingPressure = lastPoints.z;
       drawingStrokeId = allRecords[allRecords.length - 1].id;
       drawingPressureList.push(drawingPressure);
-			setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
-			// setNowAvgPressure(Math.random());
+      setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
+      // setNowAvgPressure(Math.random());
     }
 
     if (
@@ -128,16 +137,16 @@ export default function PPUndoEditor(props: Props) {
       return svgString;
     }
     return;
-  }
+  };
 
   useEffect(() => {
     if (!editor || !editorUtils) return;
     // 何かChangeが行われたら発火
-    const handleChangeEvent: TLEventMapHandler<"change"> = async(change) => {
+    const handleChangeEvent: TLEventMapHandler<"change"> = async (change) => {
       const allRecords: TLRecord[] = editorUtils.getAllRecords();
 
       drawing(allRecords);
-      
+
       if (change.source === "user") {
         // Added
         for (const record of Object.values(change.changes.added)) {
@@ -160,7 +169,7 @@ export default function PPUndoEditor(props: Props) {
             to.typeName === "instance" &&
             from.currentPageId !== to.currentPageId
           ) {
-            console.log(from, to)
+            console.log(from, to);
           }
         }
 
@@ -171,7 +180,7 @@ export default function PPUndoEditor(props: Props) {
           }
         }
       } else {
-        console.log(change)
+        console.log(change);
       }
     };
 
@@ -186,12 +195,13 @@ export default function PPUndoEditor(props: Props) {
     }
 
     if (!isDisplayChangePageButton) {
-      const changePageButton: any = document.querySelector('.tlui-page-menu__trigger');
+      const changePageButton: any = document.querySelector(
+        ".tlui-page-menu__trigger"
+      );
       if (changePageButton) {
-        changePageButton.style.display = 'none';
+        changePageButton.style.display = "none";
       }
     }
-
 
     return () => {
       editor.off("change", handleChangeEvent);
@@ -201,10 +211,12 @@ export default function PPUndoEditor(props: Props) {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: width, height: height }}>
-				{
-					pointerPosition.x !== 0 && pointerPosition.y !== 0 &&
-					<NowAvgPressureGauge pointerPosition={pointerPosition} nowAvgPressure={nowAvgPressure} />
-				}
+        {pointerPosition.x !== 0 && pointerPosition.y !== 0 && (
+          <NowAvgPressureGauge
+            pointerPosition={pointerPosition}
+            nowAvgPressure={nowAvgPressure}
+          />
+        )}
         <Tldraw
           onMount={setAppToState}
           // shapeUtils={isIncludePressureEraser ? customShapeUtils : undefined}
@@ -218,7 +230,7 @@ export default function PPUndoEditor(props: Props) {
         height={graphHeight}
         padding={graphPadding}
         background={graphBackground}
-				editor={editor}
+        editor={editor}
       />
     </div>
   );

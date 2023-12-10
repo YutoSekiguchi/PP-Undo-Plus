@@ -43,7 +43,6 @@ export default function PPUndoLineGraph() {
     datasets: [{ ...datasets, ...{ data: data } }],
   };
 
-  
   useEffect(() => {
     const setGraphData = () => {
       let tmp: number[] = [...Array(SPLIT_PRESSURE_NUM + 1)].fill(0);
@@ -55,7 +54,7 @@ export default function PPUndoLineGraph() {
       setData(tmp);
     };
     setGraphData();
-  }, [strokePressureInfo, SPLIT_PRESSURE_NUM])
+  }, [strokePressureInfo, SPLIT_PRESSURE_NUM]);
 
   return (
     <Line

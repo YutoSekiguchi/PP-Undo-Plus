@@ -1,4 +1,4 @@
-# 開発環境用コマンド
+# Commands for Development Environment
 start-dev:
 	docker-compose -f docker-compose.dev.yml up --build -d
 start-dev-api:
@@ -8,7 +8,7 @@ start-dev-frontend:
 down-dev:
 	docker-compose -f docker-compose.dev.yml down --rmi all
 
-# 本番環境用のコマンド
+# Commands for Production Environment
 start-prod:
 	sudo chmod -R 777 db && docker-compose -f docker-compose.prod.yml up --build -d --remove-orphans
 

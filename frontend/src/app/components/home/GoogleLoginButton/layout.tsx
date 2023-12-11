@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { getUserByEmail } from "@/app/lib/user";
 import { RightArrow } from "@/icons/RightArrow";
+import { useRouter } from "next/navigation";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -14,6 +15,7 @@ export default function GoogleLoginButton(props: Props) {
   const { lang } = props;
   const { data: session } = useSession();
   const { user, initializeUser } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     const getUserData = async () => {
@@ -40,7 +42,7 @@ export default function GoogleLoginButton(props: Props) {
     ) {
       signIn();
     } else {
-      console.log("already logged in");
+      router.push("/collections")
     }
   };
 

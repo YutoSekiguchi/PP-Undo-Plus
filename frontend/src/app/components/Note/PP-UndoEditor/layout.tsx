@@ -40,6 +40,7 @@ interface Props {
   isDisplayChangePageButton?: boolean;
   isHideUI?: boolean;
   isDemo?: boolean;
+  mode?: string | string[] | undefined;
 }
 
 export default function PPUndoEditor(props: Props) {
@@ -56,6 +57,7 @@ export default function PPUndoEditor(props: Props) {
     isDisplayChangePageButton = true,
     isHideUI = false,
     isDemo = false,
+    mode
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);

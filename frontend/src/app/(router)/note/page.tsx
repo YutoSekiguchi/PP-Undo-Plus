@@ -1,12 +1,7 @@
 import PPUndoEditor from "@/app/components/Note/PP-UndoEditor/layout"
 
-export default function Note({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-	const mode = searchParams.mode;
+export default function Note() {
 	return (
-		<PPUndoEditor width={'70vw'} height={'100vh'} isDisplayChangePageButton={false} isDemo={false} mode={mode} />
+		<PPUndoEditor width={'70vw'} height={'100vh'} isDisplayChangePageButton={false} isDemo={false} />
 	)
 }

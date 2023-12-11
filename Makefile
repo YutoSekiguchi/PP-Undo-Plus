@@ -1,8 +1,8 @@
 # Commands for Development Environment
 start-dev:
 	docker-compose -f docker-compose.dev.yml up --build -d
-start-dev-api:
-	docker-compose -f docker-compose.dev.yml up -d mysql phpmyadmin api
+start-dev-backend:
+	docker-compose -f docker-compose.dev.yml up -d mysql phpmyadmin backend
 start-dev-frontend:
 	docker-compose -f docker-compose.dev.yml up -d frontend
 down-dev:

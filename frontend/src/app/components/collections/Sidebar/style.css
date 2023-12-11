@@ -1,0 +1,13 @@
+.sidebar {
+  background-color: white;
+  width: 250px;
+  height: 100vh;
+}
+
+.sidebar-body--logo img {
+  filter: drop-shadow(5px 5px 5px #aaa);
+}
+
+.sidebar-body--collection-date {
+  font-size:0.6rem;
+}

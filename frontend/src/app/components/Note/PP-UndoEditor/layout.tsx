@@ -19,7 +19,7 @@ import { useAtom } from "jotai";
 import PPUndoGraph from "./PP-UndoGraph/layout";
 import NowAvgPressureGauge from "./NowAvgPressureGauge/layout";
 import { EditorUtils } from "./util";
-import uploadSvg from "@/app/services/upload/svg";
+import uploadSvg from "@/app/lib/upload/svg";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -57,7 +57,7 @@ export default function PPUndoEditor(props: Props) {
     isDisplayChangePageButton = true,
     isHideUI = false,
     isDemo = false,
-    mode
+    mode,
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);

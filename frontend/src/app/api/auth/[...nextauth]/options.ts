@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { TLPostUserData } from "@/@types/user";
-import { signin } from "@/app/services/user";
+import { signin } from "@/app/lib/user";
 
 type ClientType = {
   clientId: string;

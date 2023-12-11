@@ -42,6 +42,9 @@ func (s UserService) GetUserByEmail(db *gorm.DB, c echo.Context) (*User, error) 
 	if err := db.Where("email = ?", email).First(&u).Error; err != nil {
 		return nil, err
 	}
+	if (u.ID == 0) {
+		return nil, nil
+	}
 	return &u, nil
 }
 

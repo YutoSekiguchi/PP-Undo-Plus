@@ -27,8 +27,7 @@ func (s NoteCollectionService) GetNoteCollectionsByUserID(db *gorm.DB, c echo.Co
 	var nc []NoteCollection
 
 	user_id := c.Param("user_id")
-
-	if err := db.Where("user_id = ?", user_id).Find(&nc).Error; err != nil {
+	if err := db.Where("user_id = ?", user_id).Order("updated_at desc").Find(&nc).Error; err != nil {
 		return nil, err
 	}
 	return nc, nil

@@ -5,6 +5,7 @@ import './globals.css'
 import { Session } from 'next-auth'
 import SessionProvider from '../providers/session_provider'
 import Head from 'next/head'
+import CommonSession from './common_session'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +28,7 @@ export default function RootLayout({
       </Head>
       <body className={inter.className}>
         <SessionProvider session={session}>
+          <CommonSession />
           {children}
         </SessionProvider>
       </body>

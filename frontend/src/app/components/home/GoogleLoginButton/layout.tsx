@@ -17,22 +17,6 @@ export default function GoogleLoginButton(props: Props) {
   const { user, initializeUser } = useUser();
   const router = useRouter();
 
-  useEffect(() => {
-    const getUserData = async () => {
-      if (
-        session &&
-        session.user?.email !== null &&
-        session.user &&
-        session.user.email
-      ) {
-        const res = await getUserByEmail(session.user.email);
-        if (res === null || user !== null) return;
-        initializeUser(res);
-      }
-    };
-    getUserData();
-  }, [session?.user]);
-
   const handleClick = () => {
     if (
       !session ||

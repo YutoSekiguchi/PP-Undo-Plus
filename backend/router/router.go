@@ -34,7 +34,7 @@ func InitRouter(db *gorm.DB) {
 	}
 
 	// NoteCollection
-	noteCollection := e.Group("/note_collections")
+	noteCollection := e.Group("/collections")
 	{
 		noteCollection.GET("/:id", ctrl.HandleGetNoteCollectionByID)
 		noteCollection.GET("/user/:user_id", ctrl.HandleGetNoteCollectionsByUserID)

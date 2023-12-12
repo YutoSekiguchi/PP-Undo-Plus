@@ -4,6 +4,10 @@
   height: 100vh;
 }
 
+.sidebar-footer {
+  width: 250px;
+}
+
 .sidebar-body--logo img {
   filter: drop-shadow(5px 5px 5px #aaa);
 }

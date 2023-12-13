@@ -215,10 +215,11 @@ export default function PPUndoEditor(props: Props) {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: width, height: height }}>
-        {pointerPosition.x !== 0 && pointerPosition.y !== 0 && (
+        {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (
           <NowAvgPressureGauge
             pointerPosition={pointerPosition}
             nowAvgPressure={nowAvgPressure}
+            editorUtils={editorUtils}
           />
         )}
         <Tldraw

@@ -40,7 +40,7 @@ export default function PPUndoGraph(props: Props) {
         }}
       >
         <PPUndoArea editor={editor} />
-        <div>
+        <div className="mt-4">
           {
             !hideAllAveragePressurePieGraph &&
             <div style={{ width: allAveragePressurePieGraphWidth }}>

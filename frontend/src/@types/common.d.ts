@@ -1,5 +1,5 @@
 export interface TLIDAndCreatedAtAndUpdatedAt {
-  ID: string;
+  ID: number;
   CreatedAt: string;
   UpdatedAt: string;
 }

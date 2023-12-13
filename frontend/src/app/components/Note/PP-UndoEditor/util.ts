@@ -34,4 +34,8 @@ export class EditorUtils {
       return undefined;
     }
   }
+
+  getCameraData(): { x: number; y: number; z: number } {
+    return {x: this.editor.camera.x, y: this.editor.camera.y, z: this.editor.camera.z};
+  }
 }

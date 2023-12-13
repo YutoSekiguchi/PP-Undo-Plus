@@ -1,6 +1,6 @@
 # Dockerfile for production
 # Build stage
-FROM node:20:10 as builder
+FROM node:20.10 as builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM node:20:10
+FROM node:20.10
 
 WORKDIR /app
 

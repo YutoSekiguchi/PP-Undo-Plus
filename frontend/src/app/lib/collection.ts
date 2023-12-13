@@ -1,4 +1,4 @@
-import { TLPostCollectionData } from "@/@types/collection";
+import { TLCollectionData, TLPostCollectionData } from "@/@types/collection";
 
 const COLLECTION_API_URL = `${process.env.API_URL}/collections`;
 
@@ -63,8 +63,8 @@ export const createCollection = async (data: TLPostCollectionData) => {
 };
 
 // update collection
-export const updateCollection = async (id: number, data: TLPostCollectionData) => {
-  const url = `${COLLECTION_API_URL}/${id}`;
+export const updateCollection = async (data: TLCollectionData) => {
+  const url = `${COLLECTION_API_URL}/${data.ID}`;
   try {
     const response = await fetch(url, {
       method: "PUT",

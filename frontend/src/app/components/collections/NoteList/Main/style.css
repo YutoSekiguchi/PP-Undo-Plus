@@ -1,0 +1,48 @@
+.notelist-main {
+  padding-right: 30px;
+  padding-left: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 20px;
+}
+
+.default-note-img {
+  width: 130px;
+  height: 170px;
+  background-color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.notelist-main-add-item {
+  width: 130px;
+}
+
+.notelist-main-add-item-icon {
+  width: 130px;
+  height: 170px;
+}
+
+.notelist-main-add-item-icon p {
+  width: 100%;
+  height: 100%;
+  font-size: 6rem;
+  font-weight: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notelist-main-item-edit-input {
+  border: none;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.3s;
+}
+
+.notelist-main-item-edit-input:focus {
+  background-color: #cccccc;
+  outline: none;
+}

@@ -28,7 +28,7 @@ func (s NoteService) GetNotesByNoteCollectionID(db *gorm.DB, c echo.Context) ([]
 
 	note_collection_id := c.Param("note_collection_id")
 
-	if err := db.Where("note_collection_id = ?", note_collection_id).Find(&n).Error; err != nil {
+	if err := db.Where("note_collection_id = ?", note_collection_id).Order("updated_at desc").Find(&n).Error; err != nil {
 		return nil, err
 	}
 	return n, nil

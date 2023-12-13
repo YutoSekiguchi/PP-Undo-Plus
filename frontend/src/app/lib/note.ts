@@ -120,4 +120,3 @@ export const deleteNote = async (id: number) => {
     console.error("There was an error!", error);
   }
 }
-

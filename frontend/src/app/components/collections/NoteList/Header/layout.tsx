@@ -1,46 +1,15 @@
 import { TLCollectionData } from "@/@types/collection";
-import { TLPostNoteData } from "@/@types/note";
-import { useUser } from "@/app/hooks";
-import { createNote } from "@/app/lib/note";
 import { AddNoteIcon } from "@/icons/AddNote";
 import { MenuDotIcon } from "@/icons/MenuDot";
-import { useRouter } from "next/navigation";
 
 interface Props {
   lang: string | string[] | undefined;
   selectedCollection: TLCollectionData;
+  handleAddNoteIconClick: () => void;
 }
 
 export default function NoteListHeader(props: Props) {
-  const { lang, selectedCollection } = props;
-  const router = useRouter();
-  const { user } = useUser();
-
-  const handleAddNoteIconClick = async () => {
-    if (user === null) {
-      alert(
-        `${lang === "en" ? "Please login again" : "ログインし直してください"}`
-      );
-      return;
-    }
-    const data: TLPostNoteData = {
-      NoteCollectionID: selectedCollection.ID,
-      UserID: user.ID,
-      Title: "Untitled",
-      SvgPath: "",
-      Snapshot: "",
-    };
-    const res = await createNote(data);
-    if (res === null) {
-      alert(
-        `${
-          lang === "en" ? "Failed to create note" : "ノートの作成に失敗しました"
-        }`
-      );
-      return;
-    }
-    router.push(`/notes?id=${res.ID}&lang=${lang}`);
-  };
+  const { lang, selectedCollection, handleAddNoteIconClick } = props;
 
   return (
     <div className="notelist-header flex justify-between items-center w-full p-4">

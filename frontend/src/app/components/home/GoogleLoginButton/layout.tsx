@@ -1,9 +1,7 @@
 "use client";
 
 import { useUser } from "@/app/hooks";
-import { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { getUserByEmail } from "@/app/lib/user";
 import { RightArrow } from "@/icons/RightArrow";
 import { useRouter } from "next/navigation";
 

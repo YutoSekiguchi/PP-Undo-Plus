@@ -14,6 +14,14 @@
   cursor: pointer;
 }
 
+.note-img {
+  width: 130px;
+  height: 170px;
+  background-color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
 .notelist-main-add-item {
   width: 130px;
 }

@@ -42,6 +42,10 @@ body {
   height: 20px;
 }
 
+.back-button {
+  z-index: 9999;
+}
+
 .text-overflow {
     text-overflow: ellipsis;
     overflow: hidden;

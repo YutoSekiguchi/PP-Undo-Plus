@@ -1,4 +1,3 @@
-import type { NextApiRequest } from 'next';
 import fs from 'fs';
 import path from 'path';
 import { NextResponse } from 'next/server';

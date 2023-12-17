@@ -33,6 +33,8 @@ export default function NoteList(props: Props) {
       Title: "Untitled",
       SvgPath: "",
       Snapshot: "",
+      PressureInfo: "",
+      OperationJsonPath: "",
     };
     const res = await createNote(data);
     if (res === null) {

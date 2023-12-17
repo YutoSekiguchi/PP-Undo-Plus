@@ -40,7 +40,7 @@ export interface TLPostNoteData {
   Title: string;
   SvgPath: string;
   Snapshot: string;
-  PressureInfo: TLStrokePressureInfo;
+  PressureInfo: string;
   OperationJsonPath: string;
 }
 

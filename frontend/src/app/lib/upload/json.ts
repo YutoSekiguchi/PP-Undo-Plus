@@ -1,4 +1,4 @@
-async function uploadOperationInfoJson(jsonData: string, folder: string, filename: string) {
+async function uploadOperationJson(jsonData: string, folder: string, filename: string) {
   const response = await fetch('/api/upload/json', {
     method: 'POST',
     headers: {

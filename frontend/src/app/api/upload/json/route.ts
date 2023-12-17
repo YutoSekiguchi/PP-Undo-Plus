@@ -6,9 +6,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { json, folder, filename } = body;
-    const filePath = path.join(process.cwd(), 'public', 'json', `${folder}`, `${filename}.json}`);
+    const filePath = path.join(process.cwd(), 'public', 'json', `${folder}`, `${filename}.json`);
 
-    fs.writeFileSync(filePath, JSON.stringify(json));
+    fs.writeFileSync(filePath, json);
 
     return NextResponse.json({ message: 'Data added successfully' }, { status: 200 });
   } catch (error) {

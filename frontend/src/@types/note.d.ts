@@ -6,6 +6,30 @@ export interface TLStrokePressureInfoItem {
   group: number;
 }
 
+export interface TLStrokeTimeAndLengthInfoItem {
+  drawTime: number;
+  startTime: number;
+  len: number;
+}
+
+export interface TLNoteOperationInfo {
+  operation: string;
+  strokeID: string;
+  time: number;
+}
+
+export interface TLStrokeGroupInfo {
+  GroupID: string | number;
+  Top: number;
+  Left: number;
+  Width: number;
+  Height: number;
+}
+
+export interface TLStrokeTimeInfo {
+  [id: string]: TLStrokeTimeInfoItem;
+}
+
 export type TLStrokePressureInfo = {
   [id: string]: TLStrokePressureInfoItem;
 }
@@ -16,6 +40,8 @@ export interface TLPostNoteData {
   Title: string;
   SvgPath: string;
   Snapshot: string;
+  PressureInfo: TLStrokePressureInfo;
+  OperationJsonPath: string;
 }
 
 export interface TLNoteData extends TLPostNoteData, TLIDAndCreatedAtAndUpdatedAt{}

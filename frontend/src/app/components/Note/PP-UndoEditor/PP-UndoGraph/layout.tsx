@@ -1,6 +1,8 @@
 import { Editor } from "@tldraw/tldraw";
 import PPUndoArea from "./Areas/PP-UndoArea/layout";
 import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphArea/layout";
+import { EditorUtils } from "../util";
+import ButtonArea from "./Areas/ButtonArea/layout";
 
 interface Props {
   width: string | number;
@@ -11,6 +13,8 @@ interface Props {
   editor?: Editor;
   hideAllAveragePressurePieGraph?: boolean;
   allAveragePressurePieGraphWidth?: string | number;
+  buttonAreaWidth?: string | number;
+  editorUtils?: EditorUtils;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -21,8 +25,10 @@ export default function PPUndoGraph(props: Props) {
     background,
     isDebugMode = false,
     hideAllAveragePressurePieGraph = false,
-    allAveragePressurePieGraphWidth = "50%",
-    editor
+    allAveragePressurePieGraphWidth = "48%",
+    buttonAreaWidth = "48%",
+    editor,
+    editorUtils
   } = props;
   return (
     <div>
@@ -40,11 +46,17 @@ export default function PPUndoGraph(props: Props) {
         }}
       >
         <PPUndoArea editor={editor} />
-        <div className="mt-4">
+        <div className="mt-4 flex justify-between">
           {
             !hideAllAveragePressurePieGraph &&
             <div style={{ width: allAveragePressurePieGraphWidth }}>
               <AllAveragePressurePieGraphArea />
+            </div>
+          }
+          {
+            editorUtils &&
+            <div style={{ width: buttonAreaWidth }} className="">
+              <ButtonArea editorUtils={editorUtils} />
             </div>
           }
         </div>

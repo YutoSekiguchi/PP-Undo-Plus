@@ -13,3 +13,5 @@ async function uploadJson(jsonData: string, folder: string, filename: string) {
 
   return await response.json();
 }
+
+export default uploadJson;

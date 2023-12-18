@@ -10,6 +10,7 @@ type Note struct {
 	SvgPath           string    `gorm:"not null;column:svg_path"`
 	Snapshot          string    `gorm:"not null;column:snapshot"`
 	PressureInfo      string    `gorm:"not null;column:pressure_info"`
+	StrokeTimeInfo    string    `gorm:"not null;column:stroke_time_info"`
 	OperationJsonPath string    `gorm:"not null;column:operation_json_path"`
 	CreatedAt         time.Time `gorm:"not null;column:created_at"`
 	UpdatedAt         time.Time `gorm:"not null;column:updated_at"`

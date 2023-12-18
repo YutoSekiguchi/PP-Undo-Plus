@@ -26,6 +26,7 @@ export interface TLStrokeGroupInfo {
   Height: number;
 }
 
+
 export interface TLStrokeTimeInfo {
   [id: string]: TLStrokeTimeInfoItem;
 }
@@ -45,4 +46,12 @@ export interface TLPostNoteData {
   OperationJsonPath: string;
 }
 
+export interface TLPostNoteLogData {
+  NoteID: number;
+  Snapshot: string;
+  SvgPath: string;
+}
+
 export interface TLNoteData extends TLPostNoteData, TLIDAndCreatedAtAndUpdatedAt{}
+
+export interface TLNoteLogData extends TLPostNoteLogData, TLIDAndCreatedAtAndUpdatedAt{}

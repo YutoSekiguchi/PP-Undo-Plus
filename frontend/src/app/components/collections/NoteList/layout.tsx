@@ -34,6 +34,7 @@ export default function NoteList(props: Props) {
       SvgPath: "",
       Snapshot: "",
       PressureInfo: "",
+      StrokeTimeInfo: "",
       OperationJsonPath: "",
     };
     const res = await createNote(data);

@@ -41,6 +41,7 @@ export interface TLPostNoteData {
   SvgPath: string;
   Snapshot: string;
   PressureInfo: string;
+  StrokeTimeInfo: string;
   OperationJsonPath: string;
 }
 

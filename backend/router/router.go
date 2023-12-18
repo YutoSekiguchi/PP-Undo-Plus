@@ -85,6 +85,14 @@ func InitRouter(db *gorm.DB) {
 		noteTag.DELETE("/:id", ctrl.HandleDeleteNoteTag)
 	}
 
+	// note_logs
+	noteLog := e.Group("/note_logs")
+	{
+		noteLog.GET("/:id", ctrl.HandleGetNoteLogByID)
+		noteLog.GET("/note/:note_id", ctrl.HandleGetNoteLogsByNoteID)
+		noteLog.POST("", ctrl.HandleCreateNoteLog)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")

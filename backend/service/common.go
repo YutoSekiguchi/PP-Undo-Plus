@@ -8,3 +8,4 @@ type Tag model.Tag
 type User model.User
 type Note model.Note
 type NotePressure model.NotePressure
+type NoteLog model.NoteLog

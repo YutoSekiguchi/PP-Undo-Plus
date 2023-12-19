@@ -2,13 +2,16 @@ import { Editor } from "@tldraw/tldraw";
 import PPUndoLineGraph from "../../LineGraph/PP-Undo/layout";
 import PPUndoSlider from "../../Slider/layout";
 import "../area.css";
+import { EditorUtils } from "../../../util";
 
 interface Props { 
   editor?: Editor;
+  id: number;
+  editorUtils?: EditorUtils;
 }
 
 export default function PPUndoArea(props: Props) {
-  const { editor } = props;
+  const { editor, id, editorUtils } = props;
   return (
     <div className="area">
       <div className="title">
@@ -16,7 +19,7 @@ export default function PPUndoArea(props: Props) {
           PP-Undo
         </p>
       </div>
-      <PPUndoSlider editor={editor} />
+      <PPUndoSlider editor={editor} id={id} editorUtils={editorUtils} />
       <PPUndoLineGraph />
     </div>
   );

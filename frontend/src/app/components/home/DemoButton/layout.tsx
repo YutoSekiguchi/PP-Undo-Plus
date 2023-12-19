@@ -10,7 +10,7 @@ export default function DemoButton(props: Props) {
   const { lang } = props;
   const router = useRouter();
   const moveDemoNotePage = () => {
-    router.push(`/note/demo`);
+    router.push(`/demo`);
   }
 
   return (

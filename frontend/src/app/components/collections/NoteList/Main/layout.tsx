@@ -102,7 +102,7 @@ export default function NoteListMain(props: Props) {
               <div className="notelist-main-item-img mb-2" onClick={() => handleClickNote(note.ID)}>
                 {
                   note.SvgPath !== "" ?
-                  <img src={"svgs/" + note.SvgPath + ".svg"} className="note-img" />
+                  <img src={"svgs/" + note.SvgPath + ".svg"} className="note-img hover:opacity-50 hover:bg-gray-200" />
                   :
                   <div className="default-note-img"></div>
                 }

@@ -3,13 +3,20 @@ import "./slider.css";
 import { Editor, TLGroupShape, TLShapeId } from "@tldraw/tldraw";
 import { strokePressureInfoAtom } from "@/app/hooks";
 import { useAtom } from "jotai";
+import { EditorUtils } from "../../util";
+import { generateRandomString } from "@/app/modules/common/generateRandomString";
+import uploadSvg from "@/app/lib/upload/svg";
+import { createNoteLog } from "@/app/lib/note_log";
+import { TLPostNoteLogData } from "@/@types/note";
 
 interface Props {
   editor?: Editor;
+  id: number;
+  editorUtils?: EditorUtils;
 }
 
 export default function PPUndoSlider(props: Props) {
-  const { editor } = props;
+  const { editor, id, editorUtils } = props;
   const [sliderValue, setSliderValue] = useState(0);
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
 
@@ -22,6 +29,16 @@ export default function PPUndoSlider(props: Props) {
     if (range) {
       range.style.background = `linear-gradient(to right, blue 0%, fuchsia ${value}%, black ${value}%, black 100%)`;
     }
+  };
+
+  const getSvgAsString = async () => {
+    if (!editorUtils) return;
+    const svg = await editorUtils.getSvg().then((svg) => svg);
+    if (svg) {
+      const svgString = new XMLSerializer().serializeToString(svg);
+      return svgString;
+    }
+    return;
   };
 
   const handleChangeSliderValue = (value: number) => {
@@ -48,10 +65,23 @@ export default function PPUndoSlider(props: Props) {
     editor.setErasingShapes(Array.from(erasing));
   };
 
-  const handlePointerUp = (e: PointerEvent<HTMLInputElement>) => {
-    if (editor === undefined) return;
+  const handlePointerUp = async(e: PointerEvent<HTMLInputElement>) => {
+    if (editor === undefined || editorUtils === undefined) return;
     const target = e.target as HTMLInputElement;
     const value = parseInt(target.value) / 100;
+    const snapshot = editorUtils.getSnapshot();
+    const svg = await getSvgAsString();
+    const filename = `${generateRandomString()}`
+    if (svg) {
+      await uploadSvg(svg, filename);
+    }
+
+    const logData: TLPostNoteLogData = {
+      NoteID: id,
+      Snapshot: JSON.stringify(snapshot),
+      SvgPath: filename,
+    }
+    await createNoteLog(logData);
 
     // ストロークの削除
     const eraseShapeIds = editor.currentPageState.erasingShapeIds;

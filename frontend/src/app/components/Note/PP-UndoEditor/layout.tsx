@@ -9,7 +9,7 @@ import {
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useCallback, useEffect, useState } from "react";
-// import { CardShapeUtil } from "./CardShape/CardShapeUtil";
+import ReactDOM from 'react-dom';
 import { uiOverrides } from "./ui-overrides";
 import { PressureEraserTool } from "./PressureEraseTool/PressureEraserTool";
 import { ToolPressureEraseIcon } from "./PressureEraseTool/icon/tool-pressure-erase";
@@ -20,12 +20,21 @@ import PPUndoGraph from "./PP-UndoGraph/layout";
 import NowAvgPressureGauge from "./NowAvgPressureGauge/layout";
 import { EditorUtils } from "./util";
 import uploadSvg from "@/app/lib/upload/svg";
+import uploadJson from "@/app/lib/upload/json";
+import { useRouter } from "next/navigation";
+import { getNoteByID, updateNote } from "@/app/lib/note";
+import { TLNoteData } from "@/@types/note";
+import { generateRandomString } from "@/app/modules/common/generateRandomString";
+import { noteOperationInfoAtom, strokeTimeInfoAtom } from "@/app/hooks/atoms/note";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
 let isFinishedDraw = false;
 let drawingStrokeId: string = "";
 let drawingPressureList: number[] = [];
+let noteData: TLNoteData | null = null;
+let startTime: number = 0;
+let endTime: number = 0;
 
 interface Props {
   width: string | number;
@@ -41,6 +50,8 @@ interface Props {
   isHideUI?: boolean;
   isDemo?: boolean;
   mode?: string | string[] | undefined;
+  lang?: string | string[] | undefined;
+  id?: string | string[] | undefined;
 }
 
 export default function PPUndoEditor(props: Props) {
@@ -58,14 +69,19 @@ export default function PPUndoEditor(props: Props) {
     isHideUI = false,
     isDemo = false,
     mode,
+    lang,
+    id
   } = props;
   const [editor, setEditor] = useState<Editor>();
+  const [strokeTimeInfo] = useAtom(strokeTimeInfoAtom);
+  const [noteOperationInfo] = useAtom(noteOperationInfoAtom);
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
   const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
-  const { clearStrokePressureInfo, addStrokePressureInfo } =
+  const { clearStrokePressureInfo, addStrokePressureInfo, addStrokeTimeInfo, addNoteOperationInfo, initializeNoteOperationInfo, initializeStrokePressureInfo, initializeStrokeTimeInfo } =
     useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
   const setAppToState = useCallback((editor: Editor) => {
     // debugMode解除
@@ -80,10 +96,17 @@ export default function PPUndoEditor(props: Props) {
     const avgPressure = getAverageOfNumberList(drawingPressureList);
     // FIXME: グループの筆圧情報を取得する
     const groupPressure = getAverageOfNumberList(drawingPressureList);
+    endTime = performance.now();
+    const drawTime = endTime - startTime;
     addStrokePressureInfo(drawingStrokeId, 0, avgPressure, groupPressure);
+    addStrokeTimeInfo(drawingStrokeId, drawTime, startTime, drawingPressureList.length);
+    // FIXME: draw以外のoperationも追加する
+    addNoteOperationInfo("draw", drawingStrokeId, startTime);
     drawingStrokeId = "";
     drawingPressureList = [];
     setPointerPosition({ x: 0, y: 0 });
+    startTime = 0;
+    endTime = 0;
   };
 
   const drawing = (allRecords: any) => {
@@ -96,6 +119,7 @@ export default function PPUndoEditor(props: Props) {
           x: allRecords[allRecords.length - 1].x,
           y: allRecords[allRecords.length - 1].y,
         });
+        startTime = performance.now();
       }
       isFinishedDraw = false;
       // console.log(allRecords[allRecords.length - 1]);
@@ -143,9 +167,80 @@ export default function PPUndoEditor(props: Props) {
     return;
   };
 
+  const BackButton = () => {
+    const router = useRouter();
+  
+    const handleBack = async() => {
+      // TODO: ローディングの実装
+      if(!isDemo && id && editorUtils && noteData) {
+        try {
+          const svg = await getSvgAsString();
+          const filename = noteData.SvgPath === "" || noteData.SvgPath === null ? `${generateRandomString()}` : noteData.SvgPath;
+          if (svg) {
+            await uploadSvg(svg, filename);
+          }
+
+          const operationJson = {"data": noteOperationInfo};
+          const operationFilename = noteData.OperationJsonPath === "" || noteData.OperationJsonPath === null ? `${generateRandomString()}` : noteData.OperationJsonPath;
+          await uploadJson(JSON.stringify(operationJson), "operations", operationFilename);
+          const snapshot = editorUtils.getSnapshot();
+          noteData.StrokeTimeInfo = strokeTimeInfo? JSON.stringify(strokeTimeInfo): "";
+          noteData.Snapshot = snapshot? JSON.stringify(snapshot): "";
+          noteData.PressureInfo = JSON.stringify(strokePressureInfo);
+          noteData.SvgPath = filename;
+          noteData.OperationJsonPath = operationFilename;
+          const res = await updateNote(noteData);
+          if (res == null) {
+            if (lang === "en") {
+              alert("Failed to save note.");
+            } else {
+              alert("ノートの保存に失敗しました");
+            }
+            return;
+          }
+          router.back();
+        } catch(err) {
+          if (lang === "en") {
+            alert("Failed to save note.");
+          } else {
+            alert("ノートの保存に失敗しました");
+          }
+          return;
+        }
+      } else {
+        router.back();
+      }
+    };
+  
+    return (
+      <button onClick={handleBack} className="back-button cursor-pointer text-sky-500 pl-2 hover:text-sky-300" style={{ pointerEvents: "all" }}>
+        &lt;{lang === "en" ? "Page" : "ページ"}
+      </button>
+    );
+  };
+
   useEffect(() => {
     if (!editor || !editorUtils) return;
-    // 何かChangeが行われたら発火
+    
+    const fetchNoteData = async () => {
+      if (isDemo || !id) return;
+      const res = await getNoteByID(Number(id));
+      if (res === null) return;
+      noteData = res;
+      const snapshot = res.Snapshot;
+      if (snapshot === "" || snapshot === null) return;
+      editorUtils.loadSnapshot(JSON.parse(snapshot));
+      initializeStrokePressureInfo(JSON.parse(res.PressureInfo));
+      initializeStrokeTimeInfo(JSON.parse(res.StrokeTimeInfo));
+      const operationJson = await fetch(`/json/operations/${res.OperationJsonPath}.json`).then(response => response.json()).catch(err => {
+        console.log(err);
+        alert("Failed to load operation history data");
+      });
+      initializeNoteOperationInfo(operationJson.data);
+    }
+
+    fetchNoteData();
+
     const handleChangeEvent: TLEventMapHandler<"change"> = async (change) => {
       const allRecords: TLRecord[] = editorUtils.getAllRecords();
 
@@ -157,11 +252,6 @@ export default function PPUndoEditor(props: Props) {
           if (record.typeName === "shape") {
             if (Object.keys(change.changes.updated).length === 0) {
               handleResetStrokePressureInfo(allRecords);
-              // const svg = await getSvgAsString();
-              // if (svg) {
-              //   const res = await uploadSvg(svg, "test");
-              //   console.log(res)
-              // }
             }
           }
         }
@@ -187,6 +277,9 @@ export default function PPUndoEditor(props: Props) {
         console.log(change);
       }
     };
+
+    const element = document.querySelector('.tlui-layout__top__left');
+    setContainer(element as HTMLElement);
 
     editor.on("change", handleChangeEvent);
 
@@ -215,6 +308,7 @@ export default function PPUndoEditor(props: Props) {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: width, height: height }}>
+        {container && ReactDOM.createPortal(<BackButton />, container)}
         {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (
           <NowAvgPressureGauge
             pointerPosition={pointerPosition}
@@ -236,6 +330,8 @@ export default function PPUndoEditor(props: Props) {
         padding={graphPadding}
         background={graphBackground}
         editor={editor}
+        editorUtils={editorUtils}
+        id={Number(id)}
       />
     </div>
   );

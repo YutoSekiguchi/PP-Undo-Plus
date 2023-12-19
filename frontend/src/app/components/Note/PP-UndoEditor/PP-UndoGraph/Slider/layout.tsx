@@ -71,7 +71,7 @@ export default function PPUndoSlider(props: Props) {
     const value = parseInt(target.value) / 100;
     const snapshot = editorUtils.getSnapshot();
     const svg = await getSvgAsString();
-    const filename = `${generateRandomString()}`
+    const filename = `log-${generateRandomString()}`
     if (svg) {
       await uploadSvg(svg, filename);
     }

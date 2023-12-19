@@ -24,7 +24,11 @@ export default function GoogleLoginButton(props: Props) {
     ) {
       signIn();
     } else {
-      router.push("/collections")
+      if (lang === "en") {
+        router.push("/collections?lang=en");
+      } else {
+        router.push("/collections");
+      }
     }
   };
 

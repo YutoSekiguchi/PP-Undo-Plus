@@ -47,8 +47,8 @@ export default function NoteList(props: Props) {
       return;
     }
     await updateCollection(selectedCollection)
-    if (lang !== undefined) {router.push(`/note?id=${res.ID}&lang=${lang}`)} else {
-      router.push(`/note?id=${res.ID}`);
+    if (lang !== undefined) {router.push(`/notes/${res.ID}&lang=${lang}`)} else {
+      router.push(`/notes/${res.ID}`);
     }
   };
 

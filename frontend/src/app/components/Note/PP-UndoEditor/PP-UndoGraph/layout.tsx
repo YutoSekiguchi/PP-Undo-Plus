@@ -58,7 +58,7 @@ export default function PPUndoGraph(props: Props) {
           {
             editorUtils &&
             <div style={{ width: buttonAreaWidth }} className="">
-              <ButtonArea editorUtils={editorUtils} />
+              <ButtonArea editorUtils={editorUtils} id={id} />
             </div>
           }
         </div>

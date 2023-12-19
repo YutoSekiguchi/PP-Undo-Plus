@@ -55,9 +55,9 @@ export default function NoteListMain(props: Props) {
   const handleClickNote = (noteID: number) => {
     try {
       if (lang !== undefined) {
-        router.push(`/note?id=${noteID}&lang=${lang}`);
+        router.push(`/notes/${noteID}&lang=${lang}`);
       } else {
-        router.push(`/note?id=${noteID}`);
+        router.push(`/notes/${noteID}`);
       }
     } catch (err) {
       if (lang === "en") {

@@ -15,6 +15,7 @@ interface Props {
   allAveragePressurePieGraphWidth?: string | number;
   buttonAreaWidth?: string | number;
   editorUtils?: EditorUtils;
+  id: number;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -28,7 +29,8 @@ export default function PPUndoGraph(props: Props) {
     allAveragePressurePieGraphWidth = "48%",
     buttonAreaWidth = "48%",
     editor,
-    editorUtils
+    editorUtils,
+    id
   } = props;
   return (
     <div>
@@ -45,7 +47,7 @@ export default function PPUndoGraph(props: Props) {
           overflow: "auto",
         }}
       >
-        <PPUndoArea editor={editor} />
+        <PPUndoArea editor={editor} id={id} editorUtils={editorUtils} />
         <div className="mt-4 flex justify-between">
           {
             !hideAllAveragePressurePieGraph &&

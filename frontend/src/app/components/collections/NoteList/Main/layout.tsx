@@ -107,7 +107,7 @@ export default function NoteListMain(props: Props) {
                   <div className="default-note-img"></div>
                 }
               </div>
-              <div className="notelist-main-item-title text-center">
+              <div className="notelist-main-item-title text-center truncate">
                 {editingNote?.id === note.ID ? (
                   <EditTitleInput note={note} />
                 ) : (

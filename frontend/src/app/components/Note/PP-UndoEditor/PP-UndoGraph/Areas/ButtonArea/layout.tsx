@@ -25,7 +25,10 @@ export default function ButtonArea(props: Props) {
 
   return (
     <div className="area">
-      <LogList id={id} editorUtils={editorUtils} width={width} height={height} background={background} handleClose={handleClose} />
+      {
+        isOpen &&
+        <LogList id={id} editorUtils={editorUtils} width={width} height={height} background={background} handleClose={handleClose} />
+      }
       <div className="title">
         <p className="text-center font-bold text-md mb-2">
           Redo

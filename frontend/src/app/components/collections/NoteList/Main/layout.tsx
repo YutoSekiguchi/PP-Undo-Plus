@@ -68,6 +68,10 @@ export default function NoteListMain(props: Props) {
     }
   }
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) =>  {
+    e.currentTarget.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  }
+
   useEffect(() => {
     if (selectedCollection === null) return;
     const fetchNoteList = async () => {
@@ -102,7 +106,7 @@ export default function NoteListMain(props: Props) {
               <div className="notelist-main-item-img mb-2" onClick={() => handleClickNote(note.ID)}>
                 {
                   note.SvgPath !== "" ?
-                  <img src={"svgs/" + note.SvgPath + ".svg"} className="note-img hover:opacity-50 hover:bg-gray-200" />
+                  <img src={"svgs/" + note.SvgPath + ".svg"} className="note-img hover:opacity-50 hover:bg-gray-200" onError={handleImageError} />
                   :
                   <div className="default-note-img"></div>
                 }

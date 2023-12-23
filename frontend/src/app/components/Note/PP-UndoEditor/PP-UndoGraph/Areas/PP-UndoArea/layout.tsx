@@ -8,10 +8,11 @@ interface Props {
   editor?: Editor;
   id: number;
   editorUtils?: EditorUtils;
+  isDemo: boolean;
 }
 
 export default function PPUndoArea(props: Props) {
-  const { editor, id, editorUtils } = props;
+  const { editor, id, editorUtils, isDemo } = props;
   return (
     <div className="area">
       <div className="title">
@@ -19,7 +20,7 @@ export default function PPUndoArea(props: Props) {
           PP-Undo
         </p>
       </div>
-      <PPUndoSlider editor={editor} id={id} editorUtils={editorUtils} />
+      <PPUndoSlider editor={editor} id={id} editorUtils={editorUtils} isDemo={isDemo} />
       <PPUndoLineGraph />
     </div>
   );

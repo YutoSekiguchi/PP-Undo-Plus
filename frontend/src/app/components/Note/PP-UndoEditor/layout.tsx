@@ -78,7 +78,7 @@ export default function PPUndoEditor(props: Props) {
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
   const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
-  const { clearStrokePressureInfo, addStrokePressureInfo, addStrokeTimeInfo, addNoteOperationInfo, initializeNoteOperationInfo, initializeStrokePressureInfo, initializeStrokeTimeInfo } =
+  const { clearStrokePressureInfo, addStrokePressureInfo, addStrokeTimeInfo, addNoteOperationInfo, initializeNoteOperationInfo, initializeStrokePressureInfo, initializeStrokeTimeInfo, clearStrokeInfo } =
     useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
   const [container, setContainer] = useState<HTMLElement | null>(null);
@@ -213,7 +213,7 @@ export default function PPUndoEditor(props: Props) {
     };
   
     return (
-      <button onClick={handleBack} className="back-button cursor-pointer text-sky-500 pl-2 hover:text-sky-300" style={{ pointerEvents: "all" }}>
+      <button onClick={handleBack} className="back-button cursor-pointer text-sky-500 pl-2 hover:text-sky-300 text-xs whitespace-nowrap" style={{ pointerEvents: "all" }}>
         &lt;{lang === "en" ? "Page" : "ページ"}
       </button>
     );
@@ -245,7 +245,6 @@ export default function PPUndoEditor(props: Props) {
       const allRecords: TLRecord[] = editorUtils.getAllRecords();
 
       drawing(allRecords);
-
       if (change.source === "user") {
         // Added
         for (const record of Object.values(change.changes.added)) {
@@ -282,7 +281,6 @@ export default function PPUndoEditor(props: Props) {
     setContainer(element as HTMLElement);
 
     editor.on("change", handleChangeEvent);
-
     // ボタンの表示
     const toolPressureEraesrButton = document.querySelector(
       'button[data-testid="tools.pressure-eraser"]'
@@ -318,7 +316,7 @@ export default function PPUndoEditor(props: Props) {
         )}
         <Tldraw
           onMount={setAppToState}
-          // shapeUtils={isIncludePressureEraser ? customShapeUtils : undefined}
+          // shapeUtils={undefined}
           tools={isIncludePressureEraser ? customTools : undefined}
           overrides={isIncludePressureEraser ? uiOverrides : undefined}
           hideUi={isHideUI}
@@ -332,6 +330,7 @@ export default function PPUndoEditor(props: Props) {
         editor={editor}
         editorUtils={editorUtils}
         id={Number(id)}
+        isDemo={isDemo}
       />
     </div>
   );

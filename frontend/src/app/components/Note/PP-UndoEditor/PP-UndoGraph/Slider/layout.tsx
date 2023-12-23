@@ -13,10 +13,11 @@ interface Props {
   editor?: Editor;
   id: number;
   editorUtils?: EditorUtils;
+  isDemo: boolean;
 }
 
 export default function PPUndoSlider(props: Props) {
-  const { editor, id, editorUtils } = props;
+  const { editor, id, editorUtils, isDemo } = props;
   const [sliderValue, setSliderValue] = useState(0);
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
 
@@ -72,19 +73,30 @@ export default function PPUndoSlider(props: Props) {
     const snapshot = editorUtils.getSnapshot();
     const svg = await getSvgAsString();
     const filename = `log-${generateRandomString()}`
-    if (svg) {
-      await uploadSvg(svg, filename);
-    }
-
-    const logData: TLPostNoteLogData = {
-      NoteID: id,
-      Snapshot: JSON.stringify(snapshot),
-      SvgPath: filename,
-    }
-    await createNoteLog(logData);
-
     // ストロークの削除
     const eraseShapeIds = editor.currentPageState.erasingShapeIds;
+    if (eraseShapeIds.length === 0) {
+      editor.setErasingShapes([]);
+      setSliderValue(0);
+      return;
+    }
+
+    if (svg) {
+      uploadSvg(svg, filename).catch((err) => {
+        console.error(err);
+      });
+    }
+
+    if (!isDemo) {
+      const logData: TLPostNoteLogData = {
+        NoteID: id,
+        Snapshot: JSON.stringify(snapshot),
+        SvgPath: filename,
+      }
+      createNoteLog(logData).then(()=>{}).catch((err)=>{console.error(err)});
+    }
+
+    
     editor.deleteShapes(eraseShapeIds);
     editor.setErasingShapes([]);
 

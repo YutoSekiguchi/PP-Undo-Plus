@@ -16,6 +16,7 @@ interface Props {
   buttonAreaWidth?: string | number;
   editorUtils?: EditorUtils;
   id: number;
+  isDemo: boolean;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -30,7 +31,8 @@ export default function PPUndoGraph(props: Props) {
     buttonAreaWidth = "48%",
     editor,
     editorUtils,
-    id
+    id,
+    isDemo,
   } = props;
   return (
     <div>
@@ -58,7 +60,7 @@ export default function PPUndoGraph(props: Props) {
           {
             editorUtils && 
             <div style={{ width: buttonAreaWidth }} className="">
-              <ButtonArea editorUtils={editorUtils} id={id} width={width} height={height} background={background} />
+              <ButtonArea editorUtils={editorUtils} id={id} width={width} height={height} background={background} isDemo={isDemo} />
             </div>
           }
         </div>

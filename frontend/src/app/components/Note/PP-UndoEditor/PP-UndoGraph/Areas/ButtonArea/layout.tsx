@@ -8,10 +8,11 @@ interface Props {
   width: string | number;
   height: string | number;
   background: string;
+  isDemo: boolean;
 }
 
 export default function ButtonArea(props: Props) {
-  const { editorUtils, id, width, height, background } = props;
+  const { editorUtils, id, width, height, background, isDemo } = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,7 +28,7 @@ export default function ButtonArea(props: Props) {
     <div className="area">
       {
         isOpen &&
-        <LogList id={id} editorUtils={editorUtils} width={width} height={height} background={background} handleClose={handleClose} />
+        <LogList id={id} editorUtils={editorUtils} width={width} height={height} background={background} handleClose={handleClose} isDemo={isDemo} />
       }
       <div className="title">
         <p className="text-center font-bold text-md mb-2">

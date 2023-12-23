@@ -111,29 +111,33 @@ export class Erasing extends StateNode {
       // shapeのzの平均値を取得
       const shapeProps: any = shape.props;
 
-      if (geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)) {
-        const avg =
-          shapeProps.segments[0].points.reduce(
-            (acc: number, cur: any) => acc + cur.z,
-            0
-          ) / shapeProps.segments[0].points.length;
-        let isErase = false;
-        if (0.3 >= currentPagePoint.z && 0.3 >= avg) {
-          isErase = true;
-        } else if (
-          0.7 >= currentPagePoint.z &&
-          0.7 >= avg &&
-          0.3 < currentPagePoint.z &&
-          0.3 < avg
-        ) {
-          isErase = true;
-        } else if (0.7 <= currentPagePoint.z && 0.7 <= avg) {
-          isErase = true;
-        }
+      try {
+        if (geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)) {
+          const avg =
+            shapeProps.segments[0].points.reduce(
+              (acc: number, cur: any) => acc + cur.z,
+              0
+            ) / shapeProps.segments[0].points.length;
+          let isErase = false;
+          if (0.3 >= currentPagePoint.z && 0.3 >= avg) {
+            isErase = true;
+          } else if (
+            0.7 >= currentPagePoint.z &&
+            0.7 >= avg &&
+            0.3 < currentPagePoint.z &&
+            0.3 < avg
+          ) {
+            isErase = true;
+          } else if (0.7 <= currentPagePoint.z && 0.7 <= avg) {
+            isErase = true;
+          }
 
-        if (isErase) {
-          erasing.add(this.editor.getOutermostSelectableShape(shape).id);
+          if (isErase) {
+            erasing.add(this.editor.getOutermostSelectableShape(shape).id);
+          }
         }
+      } catch (e) {
+        continue
       }
     }
 

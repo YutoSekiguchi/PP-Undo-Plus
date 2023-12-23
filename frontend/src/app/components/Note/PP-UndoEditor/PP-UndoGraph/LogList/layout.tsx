@@ -20,7 +20,6 @@ export default function LogList(props: Props) {
   const [logs, setLogs] = useState<TLNoteLogData[]>([]);
 
   const handleCloseDialog = () => {
-
     handleClose();
   }
 

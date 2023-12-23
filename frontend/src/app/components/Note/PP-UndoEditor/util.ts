@@ -14,8 +14,9 @@ export class EditorUtils {
   }
 
   // scapshotからノートの生成
-  loadSnapshot(snapshot: StoreSnapshot<TLRecord>): void {
+  loadSnapshot(snapshot: StoreSnapshot<TLRecord>, isDebugMode: boolean = false): void {
     this.editor.store.loadSnapshot(snapshot);
+    this.editor.updateInstanceState({ isDebugMode: isDebugMode });
   }
 
   getSnapshot(): StoreSnapshot<TLRecord> | undefined {

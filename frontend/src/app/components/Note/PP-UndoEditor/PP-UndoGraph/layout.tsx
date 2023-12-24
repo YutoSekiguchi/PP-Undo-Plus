@@ -3,6 +3,7 @@ import PPUndoArea from "./Areas/PP-UndoArea/layout";
 import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphArea/layout";
 import { EditorUtils } from "../util";
 import ButtonArea from "./Areas/ButtonArea/layout";
+import ChangeParametersArea from "./Areas/ChangeParametersArea/layout";
 
 interface Props {
   width: string | number;
@@ -49,20 +50,20 @@ export default function PPUndoGraph(props: Props) {
           overflow: "auto",
         }}
       >
-        <PPUndoArea
-          editor={editor}
-          id={id}
-          editorUtils={editorUtils}
-          isDemo={isDemo}
-        />
+          <PPUndoArea
+            editor={editor}
+            id={id}
+            editorUtils={editorUtils}
+            isDemo={isDemo}
+          />
         <div className="mt-4 flex justify-between">
           {!hideAllAveragePressurePieGraph && (
-            <div style={{ width: allAveragePressurePieGraphWidth }}>
+            <div style={{ width: allAveragePressurePieGraphWidth}}>
               <AllAveragePressurePieGraphArea />
             </div>
           )}
           {editorUtils && (
-            <div style={{ width: buttonAreaWidth }} className="">
+            <div style={{ width: buttonAreaWidth, }} className="">
               <ButtonArea
                 editorUtils={editorUtils}
                 id={id}
@@ -73,6 +74,13 @@ export default function PPUndoGraph(props: Props) {
               />
             </div>
           )}
+        </div>
+        <div className="mt-4">
+          <ChangeParametersArea
+            id={id}
+            editorUtils={editorUtils}
+            isDemo={isDemo}
+          />
         </div>
       </div>
     </div>

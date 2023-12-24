@@ -23,6 +23,7 @@ export const PPUndoGraphConfig = () => {
         display:false,
       },
     },
+    maintainAspectRatio: true,
     scales: {
       x: {
         ticks: {

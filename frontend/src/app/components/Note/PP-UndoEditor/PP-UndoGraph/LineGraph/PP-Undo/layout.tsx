@@ -59,7 +59,7 @@ export default function PPUndoLineGraph() {
   return (
     <Line
       className="graph"
-      height={200}
+      // height={100}
       data={graphData}
       options={options}
       id="pressure-line-graph"

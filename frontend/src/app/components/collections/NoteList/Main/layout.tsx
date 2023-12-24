@@ -81,11 +81,7 @@ export default function NoteListMain(props: Props) {
     }
     try {
       clearStrokeInfo();
-      if (lang !== undefined) {
-        router.push(`/notes/${noteID}&lang=${lang}`);
-      } else {
-        router.push(`/notes/${noteID}`);
-      }
+      router.push(`/notes/${noteID}`);
     } catch (err) {
       if (lang === "en") {
         alert("Failed to move to note page");

@@ -35,6 +35,8 @@ export default function AllPressureAveragePieGraph(props: Props) {
   return (
     <Doughnut
       data={data}
+      width={150}
+      height={150}
       options={options}
       className="doughnuts"
       id="chart-key"

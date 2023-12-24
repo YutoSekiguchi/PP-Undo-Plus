@@ -140,8 +140,6 @@ export default function PPUndoEditor(props: Props) {
         startTime = performance.now();
       }
       isFinishedDraw = false;
-      // console.log(allRecords[allRecords.length - 1]);
-      // 筆圧を取得
       console.log(allRecords);
       const segments = allRecords[allRecords.length - 1].props.segments;
       const points = segments[0].points;

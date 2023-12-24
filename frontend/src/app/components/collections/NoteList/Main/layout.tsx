@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import { formatDate } from "@/app/modules/common/formatDate";
 import { useRouter } from "next/navigation";
+import { useStrokePressureInfo } from "@/app/hooks";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -28,6 +29,7 @@ export default function NoteListMain(props: Props) {
   } = props;
   const [noteList, setNoteList] = useState<TLNoteData[]>([]);
   const router = useRouter();
+  const { clearStrokeInfo } = useStrokePressureInfo();
 
   const [editingNote, setEditingNote] = useState<{
     id: number;
@@ -78,6 +80,7 @@ export default function NoteListMain(props: Props) {
       return;
     }
     try {
+      clearStrokeInfo();
       if (lang !== undefined) {
         router.push(`/notes/${noteID}&lang=${lang}`);
       } else {

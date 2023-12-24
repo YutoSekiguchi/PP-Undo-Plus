@@ -17,13 +17,24 @@ interface Props {
 }
 
 export default function NoteListMain(props: Props) {
-  const { lang, selectedCollection, handleAddNoteIconClick, isNoteSelectMode, setIsNoteSelectMode, selectedNoteIDs, setSelectedNoteIDs } = props;
+  const {
+    lang,
+    selectedCollection,
+    handleAddNoteIconClick,
+    isNoteSelectMode,
+    setIsNoteSelectMode,
+    selectedNoteIDs,
+    setSelectedNoteIDs,
+  } = props;
   const [noteList, setNoteList] = useState<TLNoteData[]>([]);
   const router = useRouter();
 
-  const [editingNote, setEditingNote] = useState<{ id: number; title: string } | null>(null);
-  
-  const handleEditTitle = async(noteData: TLNoteData, title: string) => {
+  const [editingNote, setEditingNote] = useState<{
+    id: number;
+    title: string;
+  } | null>(null);
+
+  const handleEditTitle = async (noteData: TLNoteData, title: string) => {
     if (noteData.Title === title) return;
     noteData.Title = title;
     const res = await updateNote(noteData);
@@ -36,7 +47,9 @@ export default function NoteListMain(props: Props) {
       return;
     }
     setNoteList((prevNotes) =>
-    prevNotes.map((note) => (note.ID === noteData.ID ? { ...note, Title: title } : note))
+      prevNotes.map((note) =>
+        note.ID === noteData.ID ? { ...note, Title: title } : note
+      )
     );
     setEditingNote(null);
   };
@@ -77,11 +90,14 @@ export default function NoteListMain(props: Props) {
         alert("ノートページへの移動に失敗しました");
       }
     }
-  }
+  };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) =>  {
-    e.currentTarget.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-  }
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  };
 
   useEffect(() => {
     if (selectedCollection === null) return;
@@ -89,14 +105,17 @@ export default function NoteListMain(props: Props) {
       const res = await getNotesByCollectionID(selectedCollection.ID);
       if (res === null) return;
       setNoteList(res);
-    }
+    };
 
     fetchNoteList();
   }, [selectedCollection, isNoteSelectMode]);
 
   const AddNoteBlock = () => {
     return (
-      <div className="notelist-main-add-item cursor-pointer mx-auto" onClick={handleAddNoteIconClick}>
+      <div
+        className="notelist-main-add-item cursor-pointer mx-auto"
+        onClick={handleAddNoteIconClick}
+      >
         <div className="notelist-main-add-item-icon text-center border-dashed border rounded-md border-sky-500 text-sky-500">
           <p>+</p>
         </div>
@@ -105,48 +124,60 @@ export default function NoteListMain(props: Props) {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div className="notelist-main">
       <AddNoteBlock />
-      {
-        noteList.map((note: TLNoteData, i: number) => {
-          return (
-            <div key={i} className="notelist-main-item text-xs mx-auto">
-              <div className={`notelist-main-item-img mb-2 relative`} onClick={() => handleClickNote(note.ID)}>
-                {
-                  note.SvgPath !== "" ?
-                  <img src={"svgs/" + note.SvgPath + ".svg"} className={`note-img hover:opacity-50 hover:bg-gray-200 ${selectedNoteIDs.includes(note.ID) && "selected-note-img"}`} onError={handleImageError} />
-                  :
-                  <div className={`default-note-img ${selectedNoteIDs.includes(note.ID) && "selected-note-img"}`}></div>
-                }
-                {
-                  selectedNoteIDs.includes(note.ID) &&
-                  <div className="notelist-main-item-selected absolute right-0 top-0">
-                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 border border-sky-500">
-                      <p className="text-white text-xs">✓</p>
-                    </div>
+      {noteList.map((note: TLNoteData, i: number) => {
+        return (
+          <div key={i} className="notelist-main-item text-xs mx-auto">
+            <div
+              className={`notelist-main-item-img mb-2 relative`}
+              onClick={() => handleClickNote(note.ID)}
+            >
+              {note.SvgPath !== "" ? (
+                <img
+                  src={"svgs/" + note.SvgPath + ".svg"}
+                  className={`note-img hover:opacity-50 hover:bg-gray-200 ${
+                    selectedNoteIDs.includes(note.ID) && "selected-note-img"
+                  }`}
+                  onError={handleImageError}
+                />
+              ) : (
+                <div
+                  className={`default-note-img ${
+                    selectedNoteIDs.includes(note.ID) && "selected-note-img"
+                  }`}
+                ></div>
+              )}
+              {selectedNoteIDs.includes(note.ID) && (
+                <div className="notelist-main-item-selected absolute right-0 top-0">
+                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 border border-sky-500">
+                    <p className="text-white text-xs">✓</p>
                   </div>
-                }
-              </div>
-              <div className="notelist-main-item-title text-center truncate">
-                {editingNote?.id === note.ID ? (
-                  <EditTitleInput note={note} />
-                ) : (
-                  <span onClick={() => setEditingNote({ id: note.ID, title: note.Title })}>
-                    {note.Title}
-                  </span>
-                )}
-              </div>
-              <div className="notelist-main-item-date text-gray-400 text-center cursor-default">
-                {formatDate(note.UpdatedAt)}
-              </div>
+                </div>
+              )}
             </div>
-          )
-        })
-      }
-      
+            <div className="notelist-main-item-title text-center truncate">
+              {editingNote?.id === note.ID ? (
+                <EditTitleInput note={note} />
+              ) : (
+                <span
+                  onClick={() =>
+                    setEditingNote({ id: note.ID, title: note.Title })
+                  }
+                >
+                  {note.Title}
+                </span>
+              )}
+            </div>
+            <div className="notelist-main-item-date text-gray-400 text-center cursor-default">
+              {formatDate(note.UpdatedAt)}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

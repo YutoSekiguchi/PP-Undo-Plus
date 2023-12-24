@@ -137,7 +137,7 @@ export class Erasing extends StateNode {
           }
         }
       } catch (e) {
-        continue
+        continue;
       }
     }
 

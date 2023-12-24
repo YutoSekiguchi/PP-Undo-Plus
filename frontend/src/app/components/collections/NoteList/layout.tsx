@@ -30,9 +30,9 @@ export default function NoteList(props: Props) {
     if (user === null) {
       alert(
         `${lang === "en" ? "Please login again" : "ログインし直してください"}`
-        );
-        return;
-      }
+      );
+      return;
+    }
     const data: TLPostNoteData = {
       NoteCollectionID: selectedCollection.ID,
       UserID: user.ID,
@@ -45,7 +45,7 @@ export default function NoteList(props: Props) {
     };
     const res = await createNote(data);
     if (res === null) {
-      setIsLoading(false)
+      setIsLoading(false);
       alert(
         `${
           lang === "en" ? "Failed to create note" : "ノートの作成に失敗しました"
@@ -56,9 +56,10 @@ export default function NoteList(props: Props) {
     await updateCollection(selectedCollection);
     setTimeout(() => {
       setIsLoading(false);
-    }
-    , 3000);
-    if (lang !== undefined) {router.push(`/notes/${res.ID}&lang=${lang}`)} else {
+    }, 3000);
+    if (lang !== undefined) {
+      router.push(`/notes/${res.ID}&lang=${lang}`);
+    } else {
       router.push(`/notes/${res.ID}`);
     }
   };
@@ -66,27 +67,38 @@ export default function NoteList(props: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }
-    , 2000);
+    }, 2000);
     if (selectedCollection) {
       timer;
     }
     return () => clearTimeout(timer);
-  }, [selectedCollection])
+  }, [selectedCollection]);
 
   return (
     <div className="note-list bg-gray-100">
-      {
-        selectedCollection&&
+      {selectedCollection && (
         <>
-          <NoteListHeader selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} isNoteSelectMode={isNoteSelectMode} setIsNoteSelectMode={setIsNoteSelectMode} selectedNoteIDs={selectedNoteIDs} setSelectedNoteIDs={setSelectedNoteIDs} />
-          <NoteListMain selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} isNoteSelectMode={isNoteSelectMode} setIsNoteSelectMode={setIsNoteSelectMode} selectedNoteIDs={selectedNoteIDs} setSelectedNoteIDs={setSelectedNoteIDs}  />
+          <NoteListHeader
+            selectedCollection={selectedCollection}
+            lang={lang}
+            handleAddNoteIconClick={handleAddNoteIconClick}
+            isNoteSelectMode={isNoteSelectMode}
+            setIsNoteSelectMode={setIsNoteSelectMode}
+            selectedNoteIDs={selectedNoteIDs}
+            setSelectedNoteIDs={setSelectedNoteIDs}
+          />
+          <NoteListMain
+            selectedCollection={selectedCollection}
+            lang={lang}
+            handleAddNoteIconClick={handleAddNoteIconClick}
+            isNoteSelectMode={isNoteSelectMode}
+            setIsNoteSelectMode={setIsNoteSelectMode}
+            selectedNoteIDs={selectedNoteIDs}
+            setSelectedNoteIDs={setSelectedNoteIDs}
+          />
         </>
-      }
-      {
-        isLoading &&
-        <LoadingScreen  />
-      }
+      )}
+      {isLoading && <LoadingScreen />}
     </div>
   );
 }

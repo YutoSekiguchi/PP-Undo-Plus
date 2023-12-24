@@ -8,9 +8,9 @@ import {
   Tooltip,
   Legend,
   Filler,
-  ArcElement
-} from 'chart.js'
-import { Doughnut } from 'react-chartjs-2'
+  ArcElement,
+} from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 
 interface Props {
   data: any;
@@ -29,7 +29,7 @@ export default function AllPressureAveragePieGraph(props: Props) {
     Legend,
     Filler,
     ArcElement
-  )
+  );
   ChartJS.defaults.scales.linear.min = 0;
 
   return (

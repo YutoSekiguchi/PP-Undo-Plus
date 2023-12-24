@@ -66,13 +66,13 @@ export default function PPUndoSlider(props: Props) {
     editor.setErasingShapes(Array.from(erasing));
   };
 
-  const handlePointerUp = async(e: PointerEvent<HTMLInputElement>) => {
+  const handlePointerUp = async (e: PointerEvent<HTMLInputElement>) => {
     if (editor === undefined || editorUtils === undefined) return;
     const target = e.target as HTMLInputElement;
     const value = parseInt(target.value) / 100;
     const snapshot = editorUtils.getSnapshot();
     const svg = await getSvgAsString();
-    const filename = `log-${generateRandomString()}`
+    const filename = `log-${generateRandomString()}`;
     // ストロークの削除
     const eraseShapeIds = editor.currentPageState.erasingShapeIds;
     if (eraseShapeIds.length === 0) {
@@ -92,11 +92,14 @@ export default function PPUndoSlider(props: Props) {
         NoteID: id,
         Snapshot: JSON.stringify(snapshot),
         SvgPath: filename,
-      }
-      createNoteLog(logData).then(()=>{}).catch((err)=>{console.error(err)});
+      };
+      createNoteLog(logData)
+        .then(() => {})
+        .catch((err) => {
+          console.error(err);
+        });
     }
 
-    
     editor.deleteShapes(eraseShapeIds);
     editor.setErasingShapes([]);
 

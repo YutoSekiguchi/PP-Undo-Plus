@@ -4,7 +4,7 @@ import PPUndoSlider from "../../Slider/layout";
 import "../area.css";
 import { EditorUtils } from "../../../util";
 
-interface Props { 
+interface Props {
   editor?: Editor;
   id: number;
   editorUtils?: EditorUtils;
@@ -16,11 +16,14 @@ export default function PPUndoArea(props: Props) {
   return (
     <div className="area">
       <div className="title">
-        <p className="text-center font-bold text-md mb-2">
-          PP-Undo
-        </p>
+        <p className="text-center font-bold text-md mb-2">PP-Undo</p>
       </div>
-      <PPUndoSlider editor={editor} id={id} editorUtils={editorUtils} isDemo={isDemo} />
+      <PPUndoSlider
+        editor={editor}
+        id={id}
+        editorUtils={editorUtils}
+        isDemo={isDemo}
+      />
       <PPUndoLineGraph />
     </div>
   );

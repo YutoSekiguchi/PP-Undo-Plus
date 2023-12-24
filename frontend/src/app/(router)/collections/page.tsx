@@ -12,5 +12,5 @@ export default function Collection({
       <Sidebar lang={lang} />
       <NoteList lang={lang} />
     </div>
-  )
+  );
 }

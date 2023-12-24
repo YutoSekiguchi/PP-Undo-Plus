@@ -8,13 +8,19 @@ export class EditorUtils {
     this.editor = editor;
   }
 
-  firstLoadData(isDebugMode: boolean = false, currentTool: "eraser" | "draw" | "select" | "hand" = "draw"): void {
+  firstLoadData(
+    isDebugMode: boolean = false,
+    currentTool: "eraser" | "draw" | "select" | "hand" = "draw"
+  ): void {
     this.editor.updateInstanceState({ isDebugMode: isDebugMode });
     this.editor.setCurrentTool(currentTool);
   }
 
   // scapshotからノートの生成
-  loadSnapshot(snapshot: StoreSnapshot<TLRecord>, isDebugMode: boolean = false): void {
+  loadSnapshot(
+    snapshot: StoreSnapshot<TLRecord>,
+    isDebugMode: boolean = false
+  ): void {
     this.editor.store.loadSnapshot(snapshot);
     this.editor.updateInstanceState({ isDebugMode: isDebugMode });
   }
@@ -37,6 +43,10 @@ export class EditorUtils {
   }
 
   getCameraData(): { x: number; y: number; z: number } {
-    return {x: this.editor.camera.x, y: this.editor.camera.y, z: this.editor.camera.z};
+    return {
+      x: this.editor.camera.x,
+      y: this.editor.camera.y,
+      z: this.editor.camera.z,
+    };
   }
 }

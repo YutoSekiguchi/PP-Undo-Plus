@@ -14,24 +14,35 @@ interface Props {
 }
 
 export default function NoteListHeader(props: Props) {
-  const { lang, selectedCollection, handleAddNoteIconClick, isNoteSelectMode, setIsNoteSelectMode, selectedNoteIDs, setSelectedNoteIDs } = props;
+  const {
+    lang,
+    selectedCollection,
+    handleAddNoteIconClick,
+    isNoteSelectMode,
+    setIsNoteSelectMode,
+    selectedNoteIDs,
+    setSelectedNoteIDs,
+  } = props;
 
   const handleClickMenuDotIcon = () => {
     setIsNoteSelectMode(true);
-  }
+  };
 
   const handleClickCancel = () => {
     setSelectedNoteIDs([]);
     setIsNoteSelectMode(false);
-  }
+  };
 
-
-  const handleClickDelete = async() => {
+  const handleClickDelete = async () => {
     if (selectedNoteIDs.length === 0) return;
-    const canDelete = confirm(lang === "en" ? "Are you sure you want to delete the selected notes?" : "選択したノートを削除してもよろしいですか？");
+    const canDelete = confirm(
+      lang === "en"
+        ? "Are you sure you want to delete the selected notes?"
+        : "選択したノートを削除してもよろしいですか？"
+    );
     if (!canDelete) return;
 
-    for(let i = 0; i < selectedNoteIDs.length; i++) {
+    for (let i = 0; i < selectedNoteIDs.length; i++) {
       const res = await deleteNote(selectedNoteIDs[i]);
       if (res === null) {
         if (lang === "en") {
@@ -44,7 +55,7 @@ export default function NoteListHeader(props: Props) {
     }
     setSelectedNoteIDs([]);
     setIsNoteSelectMode(false);
-  }
+  };
 
   return (
     <div className="notelist-header flex justify-between items-center w-full p-4">
@@ -52,8 +63,7 @@ export default function NoteListHeader(props: Props) {
         {selectedCollection.Title}
       </div>
       <div className="notelist-header-icon-list text-sky-500 flex justify-items-center">
-        {
-          isNoteSelectMode ?
+        {isNoteSelectMode ? (
           <>
             <div
               className="notelist-header--menu-icon text-sm text-red-500 mr-12 cursor-pointer"
@@ -68,7 +78,7 @@ export default function NoteListHeader(props: Props) {
               {lang === "en" ? "Cancel" : "キャンセル"}
             </div>
           </>
-          :
+        ) : (
           <>
             <div
               className="notelist-header--menu-icon mr-6 cursor-pointer"
@@ -76,11 +86,14 @@ export default function NoteListHeader(props: Props) {
             >
               <AddNoteIcon />
             </div>
-            <div className="notelist-header--menu-icon mr-2 cursor-pointer" onClick={handleClickMenuDotIcon}>
+            <div
+              className="notelist-header--menu-icon mr-2 cursor-pointer"
+              onClick={handleClickMenuDotIcon}
+            >
               <MenuDotIcon />
             </div>
           </>
-        }
+        )}
       </div>
     </div>
   );

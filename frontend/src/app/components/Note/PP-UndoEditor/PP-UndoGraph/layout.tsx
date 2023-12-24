@@ -49,20 +49,30 @@ export default function PPUndoGraph(props: Props) {
           overflow: "auto",
         }}
       >
-        <PPUndoArea editor={editor} id={id} editorUtils={editorUtils} isDemo={isDemo} />
+        <PPUndoArea
+          editor={editor}
+          id={id}
+          editorUtils={editorUtils}
+          isDemo={isDemo}
+        />
         <div className="mt-4 flex justify-between">
-          {
-            !hideAllAveragePressurePieGraph &&
+          {!hideAllAveragePressurePieGraph && (
             <div style={{ width: allAveragePressurePieGraphWidth }}>
               <AllAveragePressurePieGraphArea />
             </div>
-          }
-          {
-            editorUtils && 
+          )}
+          {editorUtils && (
             <div style={{ width: buttonAreaWidth }} className="">
-              <ButtonArea editorUtils={editorUtils} id={id} width={width} height={height} background={background} isDemo={isDemo} />
+              <ButtonArea
+                editorUtils={editorUtils}
+                id={id}
+                width={width}
+                height={height}
+                background={background}
+                isDemo={isDemo}
+              />
             </div>
-          }
+          )}
         </div>
       </div>
     </div>

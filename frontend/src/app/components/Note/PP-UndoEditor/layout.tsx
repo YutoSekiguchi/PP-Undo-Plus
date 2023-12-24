@@ -9,7 +9,7 @@ import {
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useCallback, useEffect, useState } from "react";
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 import { uiOverrides } from "./ui-overrides";
 import { PressureEraserTool } from "./PressureEraseTool/PressureEraserTool";
 import { ToolPressureEraseIcon } from "./PressureEraseTool/icon/tool-pressure-erase";
@@ -25,7 +25,11 @@ import { useRouter } from "next/navigation";
 import { getNoteByID, updateNote } from "@/app/lib/note";
 import { TLNoteData } from "@/@types/note";
 import { generateRandomString } from "@/app/modules/common/generateRandomString";
-import { noteOperationInfoAtom, strokeTimeInfoAtom } from "@/app/hooks/atoms/note";
+import {
+  noteOperationInfoAtom,
+  strokeTimeInfoAtom,
+} from "@/app/hooks/atoms/note";
+import LoadingScreen from "@/app/Loading";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -70,7 +74,7 @@ export default function PPUndoEditor(props: Props) {
     isDemo = false,
     mode,
     lang,
-    id
+    id,
   } = props;
   const [editor, setEditor] = useState<Editor>();
   const [strokeTimeInfo] = useAtom(strokeTimeInfoAtom);
@@ -78,10 +82,19 @@ export default function PPUndoEditor(props: Props) {
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
   const [nowAvgPressure, setNowAvgPressure] = useState<number>(0);
-  const { clearStrokePressureInfo, addStrokePressureInfo, addStrokeTimeInfo, addNoteOperationInfo, initializeNoteOperationInfo, initializeStrokePressureInfo, initializeStrokeTimeInfo, clearStrokeInfo } =
-    useStrokePressureInfo();
+  const {
+    clearStrokePressureInfo,
+    addStrokePressureInfo,
+    addStrokeTimeInfo,
+    addNoteOperationInfo,
+    initializeNoteOperationInfo,
+    initializeStrokePressureInfo,
+    initializeStrokeTimeInfo,
+    clearStrokeInfo,
+  } = useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
   const [container, setContainer] = useState<HTMLElement | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const setAppToState = useCallback((editor: Editor) => {
     // debugMode解除
@@ -99,7 +112,12 @@ export default function PPUndoEditor(props: Props) {
     endTime = performance.now();
     const drawTime = endTime - startTime;
     addStrokePressureInfo(drawingStrokeId, 0, avgPressure, groupPressure);
-    addStrokeTimeInfo(drawingStrokeId, drawTime, startTime, drawingPressureList.length);
+    addStrokeTimeInfo(
+      drawingStrokeId,
+      drawTime,
+      startTime,
+      drawingPressureList.length
+    );
     // FIXME: draw以外のoperationも追加する
     addNoteOperationInfo("draw", drawingStrokeId, startTime);
     drawingStrokeId = "";
@@ -169,23 +187,36 @@ export default function PPUndoEditor(props: Props) {
 
   const BackButton = () => {
     const router = useRouter();
-  
-    const handleBack = async() => {
-      // TODO: ローディングの実装
-      if(!isDemo && id && editorUtils && noteData) {
+
+    const handleBack = async () => {
+      setIsLoading(true);
+      if (!isDemo && id && editorUtils && noteData) {
         try {
           const svg = await getSvgAsString();
-          const filename = noteData.SvgPath === "" || noteData.SvgPath === null ? `${generateRandomString()}` : noteData.SvgPath;
+          const filename =
+            noteData.SvgPath === "" || noteData.SvgPath === null
+              ? `${generateRandomString()}`
+              : noteData.SvgPath;
           if (svg) {
             await uploadSvg(svg, filename);
           }
 
-          const operationJson = {"data": noteOperationInfo};
-          const operationFilename = noteData.OperationJsonPath === "" || noteData.OperationJsonPath === null ? `${generateRandomString()}` : noteData.OperationJsonPath;
-          await uploadJson(JSON.stringify(operationJson), "operations", operationFilename);
+          const operationJson = { data: noteOperationInfo };
+          const operationFilename =
+            noteData.OperationJsonPath === "" ||
+            noteData.OperationJsonPath === null
+              ? `${generateRandomString()}`
+              : noteData.OperationJsonPath;
+          await uploadJson(
+            JSON.stringify(operationJson),
+            "operations",
+            operationFilename
+          );
           const snapshot = editorUtils.getSnapshot();
-          noteData.StrokeTimeInfo = strokeTimeInfo? JSON.stringify(strokeTimeInfo): "";
-          noteData.Snapshot = snapshot? JSON.stringify(snapshot): "";
+          noteData.StrokeTimeInfo = strokeTimeInfo
+            ? JSON.stringify(strokeTimeInfo)
+            : "";
+          noteData.Snapshot = snapshot ? JSON.stringify(snapshot) : "";
           noteData.PressureInfo = JSON.stringify(strokePressureInfo);
           noteData.SvgPath = filename;
           noteData.OperationJsonPath = operationFilename;
@@ -199,7 +230,7 @@ export default function PPUndoEditor(props: Props) {
             return;
           }
           router.back();
-        } catch(err) {
+        } catch (err) {
           if (lang === "en") {
             alert("Failed to save note.");
           } else {
@@ -211,9 +242,13 @@ export default function PPUndoEditor(props: Props) {
         router.back();
       }
     };
-  
+
     return (
-      <button onClick={handleBack} className="back-button cursor-pointer text-sky-500 pl-2 hover:text-sky-300 text-xs whitespace-nowrap" style={{ pointerEvents: "all" }}>
+      <button
+        onClick={handleBack}
+        className="back-button cursor-pointer text-sky-500 pl-2 hover:text-sky-300 text-xs whitespace-nowrap"
+        style={{ pointerEvents: "all" }}
+      >
         &lt;{lang === "en" ? "Page" : "ページ"}
       </button>
     );
@@ -221,7 +256,7 @@ export default function PPUndoEditor(props: Props) {
 
   useEffect(() => {
     if (!editor || !editorUtils) return;
-    
+
     const fetchNoteData = async () => {
       if (isDemo || !id) return;
       const res = await getNoteByID(Number(id));
@@ -232,12 +267,16 @@ export default function PPUndoEditor(props: Props) {
       editorUtils.loadSnapshot(JSON.parse(snapshot));
       initializeStrokePressureInfo(JSON.parse(res.PressureInfo));
       initializeStrokeTimeInfo(JSON.parse(res.StrokeTimeInfo));
-      const operationJson = await fetch(`/json/operations/${res.OperationJsonPath}.json`).then(response => response.json()).catch(err => {
-        console.log(err);
-        alert("Failed to load operation history data");
-      });
+      const operationJson = await fetch(
+        `/json/operations/${res.OperationJsonPath}.json`
+      )
+        .then((response) => response.json())
+        .catch((err) => {
+          console.log(err);
+          alert("Failed to load operation history data");
+        });
       initializeNoteOperationInfo(operationJson.data);
-    }
+    };
 
     fetchNoteData();
 
@@ -277,7 +316,7 @@ export default function PPUndoEditor(props: Props) {
       }
     };
 
-    const element = document.querySelector('.tlui-layout__top__left');
+    const element = document.querySelector(".tlui-layout__top__left");
     setContainer(element as HTMLElement);
 
     editor.on("change", handleChangeEvent);
@@ -305,6 +344,7 @@ export default function PPUndoEditor(props: Props) {
 
   return (
     <div style={{ display: "flex" }}>
+      {isLoading && <LoadingScreen />}
       <div style={{ width: width, height: height }}>
         {container && ReactDOM.createPortal(<BackButton />, container)}
         {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (

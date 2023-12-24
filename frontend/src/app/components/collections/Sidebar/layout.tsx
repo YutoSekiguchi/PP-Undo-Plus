@@ -24,24 +24,24 @@ export default function Sidebar(props: Props) {
   const { selectedCollection, selectCollection } = useSelectedCollection();
   const items = [
     {
-      name: "notebooks",
+      name: "Notebooks",
       jaName: "ノートブック",
       icon: <NoteBooksIcon />,
     },
     {
-      name: "setting",
+      name: "Setting",
       jaName: "設定",
       icon: <SettingIcon />,
     },
     {
-      name: "help",
+      name: "Help",
       jaName: "ヘルプ",
       icon: <HelpIcon />,
     },
   ];
   const [selectedMenu, setSelectedMenu] = useState<
-    "notebooks" | "setting" | "help"
-  >("notebooks");
+    "Notebooks" | "Setting" | "Help"
+  >("Notebooks");
 
   const fetchCollectionsByUserID = async (userID: number) => {
     const res = await getCollectionsByUserID(userID);
@@ -59,6 +59,57 @@ export default function Sidebar(props: Props) {
     fetchCollectionsByUserID(Number(user.ID));
   }, [user]);
 
+  const CollectionList = () => {
+    return (
+      <>
+        <div className="sidebar-body--collection-list-title">
+          <p className="text-md font-bold">
+            {lang === "en" ? "My Collections" : "マイコレクション"}
+          </p>
+        </div>
+        {collections.map((collection, i) => (
+          <div
+            key={i}
+            className={`sidebar-body--collection flex items-center pl-1 pr-2 py-2 cursor-pointer rounded-lg ${
+              selectedCollection?.ID === collection.ID
+                ? "bg-sky-100"
+                : ""
+            }`}
+            onClick={() => handleCollectionClick(collection)}
+          >
+            <div className="sidebar-body--collection-note-icon text-sky-500 mr-2">
+              <NoteBookIcon />
+            </div>
+            <div className="sidebar-body--collection-description">
+              <div className="sidebar-body--collection-name text-overflow">
+                <p className="text-xs">{collection.Title}</p>
+              </div>
+              <div className="sidebar-body--collection-date">
+                <p className="text-gray-400">
+                  {formatDate(collection.UpdatedAt)}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  const HelpBody = () => {
+    return (
+      <div className="sidebar-body--help">
+        <div className="sidebar-body--help-app-name">
+          <p className="text-md font-bold mr-2">PP-Undo Plus</p>
+          <p className="text-gray-400 text-xs">{lang=="en"? "version": "バージョン"}{process.env.VERSION}</p>
+        </div>
+        <div className="sidebar-body--help-copy-right mt-6">
+          <p className="text-xs text-gray-400">&copy;2022-<span id="copy-year">{new Date().getFullYear()}</span> Yuto Sekiguchi. All rights reserved.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="sidebar">
       {user && (
@@ -73,7 +124,7 @@ export default function Sidebar(props: Props) {
           <div className="sidebar-body w-full">
             <div className="slidebar-body--title">
               <p className="ml-4 font-bold text-2xl mb-2">
-                {lang === "en" ? "Note Books" : "ノートブック"}
+                {lang === "en"? selectedMenu: items.find((item) => item.name === selectedMenu)?.jaName}
               </p>
             </div>
             <div className="sidebar-body--logo mt-4 mb-8">
@@ -84,36 +135,18 @@ export default function Sidebar(props: Props) {
               />
             </div>
             <div className="sidebar-body--collection-list ml-4 mt-6 mr-2">
-              <div className="sidebar-body--collection-list-title">
-                <p className="text-md font-bold">
-                  {lang === "en" ? "My Collections" : "マイコレクション"}
-                </p>
-              </div>
-              {collections.map((collection, i) => (
-                <div
-                  key={i}
-                  className={`sidebar-body--collection flex items-center pl-1 pr-2 py-2 cursor-pointer rounded-lg ${
-                    selectedCollection?.ID === collection.ID
-                      ? "bg-sky-100"
-                      : ""
-                  }`}
-                  onClick={() => handleCollectionClick(collection)}
-                >
-                  <div className="sidebar-body--collection-note-icon text-sky-500 mr-2">
-                    <NoteBookIcon />
-                  </div>
-                  <div className="sidebar-body--collection-description">
-                    <div className="sidebar-body--collection-name text-overflow">
-                      <p className="text-xs">{collection.Title}</p>
-                    </div>
-                    <div className="sidebar-body--collection-date">
-                      <p className="text-gray-400">
-                        {formatDate(collection.UpdatedAt)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {
+                selectedMenu === "Notebooks" &&
+                <CollectionList />
+              }
+              {
+                selectedMenu === "Setting" &&
+                <></>
+              }
+              {
+                selectedMenu === "Help" &&
+                <HelpBody />
+              }
             </div>
           </div>
           <SidebarFooter

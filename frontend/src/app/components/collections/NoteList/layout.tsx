@@ -21,6 +21,8 @@ export default function NoteList(props: Props) {
   const router = useRouter();
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isNoteSelectMode, setIsNoteSelectMode] = useState<boolean>(false);
+  const [selectedNoteIDs, setSelectedNoteIDs] = useState<number[]>([]);
 
   const handleAddNoteIconClick = async () => {
     if (selectedCollection === null) return;
@@ -66,18 +68,20 @@ export default function NoteList(props: Props) {
       setIsLoading(false);
     }
     , 2000);
+    if (selectedCollection) {
+      timer;
+    }
     return () => clearTimeout(timer);
-  }, [])
+  }, [selectedCollection])
 
   return (
     <div className="note-list bg-gray-100">
       {
         selectedCollection&&
         <>
-          <NoteListHeader selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} />
-          <NoteListMain selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} />
+          <NoteListHeader selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} isNoteSelectMode={isNoteSelectMode} setIsNoteSelectMode={setIsNoteSelectMode} selectedNoteIDs={selectedNoteIDs} setSelectedNoteIDs={setSelectedNoteIDs} />
+          <NoteListMain selectedCollection={selectedCollection} lang={lang} handleAddNoteIconClick={handleAddNoteIconClick} isNoteSelectMode={isNoteSelectMode} setIsNoteSelectMode={setIsNoteSelectMode} selectedNoteIDs={selectedNoteIDs} setSelectedNoteIDs={setSelectedNoteIDs}  />
         </>
-        
       }
       {
         isLoading &&

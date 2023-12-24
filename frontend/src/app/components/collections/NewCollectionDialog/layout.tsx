@@ -33,7 +33,7 @@ export default function NewCollectionDialog(props: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-auto" style={{ zIndex: 1000 }}>
       <div className="bg-white p-4 rounded-lg shadow-lg w-1/2" style={{ minWidth: "400px", maxWidth: "600px" }}>
         <div className="mb-4">
           <h2 className="text-xs text-center text-gray-700">

@@ -14,6 +14,11 @@
   cursor: pointer;
 }
 
+.selected-note-img {
+  background-color: #aaa;
+  opacity: 0.5;
+}
+
 .note-img {
   width: 130px;
   height: 170px;

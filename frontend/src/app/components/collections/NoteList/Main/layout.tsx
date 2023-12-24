@@ -10,15 +10,18 @@ interface Props {
   lang: string | string[] | undefined;
   selectedCollection: TLCollectionData;
   handleAddNoteIconClick: () => void;
+  isNoteSelectMode: boolean;
+  selectedNoteIDs: number[];
+  setIsNoteSelectMode: (isNoteSelectMode: boolean) => void;
+  setSelectedNoteIDs: (selectedNoteIDs: number[]) => void;
 }
 
 export default function NoteListMain(props: Props) {
-  const { lang, selectedCollection, handleAddNoteIconClick } = props;
+  const { lang, selectedCollection, handleAddNoteIconClick, isNoteSelectMode, setIsNoteSelectMode, selectedNoteIDs, setSelectedNoteIDs } = props;
   const [noteList, setNoteList] = useState<TLNoteData[]>([]);
   const router = useRouter();
 
   const [editingNote, setEditingNote] = useState<{ id: number; title: string } | null>(null);
-
   
   const handleEditTitle = async(noteData: TLNoteData, title: string) => {
     if (noteData.Title === title) return;
@@ -53,6 +56,14 @@ export default function NoteListMain(props: Props) {
   };
 
   const handleClickNote = (noteID: number) => {
+    if (isNoteSelectMode) {
+      if (selectedNoteIDs.includes(noteID)) {
+        setSelectedNoteIDs(selectedNoteIDs.filter((id) => id !== noteID));
+      } else {
+        setSelectedNoteIDs([...selectedNoteIDs, noteID]);
+      }
+      return;
+    }
     try {
       if (lang !== undefined) {
         router.push(`/notes/${noteID}&lang=${lang}`);
@@ -81,7 +92,7 @@ export default function NoteListMain(props: Props) {
     }
 
     fetchNoteList();
-  }, [selectedCollection]);
+  }, [selectedCollection, isNoteSelectMode]);
 
   const AddNoteBlock = () => {
     return (
@@ -103,12 +114,20 @@ export default function NoteListMain(props: Props) {
         noteList.map((note: TLNoteData, i: number) => {
           return (
             <div key={i} className="notelist-main-item text-xs mx-auto">
-              <div className="notelist-main-item-img mb-2" onClick={() => handleClickNote(note.ID)}>
+              <div className={`notelist-main-item-img mb-2 relative`} onClick={() => handleClickNote(note.ID)}>
                 {
                   note.SvgPath !== "" ?
-                  <img src={"svgs/" + note.SvgPath + ".svg"} className="note-img hover:opacity-50 hover:bg-gray-200" onError={handleImageError} />
+                  <img src={"svgs/" + note.SvgPath + ".svg"} className={`note-img hover:opacity-50 hover:bg-gray-200 ${selectedNoteIDs.includes(note.ID) && "selected-note-img"}`} onError={handleImageError} />
                   :
-                  <div className="default-note-img"></div>
+                  <div className={`default-note-img ${selectedNoteIDs.includes(note.ID) && "selected-note-img"}`}></div>
+                }
+                {
+                  selectedNoteIDs.includes(note.ID) &&
+                  <div className="notelist-main-item-selected absolute right-0 top-0">
+                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 border border-sky-500">
+                      <p className="text-white text-xs">✓</p>
+                    </div>
+                  </div>
                 }
               </div>
               <div className="notelist-main-item-title text-center truncate">

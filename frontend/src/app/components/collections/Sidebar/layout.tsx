@@ -10,7 +10,7 @@ import SidebarFooter from "./Footer/layout";
 import SidebarHeader from "./Header/layout";
 import { useSelectedCollection, useUser } from "@/app/hooks";
 import { TLCollectionData } from "@/@types/collection";
-import { getCollectionsByUserID } from "@/app/lib/collection";
+import { deleteCollection, getCollectionsByUserID } from "@/app/lib/collection";
 import { formatDate } from "@/app/modules/common/formatDate";
 
 interface Props {
@@ -42,6 +42,8 @@ export default function Sidebar(props: Props) {
   const [selectedMenu, setSelectedMenu] = useState<
     "Notebooks" | "Setting" | "Help"
   >("Notebooks");
+  const [isSelectMode, setIsSelectMode] = useState<boolean>(false);
+  const [selectedCollectionIDs, setSelectedCollectionIDs] = useState<number[]>([]);
 
   const fetchCollectionsByUserID = async (userID: number) => {
     const res = await getCollectionsByUserID(userID);
@@ -50,8 +52,39 @@ export default function Sidebar(props: Props) {
     selectCollection(res[0]);
   };
 
+  const deleteSelectedNoteCollections = async() => {
+    if (selectedCollectionIDs.length === 0 || user === null) return;
+    // 本当に削除していいかlangに応じた言語で確認
+    const canDelete = confirm(lang === "en" ? "Are you sure you want to delete the selected collections?" : "選択したコレクションを削除してもよろしいですか？");
+    if (!canDelete) return;
+
+    for(let i = 0; i < selectedCollectionIDs.length; i++) {
+      const res = await deleteCollection(selectedCollectionIDs[i]);
+      if (res === null) {
+        if (lang === "en") {
+          alert("Failed to delete collection");
+        } else {
+          alert("コレクションの削除に失敗しました");
+        }
+        return;
+      }
+    }
+    fetchCollectionsByUserID(Number(user.ID));
+    setIsSelectMode(false);
+  }
+
   const handleCollectionClick = (collection: TLCollectionData) => {
-    selectCollection(collection);
+    if (isSelectMode) {
+      if (selectedCollectionIDs.includes(collection.ID)) {
+        setSelectedCollectionIDs(selectedCollectionIDs.filter((id) => id !== collection.ID));
+      }
+      else {
+        setSelectedCollectionIDs([...selectedCollectionIDs, collection.ID]);
+      }
+    }
+    else {
+      selectCollection(collection);
+    }
   };
 
   useEffect(() => {
@@ -77,6 +110,20 @@ export default function Sidebar(props: Props) {
             }`}
             onClick={() => handleCollectionClick(collection)}
           >
+            {
+              isSelectMode &&
+              <div className="sidebar-body--collection-selected-icon mr-2">
+                {
+                  selectedCollectionIDs.includes(collection.ID) ?
+                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-sky-500 border border-sky-500">
+                    <p className="text-white text-xs">✓</p>
+                  </div>
+                  :
+                  <div className="flex items-center justify-center w-4 h-4 rounded-full border border-gray-400">
+                  </div>
+                }
+              </div>
+            }
             <div className="sidebar-body--collection-note-icon text-sky-500 mr-2">
               <NoteBookIcon />
             </div>
@@ -120,6 +167,8 @@ export default function Sidebar(props: Props) {
             fetchCollectionsByUserID={() =>
               fetchCollectionsByUserID(Number(user.ID))
             }
+            isSelectMode={isSelectMode}
+            setIsSelectMode={setIsSelectMode}
           />
           <div className="sidebar-body w-full">
             <div className="slidebar-body--title">
@@ -148,6 +197,16 @@ export default function Sidebar(props: Props) {
                 <HelpBody />
               }
             </div>
+          {
+            isSelectMode && selectedCollectionIDs.length > 0 &&
+            <div className="flex items-center justify-around mb-2 mt-4">
+              <div className="ml-1 mr-1">
+                <button className="flex items-center justify-center px-4 py-2 bg-red-500 hover:bg-red-400 rounded-lg" onClick={deleteSelectedNoteCollections}>
+                  <p className="text-xs text-white">{lang==="en"? "Delete": "削除"}</p>
+                </button>
+              </div>
+            </div>
+          }
           </div>
           <SidebarFooter
             items={items}

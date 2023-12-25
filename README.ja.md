@@ -1,4 +1,5 @@
 # PP-Undo+（日本語版）
+[English](./README.md) | [日本語](./README.ja.md)
 
 **概要**
 
@@ -38,6 +39,10 @@
   - ```
     API_URL_DEV=http://localhost:7171 // 開発環境のAPIのURL
     API_URL_PROD=https://xxx.com/api // 本番環境のAPIのURL
+    GOOGLE_CLIENT_ID=xxx.yyy.zzz.com
+    GOOGLE_CLIENT_SECRET=XXX-YYY-ZZZ
+    NEXTAUTH_SECRET=xxxxxxxxxxxxxxxxxx
+    VERSION=1.0.0
     ```
 
 ### 開発で使用するポート一覧

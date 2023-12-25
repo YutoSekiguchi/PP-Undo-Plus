@@ -39,6 +39,10 @@
   - ```
     API_URL_DEV=http://localhost:7171 // API URL for the development environment
     API_URL_PROD=https://xxx.com/api // API URL for the production environment
+    GOOGLE_CLIENT_ID=xxx.yyy.zzz.com
+    GOOGLE_CLIENT_SECRET=XXX-YYY-ZZZ
+    NEXTAUTH_SECRET=xxxxxxxxxxxxxxxxxx
+    VERSION=1.0.0
     ```
 
 ### List of Ports Used in Development

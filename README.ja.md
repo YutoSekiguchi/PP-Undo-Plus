@@ -49,7 +49,7 @@
 
 |     | port | 説明                           | docker container 名         |
 | :-: | ---- | :----------------------------- | --------------------------- |
-|     | 7170 | クライアント, Next.js          | ppundo-plus--frontend          |
-|     | 7171 | API, Go                        | ppundo-plus--api            |
+|     | 7170 | クライアント, Next.js          | ppundo-plus--frontend       |
+|     | 7171 | API, Go                        | ppundo-plus--backend        |
 |     | 7172 | データベース，   MySQL         | ppundo-plus--mysql          |
 |     | 7173 | データベースの操作, PHPMyAdmin | ppundo-plus--phpmyadmin     |

@@ -50,6 +50,6 @@
 |     | Port | Description                   | Docker Container Name        |
 | :-: | ---- | ----------------------------- | ---------------------------- |
 |     | 7170 | Client, Next.js               | ppundo-plus--frontend        |
-|     | 7171 | API, Go                       | ppundo-plus--api             |
+|     | 7171 | API, Go                       | ppundo-plus--backend         |
 |     | 7172 | Database, MySQL               | ppundo-plus--mysql           |
 |     | 7173 | Database Management, PHPMyAdmin | ppundo-plus--phpmyadmin    |

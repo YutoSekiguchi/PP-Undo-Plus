@@ -15,7 +15,7 @@ interface Props {
   lang: string | string[] | undefined;
 }
 
-export default function NoteList(props: Props) {
+const NoteList: React.FC<Props> = (props) => {
   const { lang } = props;
   const { selectedCollection } = useSelectedCollection();
   const router = useRouter();
@@ -102,3 +102,5 @@ export default function NoteList(props: Props) {
     </div>
   );
 }
+
+export default NoteList;

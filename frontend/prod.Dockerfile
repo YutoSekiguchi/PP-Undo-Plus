@@ -16,6 +16,9 @@ RUN pnpm install
 # Copy the application's source code
 COPY . .
 
+# Clear ESLint cache
+RUN pnpm run eslint -- --clear-cache
+
 # Build
 RUN pnpm run build
 

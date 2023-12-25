@@ -369,6 +369,7 @@ export default function PPUndoEditor(props: Props) {
         editorUtils={editorUtils}
         id={Number(id)}
         isDemo={isDemo}
+        handleResetStrokePressureInfo={handleResetStrokePressureInfo}
       />
     </div>
   );

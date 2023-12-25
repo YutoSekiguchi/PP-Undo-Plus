@@ -18,6 +18,7 @@ interface Props {
   editorUtils?: EditorUtils;
   id: number;
   isDemo: boolean;
+  handleResetStrokePressureInfo: (allRecords: any) => void;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -34,6 +35,7 @@ export default function PPUndoGraph(props: Props) {
     editorUtils,
     id,
     isDemo,
+    handleResetStrokePressureInfo,
   } = props;
   return (
     <div>
@@ -71,6 +73,7 @@ export default function PPUndoGraph(props: Props) {
                 height={height}
                 background={background}
                 isDemo={isDemo}
+                handleResetStrokePressureInfo={handleResetStrokePressureInfo}
               />
             </div>
           )}

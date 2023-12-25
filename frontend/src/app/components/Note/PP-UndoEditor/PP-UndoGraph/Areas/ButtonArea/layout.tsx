@@ -9,10 +9,11 @@ interface Props {
   height: string | number;
   background: string;
   isDemo: boolean;
+  handleResetStrokePressureInfo: (allRecords: any) => void;
 }
 
 export default function ButtonArea(props: Props) {
-  const { editorUtils, id, width, height, background, isDemo } = props;
+  const { editorUtils, id, width, height, background, isDemo, handleResetStrokePressureInfo } = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,6 +36,7 @@ export default function ButtonArea(props: Props) {
           background={background}
           handleClose={handleClose}
           isDemo={isDemo}
+          handleResetStrokePressureInfo={handleResetStrokePressureInfo}
         />
       )}
       <div className="title">

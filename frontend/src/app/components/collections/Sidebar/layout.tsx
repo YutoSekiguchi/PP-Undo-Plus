@@ -153,9 +153,51 @@ export default function Sidebar(props: Props) {
             {process.env.VERSION}
           </p>
         </div>
-        <div className="sidebar-body--help-copy-right mt-6">
+
+        <div className="sidebar-body--help-support mt-8 rounded-lg">
+          <p className="text-sm font-bold">{lang=="en"? "Support": "サポート"}</p>
           <p className="text-xs text-gray-400">
-            &copy;2022-<span id="copy-year">{new Date().getFullYear()}</span>{" "}
+            {lang == "en"
+              ? "For support, please visit:"
+              : "サポートが必要な場合は、以下をご覧ください"}
+            <br />
+            <a href="" className="text-sky-500"> 
+              {lang == "en" ?
+              "Preparing"
+              : "準備中"}
+            </a>
+          </p>
+        </div>
+
+        <div className="sidebar-body--help-terms mt-4 rounded-lg">
+          <p className="text-xs text-gray-400">
+            <a href={`${lang==="en"? "/terms?lang=en": "/terms"}`} className="text-sky-500">
+              {lang == "en" ? "Terms of Service" : "利用規約"}
+            </a>{" "}
+            |
+            <a href={`${lang==="en"? "/privacy-policy?lang=en": "/privacy-policy"}`} className="text-sky-500">
+              {lang == "en" ? "Privacy Policy" : "プライバシーポリシー"}
+            </a>
+          </p>
+        </div>
+
+        <div className="sidebar-body--help-contact mt-4 rounded-lg">
+          <p className="text-md font-bold">
+            {lang == "en" ? "Contact" : "お問い合わせ"}
+          </p>
+          <p className="text-xs text-gray-400">
+            {lang == "en"
+              ? "For inquiries, email us at:"
+              : "お問い合わせは、以下までご連絡ください"}
+            <br />
+            <a href="mailto:yuutosekiguchi@gmail.com" className="text-sky-500">
+              yuutosekiguchi@gmail.com
+            </a>
+          </p>
+        </div>
+        <div className="sidebar-body--help-copy-right mt-12">
+          <p className="text-xs text-gray-400">
+            &copy;2023-<span id="copy-year">{new Date().getFullYear()}</span>{" "}
             Yuto Sekiguchi. All rights reserved.
           </p>
         </div>

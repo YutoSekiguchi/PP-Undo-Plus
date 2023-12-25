@@ -12,10 +12,11 @@ interface Props {
   background: string;
   handleClose: () => void;
   isDemo: boolean;
+  handleResetStrokePressureInfo: (allRecords: any) => void;
 }
 
 export default function LogList(props: Props) {
-  const { editorUtils, id, width, height, background, handleClose, isDemo } =
+  const { editorUtils, id, width, height, background, handleClose, isDemo, handleResetStrokePressureInfo } =
     props;
 
   const [logs, setLogs] = useState<TLNoteLogData[]>([]);
@@ -28,6 +29,7 @@ export default function LogList(props: Props) {
     const snapshot = log.Snapshot;
     if (snapshot === "" || snapshot === null) return;
     editorUtils.loadSnapshot(JSON.parse(snapshot));
+    handleResetStrokePressureInfo(editorUtils.getAllRecords());
   };
 
   const handleImageError = (

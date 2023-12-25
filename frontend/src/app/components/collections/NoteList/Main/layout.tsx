@@ -16,7 +16,7 @@ interface Props {
   setSelectedNoteIDs: (selectedNoteIDs: number[]) => void;
 }
 
-export default function NoteListMain(props: Props) {
+export default function NoteListMain(props: Props): JSX.Element {
   const {
     lang,
     selectedCollection,

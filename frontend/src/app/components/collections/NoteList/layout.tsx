@@ -57,11 +57,7 @@ const NoteList: React.FC<Props> = (props) => {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-    if (lang !== undefined) {
-      router.push(`/notes/${res.ID}&lang=${lang}`);
-    } else {
-      router.push(`/notes/${res.ID}`);
-    }
+    router.push(`/notes/${res.ID}`);
   };
 
   useEffect(() => {
@@ -92,7 +88,6 @@ const NoteList: React.FC<Props> = (props) => {
             lang={lang}
             handleAddNoteIconClick={handleAddNoteIconClick}
             isNoteSelectMode={isNoteSelectMode}
-            setIsNoteSelectMode={setIsNoteSelectMode}
             selectedNoteIDs={selectedNoteIDs}
             setSelectedNoteIDs={setSelectedNoteIDs}
           />

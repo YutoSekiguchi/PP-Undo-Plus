@@ -13,7 +13,6 @@ interface Props {
   handleAddNoteIconClick: () => void;
   isNoteSelectMode: boolean;
   selectedNoteIDs: number[];
-  setIsNoteSelectMode: (isNoteSelectMode: boolean) => void;
   setSelectedNoteIDs: (selectedNoteIDs: number[]) => void;
 }
 
@@ -23,7 +22,6 @@ export default function NoteListMain(props: Props) {
     selectedCollection,
     handleAddNoteIconClick,
     isNoteSelectMode,
-    setIsNoteSelectMode,
     selectedNoteIDs,
     setSelectedNoteIDs,
   } = props;

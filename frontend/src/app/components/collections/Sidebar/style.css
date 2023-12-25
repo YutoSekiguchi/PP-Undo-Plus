@@ -15,3 +15,10 @@
 .sidebar-body--collection-date {
   font-size:0.6rem;
 }
+
+.sidebar-body--help-support, .sidebar-body--help-terms, .sidebar-body--help-contact {
+  background-color: #f5f5f5;
+  padding: 0.6rem 1rem;
+  margin-right: 0.5rem;
+  word-break: auto-phrase;
+}

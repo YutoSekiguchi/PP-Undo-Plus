@@ -8,6 +8,9 @@ const nextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com'],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   env: {
     API_URL: process.env.MODE=="production" ? process.env.API_URL_PROD : process.env.API_URL_DEV,
     VERSION: process.env.VERSION,

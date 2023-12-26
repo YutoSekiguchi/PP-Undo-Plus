@@ -135,7 +135,7 @@ export default function NoteListMain(props: Props): JSX.Element {
             >
               {note.SvgPath !== "" ? (
                 <img
-                  src={"svgs/" + note.SvgPath + ".svg"}
+                  src={process.env.FILE_SERVER_URL + "/svgs/" + note.SvgPath + ".svg"}
                   className={`note-img hover:opacity-50 hover:bg-gray-200 ${
                     selectedNoteIDs.includes(note.ID) && "selected-note-img"
                   }`}

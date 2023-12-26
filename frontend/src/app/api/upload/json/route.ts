@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const filePath = path.join(process.cwd(), 'public', 'json', `${folder}`, `${filename}.json`);
 
     fs.writeFileSync(filePath, json);
-    fs.chmodSync(filePath, 0o644);
+    fs.chmodSync(filePath, 0o775);
 
     return NextResponse.json({ message: 'Data added successfully' }, { status: 200 });
   } catch (error) {

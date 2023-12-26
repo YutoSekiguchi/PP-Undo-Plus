@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const filePath = path.join(process.cwd(), 'public', 'svgs', `${filename}.svg`);
 
     fs.writeFileSync(filePath, svg);
-    fs.chmodSync(filePath, 0o644);
+    fs.chmodSync(filePath, 0o775);
 
     return NextResponse.json({ message: 'SVG uploaded successfully' }, { status: 200 });
   } catch (error) {

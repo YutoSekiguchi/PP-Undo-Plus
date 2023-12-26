@@ -1,0 +1,7 @@
+<FilesMatch "\.(svg|json)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+AddType image/svg+xml .svg
+AddType application/json .json

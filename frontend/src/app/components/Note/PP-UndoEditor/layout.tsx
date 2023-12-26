@@ -266,7 +266,7 @@ export default function PPUndoEditor(props: Props) {
       initializeStrokePressureInfo(JSON.parse(res.PressureInfo));
       initializeStrokeTimeInfo(JSON.parse(res.StrokeTimeInfo));
       const operationJson = await fetch(
-        `/json/operations/${res.OperationJsonPath}.json`
+        `${process.env.FILE_SERVER_URL}/json/operations/${res.OperationJsonPath}.json`
       )
         .then((response) => response.json())
         .catch((err) => {

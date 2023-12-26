@@ -87,7 +87,7 @@ export default function LogList(props: Props) {
               >
                 {log.SvgPath !== "" && (
                   <img
-                    src={"/svgs/" + log.SvgPath + ".svg"}
+                    src={process.env.FILE_SERVER_URL + "/svgs/" + log.SvgPath + ".svg"}
                     className="log-img hover:opacity-50 hover:bg-gray-200 text-center mx-auto"
                     onError={handleImageError}
                   />

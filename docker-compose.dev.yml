@@ -49,6 +49,20 @@ services:
       - mysql
     networks:
       - ppundo-plus-network
+  
+  static-file-server:
+    container_name: ppundo-plus--static-file-server
+    build: 
+      context: ./frontend
+      dockerfile: static_file_server.Dockerfile
+    volumes:
+      - ./frontend/public:/usr/share/nginx/html
+    ports:
+      - "7174:80"
+    networks:
+      - ppundo-plus-network
+    depends_on:
+      - frontend
 
 volumes:
   mysql:

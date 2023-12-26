@@ -5,6 +5,10 @@ start-dev-backend:
 	docker-compose -f docker-compose.dev.yml up -d mysql phpmyadmin backend
 start-dev-frontend:
 	docker-compose -f docker-compose.dev.yml up -d frontend
+start-dev-file-server:
+	docker-compose -f docker-compose.dev.yml up -d static-file-server
+down-dev-file-server:
+	docker-compose -f docker-compose.dev.yml rm -fsv static-file-server
 down-dev:
 	docker-compose -f docker-compose.dev.yml down --rmi all
 

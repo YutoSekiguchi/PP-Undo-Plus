@@ -30,6 +30,8 @@ services:
       context: ./frontend
       dockerfile: prod.Dockerfile
     env_file: ./.env
+    volumes:
+      - ./frontend/public/:/app/public/
     ports:
       - 7170:3000
     networks:

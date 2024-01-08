@@ -6,6 +6,7 @@ import "./style.css";
 import { formatDate } from "@/app/modules/common/formatDate";
 import { useRouter } from "next/navigation";
 import { useStrokePressureInfo } from "@/app/hooks";
+import Image from "next/image";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -134,11 +135,14 @@ export default function NoteListMain(props: Props): JSX.Element {
               onClick={() => handleClickNote(note.ID)}
             >
               {note.SvgPath !== "" ? (
-                <img
+                <Image
                   src={process.env.FILE_SERVER_URL + "/svgs/" + note.SvgPath + ".svg"}
                   className={`note-img hover:opacity-50 hover:bg-gray-200 ${
                     selectedNoteIDs.includes(note.ID) && "selected-note-img"
                   }`}
+                  width={130}
+                  height={170}
+                  alt="note image"
                   onError={handleImageError}
                 />
               ) : (

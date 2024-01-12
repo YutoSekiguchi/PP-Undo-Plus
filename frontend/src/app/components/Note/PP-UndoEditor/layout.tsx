@@ -145,7 +145,7 @@ export default function PPUndoEditor(props: Props) {
       const segments = allRecords[allRecords.length - 1].props.segments;
       const points = segments[0].points;
       const lastPoints = points[points.length - 1];
-      const drawingPressure = lastPoints.z;
+      const drawingPressure = lastPoints.z >= 1 ? 1 : lastPoints.z;
       drawingStrokeId = allRecords[allRecords.length - 1].id;
       drawingPressureList.push(drawingPressure);
       setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
@@ -166,7 +166,7 @@ export default function PPUndoEditor(props: Props) {
     allRecords.forEach((record: any) => {
       if (record.typeName === "shape" && record.type === "draw") {
         const points = record.props.segments[0].points;
-        const pressureList = points.map((point: any) => point.z);
+        const pressureList = points.map((point: any) => point.z >= 1? 1: point.z);
         const avgPressure = getAverageOfNumberList(pressureList);
         const groupPressure = getAverageOfNumberList(pressureList);
         addStrokePressureInfo(record.id, 0, avgPressure, groupPressure);
@@ -228,6 +228,7 @@ export default function PPUndoEditor(props: Props) {
             }
             return;
           }
+          clearStrokeInfo();
           router.back();
         } catch (err) {
           if (lang === "en") {

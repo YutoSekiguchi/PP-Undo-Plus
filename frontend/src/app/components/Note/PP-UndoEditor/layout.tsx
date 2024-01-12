@@ -99,6 +99,7 @@ export default function PPUndoEditor(props: Props) {
   const setAppToState = useCallback((editor: Editor) => {
     // debugMode解除
     editor.updateInstanceState({ isDebugMode: isDebugMode });
+
     editor.setCurrentTool(defaultCurrentTool);
     setEditor(editor);
     setEditorUtils(new EditorUtils(editor));
@@ -237,6 +238,7 @@ export default function PPUndoEditor(props: Props) {
           return;
         }
       } else {
+        clearStrokeInfo();
         router.back();
       }
     };

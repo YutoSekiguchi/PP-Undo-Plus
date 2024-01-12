@@ -116,6 +116,7 @@ export default function PPUndoSlider(props: Props) {
         value={sliderValue}
         onChange={(e) => handleChangeSliderValue(parseInt(e.target.value))}
         onPointerUp={(e) => handlePointerUp(e)}
+        onPointerLeave={(e) => handlePointerUp(e)}
       />
     </div>
   );

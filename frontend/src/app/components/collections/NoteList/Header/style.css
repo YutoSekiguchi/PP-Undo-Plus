@@ -1,0 +1,13 @@
+.notetitle-input {
+  border: none;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.3s;
+}
+
+.notetitle-input:focus {
+  background-color: #cccccc;
+  outline: none;
+}

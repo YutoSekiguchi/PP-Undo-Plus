@@ -27,6 +27,7 @@ export default function NoteListMain(props: Props): JSX.Element {
     setSelectedNoteIDs,
   } = props;
   const [noteList, setNoteList] = useState<TLNoteData[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false)
   const router = useRouter();
   const { clearStrokeInfo } = useStrokePressureInfo();
 
@@ -109,10 +110,15 @@ export default function NoteListMain(props: Props): JSX.Element {
   }, [selectedCollection, isNoteSelectMode]);
 
   const AddNoteBlock = () => {
+    const handleAddNote = () => {
+      setIsProcessing(true)
+      handleAddNoteIconClick()
+      setIsProcessing(false)
+    }
     return (
       <div
         className="notelist-main-add-item cursor-pointer mx-auto"
-        onClick={handleAddNoteIconClick}
+        onClick={!isProcessing? handleAddNote: undefined}
       >
         <div className="notelist-main-add-item-icon text-center border-dashed border rounded-md border-sky-500 text-sky-500">
           <p>+</p>

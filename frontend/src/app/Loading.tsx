@@ -1,20 +1,12 @@
-import React from "react";
-import "./LoadingScreen.css";
+import { Loader2 } from "lucide-react"
 
-const LoadingScreen = () => {
+// ローディング
+const Loading = () => {
   return (
-    <div className="loading-container">
-      <div className="loading-wrapper">
-        <div className="loading-circle circle1"></div>
-        <div className="loading-circle circle2"></div>
-        <div className="loading-circle circle3"></div>
-        <div className="loading-shadow"></div>
-        <div className="loading-shadow"></div>
-        <div className="loading-shadow"></div>
-        <span>Loading…</span>
-      </div>
+    <div className="absolute inset-0 flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin" />
     </div>
-  );
-};
+  )
+}
 
-export default LoadingScreen;
+export default Loading

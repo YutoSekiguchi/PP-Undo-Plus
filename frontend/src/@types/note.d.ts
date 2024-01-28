@@ -28,7 +28,7 @@ export interface TLStrokeGroupInfo {
 
 
 export interface TLStrokeTimeInfo {
-  [id: string]: TLStrokeTimeInfoItem;
+  [id: string]: TLStrokeTimeAndLengthInfoItem;
 }
 
 export type TLStrokePressureInfo = {

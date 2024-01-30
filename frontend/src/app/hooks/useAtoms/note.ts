@@ -11,7 +11,7 @@ export const useStrokePressureInfo = () => {
 
   const addStrokePressureInfo = (
     id: string,
-    groupID: string | number,
+    groupID: number,
     avg: number,
     group: number,
   ) => {

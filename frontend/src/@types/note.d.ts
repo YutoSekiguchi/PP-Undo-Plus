@@ -1,7 +1,7 @@
 import { TLIDAndCreatedAtAndUpdatedAt } from "./common";
 
 export interface TLStrokePressureInfoItem {
-  groupID: string | number;
+  groupID: number;
   avg: number;
   group: number;
 }

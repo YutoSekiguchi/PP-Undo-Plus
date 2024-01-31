@@ -1,11 +1,12 @@
 import { useAtom } from "jotai";
-import { noteOperationInfoAtom, strokePressureInfoAtom, strokeTimeInfoAtom } from "@/app/hooks/atoms/note";
+import { noteOperationInfoAtom, strokePressureInfoAtom, strokePressureInfoStoreAtom, strokeTimeInfoAtom } from "@/app/hooks/atoms/note";
 import { TLNoteOperationInfo, TLStrokePressureInfo, TLStrokeTimeInfo } from "@/@types/note";
 
 export const useStrokePressureInfo = () => {
   const [strokePressureInfo, setStrokePressureInfo] = useAtom(
     strokePressureInfoAtom
   );
+  const [strokePressureInfoStore, setStrokePressureInfoStore] = useAtom(strokePressureInfoStoreAtom);
   const [strokeTimeInfo, setStrokeTimeInfo] = useAtom(strokeTimeInfoAtom);
   const [noteOperationInfo, setNoteOperationInfo] = useAtom(noteOperationInfoAtom);
 
@@ -16,6 +17,14 @@ export const useStrokePressureInfo = () => {
     group: number,
   ) => {
     setStrokePressureInfo((prev: TLStrokePressureInfo) => ({
+      ...prev,
+      [id]: {
+        groupID,
+        avg,
+        group,
+      },
+    }));
+    setStrokePressureInfoStore((prev: TLStrokePressureInfo) => ({
       ...prev,
       [id]: {
         groupID,
@@ -60,6 +69,7 @@ export const useStrokePressureInfo = () => {
     strokePressureInfo: TLStrokePressureInfo
   ) => {
     setStrokePressureInfo(strokePressureInfo);
+    setStrokePressureInfoStore(strokePressureInfo);
   };
 
   const initializeStrokeTimeInfo = (
@@ -86,8 +96,13 @@ export const useStrokePressureInfo = () => {
     setNoteOperationInfo([]);
   }
 
+  const clearStrokePressureInfoStore = () => {
+    setStrokePressureInfoStore({});
+  }
+
   const clearStrokeInfo = () => {
     clearStrokePressureInfo();
+    clearStrokePressureInfoStore();
     clearStrokeTimeInfo();
     clearNoteOperationInfo();
   }
@@ -108,5 +123,7 @@ export const useStrokePressureInfo = () => {
     initializeNoteOperationInfo,
     clearNoteOperationInfo,
     clearStrokeInfo,
+    strokePressureInfoStore,
+    clearStrokePressureInfoStore,
   };
 };

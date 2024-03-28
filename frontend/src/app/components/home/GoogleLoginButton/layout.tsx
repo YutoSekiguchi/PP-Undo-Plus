@@ -4,6 +4,7 @@ import { useUser } from "@/app/hooks";
 import { useSession, signIn } from "next-auth/react";
 import { RightArrow } from "@/icons/RightArrow";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -40,7 +41,7 @@ export default function GoogleLoginButton(props: Props) {
       >
         {user === null ? (
           <>
-            <img src="/google.svg" className="w-8 h-8" />
+            <Image src="/google.svg" width={28} height={28} alt="Google Icon" />
             {lang === "en" ? (
               <span className="ml-2">Login with Google</span>
             ) : (

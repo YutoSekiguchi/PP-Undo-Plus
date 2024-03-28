@@ -1,5 +1,5 @@
 // EditorUtils.ts
-import { TLStrokePressureInfo } from "@/@types/note";
+import { TLGroupDrawArea, TLStrokePressureInfo } from "@/@types/note";
 import { Editor, StoreSnapshot, TLRecord } from "@tldraw/tldraw";
 
 export class EditorUtils {
@@ -100,25 +100,9 @@ export class EditorUtils {
 
   getGroupDrawAreas(
     strokePressureInfo: TLStrokePressureInfo
-  ): {
-    ids: string[];
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-    groupID: number;
-    groupPressure: number;
-  }[] {
+  ): TLGroupDrawArea[] {
     const allDrawArea = this.getAllDrawAreas();
-    const groupDrawAreas: {
-      ids: string[];
-      left: number;
-      top: number;
-      width: number;
-      height: number;
-      groupID: number;
-      groupPressure: number;
-    }[] = [];
+    const groupDrawAreas: TLGroupDrawArea[] = [];
     Object.keys(strokePressureInfo).forEach((id) => {
       const groupID = strokePressureInfo[id].groupID;
       const groupPressure = strokePressureInfo[id].avg;

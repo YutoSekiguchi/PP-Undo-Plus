@@ -26,6 +26,15 @@ export interface TLStrokeGroupInfo {
   Height: number;
 }
 
+export interface TLGroupDrawArea {
+  ids: string[];
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  groupID: number;
+  groupPressure: number;
+}
 
 export interface TLStrokeTimeInfo {
   [id: string]: TLStrokeTimeAndLengthInfoItem;

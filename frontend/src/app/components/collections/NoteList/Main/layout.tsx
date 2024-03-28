@@ -7,6 +7,7 @@ import { formatDate } from "@/app/modules/common/formatDate";
 import { useRouter } from "next/navigation";
 import { useStrokePressureInfo } from "@/app/hooks";
 import Image from "next/image";
+import { Lang } from "@/app/components/common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -27,9 +28,11 @@ export default function NoteListMain(props: Props): JSX.Element {
     setSelectedNoteIDs,
   } = props;
   const [noteList, setNoteList] = useState<TLNoteData[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
   const { clearStrokeInfo } = useStrokePressureInfo();
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const [editingNote, setEditingNote] = useState<{
     id: number;
@@ -41,11 +44,7 @@ export default function NoteListMain(props: Props): JSX.Element {
     noteData.Title = title;
     const res = await updateNote(noteData);
     if (res === null) {
-      if (lang === "en") {
-        alert("Failed to update note title");
-      } else {
-        alert("ノートタイトルの更新に失敗しました");
-      }
+      alert(l.failedToUpdateNoteTitle());
       return;
     }
     setNoteList((prevNotes) =>
@@ -83,11 +82,7 @@ export default function NoteListMain(props: Props): JSX.Element {
       clearStrokeInfo();
       router.push(`/notes/${noteID}`);
     } catch (err) {
-      if (lang === "en") {
-        alert("Failed to move to note page");
-      } else {
-        alert("ノートページへの移動に失敗しました");
-      }
+      alert(l.failedToMovePage());
     }
   };
 
@@ -111,20 +106,20 @@ export default function NoteListMain(props: Props): JSX.Element {
 
   const AddNoteBlock = () => {
     const handleAddNote = () => {
-      setIsProcessing(true)
-      handleAddNoteIconClick()
-      setIsProcessing(false)
-    }
+      setIsProcessing(true);
+      handleAddNoteIconClick();
+      setIsProcessing(false);
+    };
     return (
       <div
         className="notelist-main-add-item cursor-pointer mx-auto"
-        onClick={!isProcessing? handleAddNote: undefined}
+        onClick={!isProcessing ? handleAddNote : undefined}
       >
         <div className="notelist-main-add-item-icon text-center border-dashed border rounded-md border-sky-500 text-sky-500">
           <p>+</p>
         </div>
         <div className="notelist-main-add-item-title text-xs text-sky-500 mt-2 text-center">
-          {lang === "en" ? "Add..." : "追加..."}
+          {l.add()}...
         </div>
       </div>
     );
@@ -142,7 +137,12 @@ export default function NoteListMain(props: Props): JSX.Element {
             >
               {note.SvgPath !== "" ? (
                 <Image
-                  src={process.env.FILE_SERVER_URL + "/svgs/" + note.SvgPath + ".svg"}
+                  src={
+                    process.env.FILE_SERVER_URL +
+                    "/svgs/" +
+                    note.SvgPath +
+                    ".svg"
+                  }
                   className={`note-img hover:opacity-50 hover:bg-gray-200 ${
                     selectedNoteIDs.includes(note.ID) && "selected-note-img"
                   }`}

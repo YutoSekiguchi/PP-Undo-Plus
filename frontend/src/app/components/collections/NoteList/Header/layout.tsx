@@ -5,6 +5,7 @@ import { AddNoteIcon } from "@/icons/AddNote";
 import { MenuDotIcon } from "@/icons/MenuDot";
 import { useState } from "react";
 import "./style.css";
+import { Lang } from "@/app/components/common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -28,7 +29,8 @@ export default function NoteListHeader(props: Props): JSX.Element {
   } = props;
 
   const [isEditCollection, setIsCollection] = useState<boolean>(false);
-
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
   const handleClickMenuDotIcon = () => {
     setIsNoteSelectMode(true);
   };
@@ -40,21 +42,13 @@ export default function NoteListHeader(props: Props): JSX.Element {
 
   const handleClickDelete = async () => {
     if (selectedNoteIDs.length === 0) return;
-    const canDelete = confirm(
-      lang === "en"
-        ? "Are you sure you want to delete the selected notes?"
-        : "選択したノートを削除してもよろしいですか？"
-    );
+    const canDelete = confirm(l.confirmDeleteNote());
     if (!canDelete) return;
 
     for (let i = 0; i < selectedNoteIDs.length; i++) {
       const res = await deleteNote(selectedNoteIDs[i]);
       if (res === null) {
-        if (lang === "en") {
-          alert("Failed to delete note");
-        } else {
-          alert("ノートの削除に失敗しました");
-        }
+        alert(l.failedToDeleteNote());
         return;
       }
     }
@@ -62,51 +56,56 @@ export default function NoteListHeader(props: Props): JSX.Element {
     setIsNoteSelectMode(false);
   };
 
-  const handleEditCollectionTitle = async (collectionData: TLCollectionData, title: string) => {
+  const handleEditCollectionTitle = async (
+    collectionData: TLCollectionData,
+    title: string
+  ) => {
     if (collectionData.Title === title) return;
     collectionData.Title = title;
     const res = await updateCollection(collectionData);
     if (res === null) {
-      if (lang === "en") {
-        alert("Failed to update collection title");
-      } else {
-        alert("コレクションタイトルの更新に失敗しました");
-      }
+      alert(l.failedToUpdateCollectionTitle());
       return;
     }
     setIsCollection(false);
-  }
+  };
 
-  const EditTitleInput = ({selectedCollection}: { selectedCollection: TLCollectionData }) => {
-    const [newCollectionTitle, setNewCollectionTitle] = useState(selectedCollection.Title);
+  const EditTitleInput = ({
+    selectedCollection,
+  }: {
+    selectedCollection: TLCollectionData;
+  }) => {
+    const [newCollectionTitle, setNewCollectionTitle] = useState(
+      selectedCollection.Title
+    );
     return (
       <div className="w-1/2 mx-auto">
         <input
           className="notetitle-input text-center"
           value={newCollectionTitle}
           onChange={(e) => setNewCollectionTitle(e.target.value)}
-          onBlur={() => handleEditCollectionTitle(selectedCollection, newCollectionTitle)}
+          onBlur={() =>
+            handleEditCollectionTitle(selectedCollection, newCollectionTitle)
+          }
           autoFocus
         />
       </div>
     );
-  }
+  };
 
   return (
     <div className="notelist-header flex justify-between items-center w-full p-4">
       <div className="notelist-header-title grow text-center text-sm">
-        {
-          isEditCollection ? (
-            <EditTitleInput selectedCollection={selectedCollection} />
-          ) : (
-            <div
-              className="notelist-header-title-text text-center text-sm cursor-pointer"
-              onClick={() => setIsCollection(true)}
-            >
-              {selectedCollection.Title}
-            </div>
-          )
-        }
+        {isEditCollection ? (
+          <EditTitleInput selectedCollection={selectedCollection} />
+        ) : (
+          <div
+            className="notelist-header-title-text text-center text-sm cursor-pointer"
+            onClick={() => setIsCollection(true)}
+          >
+            {selectedCollection.Title}
+          </div>
+        )}
       </div>
       <div className="notelist-header-icon-list text-sky-500 flex justify-items-center">
         {isNoteSelectMode ? (
@@ -115,13 +114,13 @@ export default function NoteListHeader(props: Props): JSX.Element {
               className="notelist-header--menu-icon text-sm text-red-500 mr-12 cursor-pointer"
               onClick={handleClickDelete}
             >
-              {lang === "en" ? "Delete" : "削除する"}
+              {l.delete()}
             </div>
             <div
               className="notelist-header--menu-icon text-sm mr-2 cursor-pointer"
               onClick={handleClickCancel}
             >
-              {lang === "en" ? "Cancel" : "キャンセル"}
+              {l.cancel()}
             </div>
           </>
         ) : (

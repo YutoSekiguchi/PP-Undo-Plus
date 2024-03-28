@@ -1,5 +1,6 @@
 import { createCollection } from "@/app/lib/collection";
 import { useState } from "react";
+import { Lang } from "../../common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -10,6 +11,8 @@ interface Props {
 export default function NewCollectionDialog(props: Props) {
   const { lang, onClose, userID } = props;
   const [collectionName, setCollectionName] = useState("");
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const handleCloseDialog = () => {
     setCollectionName("");
@@ -43,7 +46,7 @@ export default function NewCollectionDialog(props: Props) {
       >
         <div className="mb-4">
           <h2 className="text-xs text-center text-gray-700">
-            {lang === "en" ? "New Collection" : "新規コレクション"}
+            {l.newCollection()}
           </h2>
         </div>
         <div className="mb-4 text-center">
@@ -52,9 +55,7 @@ export default function NewCollectionDialog(props: Props) {
             type="text"
             value={collectionName}
             onChange={handleNameChange}
-            placeholder={`${
-              lang === "en" ? "Collection Name" : "コレクション名"
-            }`}
+            placeholder={l.collectionName()}
           />
         </div>
         <div className="flex justify-between w-11/12 mx-auto">
@@ -62,7 +63,7 @@ export default function NewCollectionDialog(props: Props) {
             className="text-sky-500 rounded-lg hover:text-sky-300 mt-4"
             onClick={handleCloseDialog}
           >
-            {lang === "en" ? "Cancel" : "キャンセル"}
+            {l.cancel()}
           </button>
           <button
             className={`${
@@ -72,7 +73,7 @@ export default function NewCollectionDialog(props: Props) {
             } rounded-lg mt-4`}
             onClick={handleCreateCollection}
           >
-            {lang === "en" ? "Create" : "作成"}
+            {l.create()}
           </button>
         </div>
       </div>

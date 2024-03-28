@@ -5,6 +5,7 @@ import { useSession, signIn } from "next-auth/react";
 import { RightArrow } from "@/icons/RightArrow";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Lang } from "../../common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -13,8 +14,10 @@ interface Props {
 export default function GoogleLoginButton(props: Props) {
   const { lang } = props;
   const { data: session } = useSession();
-  const { user, initializeUser } = useUser();
+  const { user } = useUser();
   const router = useRouter();
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const handleClick = () => {
     if (
@@ -25,11 +28,7 @@ export default function GoogleLoginButton(props: Props) {
     ) {
       signIn();
     } else {
-      if (lang === "en") {
-        router.push("/collections?lang=en");
-      } else {
-        router.push("/collections");
-      }
+      router.push(l.collectionsURL());
     }
   };
 
@@ -42,19 +41,11 @@ export default function GoogleLoginButton(props: Props) {
         {user === null ? (
           <>
             <Image src="/google.svg" width={28} height={28} alt="Google Icon" />
-            {lang === "en" ? (
-              <span className="ml-2">Login with Google</span>
-            ) : (
-              <span className="ml-2">Googleでログイン</span>
-            )}
+            <span className="ml-2">{l.loginWithGoogle()}</span>
           </>
         ) : (
           <>
-            {lang === "en" ? (
-              <span className="mr-2">Start</span>
-            ) : (
-              <span className="mr-2">始める</span>
-            )}
+            <span className="mr-2">{l.start()}</span>
             <RightArrow />
           </>
         )}

@@ -9,6 +9,7 @@ import { TLPostNoteData } from "@/@types/note";
 import { createNote } from "@/app/lib/note";
 import { updateCollection } from "@/app/lib/collection";
 import { useEffect, useState } from "react";
+import { Lang } from "../../common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -21,13 +22,13 @@ export default function NoteList(props: Props): JSX.Element {
   const { user } = useUser();
   const [isNoteSelectMode, setIsNoteSelectMode] = useState<boolean>(false);
   const [selectedNoteIDs, setSelectedNoteIDs] = useState<number[]>([]);
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const handleAddNoteIconClick = async () => {
     if (selectedCollection === null) return;
     if (user === null) {
-      alert(
-        `${lang === "en" ? "Please login again" : "ログインし直してください"}`
-      );
+      alert(l.loginAgain());
       return;
     }
     const data: TLPostNoteData = {
@@ -42,11 +43,7 @@ export default function NoteList(props: Props): JSX.Element {
     };
     const res = await createNote(data);
     if (res === null) {
-      alert(
-        `${
-          lang === "en" ? "Failed to create note" : "ノートの作成に失敗しました"
-        }`
-      );
+      alert(l.failedToCreateNote());
       return;
     }
     await updateCollection(selectedCollection);

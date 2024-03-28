@@ -2,6 +2,7 @@ import { MenuDotIcon } from "@/icons/MenuDot";
 import { PlusIcon } from "@/icons/Plus";
 import { useState } from "react";
 import NewCollectionDialog from "../../NewCollectionDialog/layout";
+import { Lang } from "@/app/components/common/lang";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -20,6 +21,8 @@ export default function SidebarHeader(props: Props) {
     setIsSelectMode,
   } = props;
   const [showDialog, setShowDialog] = useState(false);
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const handlePlusIconClick = () => {
     setShowDialog(true);
@@ -41,7 +44,7 @@ export default function SidebarHeader(props: Props) {
                 setIsSelectMode(false);
               }}
             >
-              {lang === "en" ? "Cancel" : "キャンセル"}
+              {l.cancel()}
             </div>
           </>
         ) : (

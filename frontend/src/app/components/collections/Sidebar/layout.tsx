@@ -12,6 +12,8 @@ import { useSelectedCollection, useUser } from "@/app/hooks";
 import { TLCollectionData } from "@/@types/collection";
 import { deleteCollection, getCollectionsByUserID } from "@/app/lib/collection";
 import { formatDate } from "@/app/modules/common/formatDate";
+import { Lang } from "../../common/lang";
+import Image from "next/image";
 
 interface Props {
   lang: string | string[] | undefined;
@@ -46,6 +48,8 @@ export default function Sidebar(props: Props) {
   const [selectedCollectionIDs, setSelectedCollectionIDs] = useState<number[]>(
     []
   );
+  const l =
+    lang === undefined || Array.isArray(lang) ? new Lang() : new Lang(lang);
 
   const fetchCollectionsByUserID = async (userID: number) => {
     const res = await getCollectionsByUserID(userID);
@@ -57,20 +61,14 @@ export default function Sidebar(props: Props) {
   const deleteSelectedNoteCollections = async () => {
     if (selectedCollectionIDs.length === 0 || user === null) return;
     const canDelete = confirm(
-      lang === "en"
-        ? "Are you sure you want to delete the selected collections?"
-        : "選択したコレクションを削除してもよろしいですか？"
+      l.confirmDeleteNote()
     );
     if (!canDelete) return;
 
     for (let i = 0; i < selectedCollectionIDs.length; i++) {
       const res = await deleteCollection(selectedCollectionIDs[i]);
       if (res === null) {
-        if (lang === "en") {
-          alert("Failed to delete collection");
-        } else {
-          alert("コレクションの削除に失敗しました");
-        }
+        alert(l.failedToDeleteCollection());
         return;
       }
     }
@@ -102,7 +100,7 @@ export default function Sidebar(props: Props) {
       <>
         <div className="sidebar-body--collection-list-title">
           <p className="text-md font-bold">
-            {lang === "en" ? "My Collections" : "マイコレクション"}
+            {l.myCollections()}
           </p>
         </div>
         {collections.map((collection, i) => (
@@ -149,46 +147,40 @@ export default function Sidebar(props: Props) {
         <div className="sidebar-body--help-app-name">
           <p className="text-md font-bold mr-2">PP-Undo Plus</p>
           <p className="text-gray-400 text-xs">
-            {lang == "en" ? "version" : "バージョン"}
+            {l.version()}
             {process.env.VERSION}
           </p>
         </div>
 
         <div className="sidebar-body--help-support mt-8 rounded-lg">
-          <p className="text-sm font-bold">{lang=="en"? "Support": "サポート"}</p>
+          <p className="text-sm font-bold">{l.support()}</p>
           <p className="text-xs text-gray-400">
-            {lang == "en"
-              ? "For support, please visit:"
-              : "サポートが必要な場合は、以下をご覧ください"}
+            {l.supportText()}
             <br />
             <a href="" className="text-sky-500"> 
-              {lang == "en" ?
-              "Preparing"
-              : "準備中"}
+              {l.prepare()}
             </a>
           </p>
         </div>
 
         <div className="sidebar-body--help-terms mt-4 rounded-lg">
           <p className="text-xs text-gray-400">
-            <a href={`${lang==="en"? "/terms?lang=en": "/terms"}`} className="text-sky-500">
-              {lang == "en" ? "Terms of Service" : "利用規約"}
+            <a href={l.termURL()} className="text-sky-500">
+              {l.term()}
             </a>{" "}
             |
-            <a href={`${lang==="en"? "/privacy-policy?lang=en": "/privacy-policy"}`} className="text-sky-500">
-              {lang == "en" ? "Privacy Policy" : "プライバシーポリシー"}
+            <a href={l.privacyURL()} className="text-sky-500">
+              {l.privacy()}
             </a>
           </p>
         </div>
 
         <div className="sidebar-body--help-contact mt-4 rounded-lg">
           <p className="text-md font-bold">
-            {lang == "en" ? "Contact" : "お問い合わせ"}
+            {l.contact()}
           </p>
           <p className="text-xs text-gray-400">
-            {lang == "en"
-              ? "For inquiries, email us at:"
-              : "お問い合わせは、以下までご連絡ください"}
+            {l.contactText()}
             <br />
             <a href="mailto:yuutosekiguchi@gmail.com" className="text-sky-500">
               yuutosekiguchi@gmail.com
@@ -221,16 +213,18 @@ export default function Sidebar(props: Props) {
           <div className="sidebar-body w-full">
             <div className="slidebar-body--title">
               <p className="ml-4 font-bold text-2xl mb-2">
-                {lang === "en"
+                {l.nowLang() === "en"
                   ? selectedMenu
                   : items.find((item) => item.name === selectedMenu)?.jaName}
               </p>
             </div>
             <div className="sidebar-body--logo mt-4 mb-8">
-              <img
+              <Image
                 src="/sidebar-logo.png"
                 alt="logo"
-                className="w-24 h-18 mx-auto opacity-90"
+                width={96}
+                height={72}
+                className="mx-auto opacity-90"
               />
             </div>
             <div className="sidebar-body--collection-list ml-4 mt-6 mr-2">
@@ -246,7 +240,7 @@ export default function Sidebar(props: Props) {
                     onClick={deleteSelectedNoteCollections}
                   >
                     <p className="text-xs text-white">
-                      {lang === "en" ? "Delete" : "削除"}
+                      {l.delete()}
                     </p>
                   </button>
                 </div>

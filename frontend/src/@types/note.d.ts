@@ -12,6 +12,12 @@ export interface TLStrokeTimeAndLengthInfoItem {
   len: number;
 }
 
+export interface TLCamera {
+  x: number;
+  y: number;
+  z: number;
+}
+
 export interface TLNoteOperationInfo {
   operation: string;
   strokeID: string;

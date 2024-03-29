@@ -98,53 +98,116 @@ export class EditorUtils {
     });
   }
 
-  getGroupDrawAreas(
-    strokePressureInfo: TLStrokePressureInfo
-  ): TLGroupDrawArea[] {
+  getGroupDrawAreas(strokePressureInfo: TLStrokePressureInfo): TLGroupDrawArea[] {
     const allDrawArea = this.getAllDrawAreas();
     const groupDrawAreas: TLGroupDrawArea[] = [];
+  
     Object.keys(strokePressureInfo).forEach((id) => {
       const groupID = strokePressureInfo[id].groupID;
       const groupPressure = strokePressureInfo[id].avg;
       const targetDrawArea = allDrawArea.find((drawArea) => drawArea.id === id);
+  
       if (targetDrawArea) {
         const targetGroupDrawArea = groupDrawAreas.find(
           (groupDrawArea) => groupDrawArea.groupID === groupID
         );
+  
         if (targetGroupDrawArea) {
           targetGroupDrawArea.ids.push(id);
-          targetGroupDrawArea.left = Math.min(
-            targetGroupDrawArea.left,
-            targetDrawArea.left
+  
+          // Calculate the right and bottom coordinates
+          const right = Math.max(
+            targetGroupDrawArea.left + targetGroupDrawArea.width,
+            targetDrawArea.left + targetDrawArea.width
           );
-          targetGroupDrawArea.top = Math.min(
-            targetGroupDrawArea.top,
-            targetDrawArea.top
+          const bottom = Math.max(
+            targetGroupDrawArea.top + targetGroupDrawArea.height,
+            targetDrawArea.top + targetDrawArea.height
           );
-          targetGroupDrawArea.width = Math.max(
-            targetGroupDrawArea.width,
-            targetDrawArea.width
-          );
-          targetGroupDrawArea.height = Math.max(
-            targetGroupDrawArea.height,
-            targetDrawArea.height
-          );
+  
+          // Update left and top coordinates
+          const newLeft = Math.min(targetGroupDrawArea.left, targetDrawArea.left);
+          const newTop = Math.min(targetGroupDrawArea.top, targetDrawArea.top);
+  
+          // Update width and height based on the new left and top coordinates
+          targetGroupDrawArea.width = right - newLeft;
+          targetGroupDrawArea.height = bottom - newTop;
+  
+          // Update left and top coordinates
+          targetGroupDrawArea.left = newLeft;
+          targetGroupDrawArea.top = newTop;
         } else {
+          // Calculate the right and bottom coordinates for the first draw area in the group
+          const right = targetDrawArea.left + targetDrawArea.width;
+          const bottom = targetDrawArea.top + targetDrawArea.height;
+  
           groupDrawAreas.push({
             ids: [id],
             left: targetDrawArea.left,
             top: targetDrawArea.top,
-            width: targetDrawArea.width,
-            height: targetDrawArea.height,
+            width: right - targetDrawArea.left,
+            height: bottom - targetDrawArea.top,
             groupID: groupID,
             groupPressure: groupPressure,
           });
         }
       }
     });
-
+  
     return groupDrawAreas;
   }
+
+  getZoomLevel(): number {
+    return this.editor.zoomLevel
+  }
+
+  // getGroupDrawAreas(
+  //   strokePressureInfo: TLStrokePressureInfo
+  // ): TLGroupDrawArea[] {
+  //   const allDrawArea = this.getAllDrawAreas();
+  //   const groupDrawAreas: TLGroupDrawArea[] = [];
+  //   Object.keys(strokePressureInfo).forEach((id) => {
+  //     const groupID = strokePressureInfo[id].groupID;
+  //     const groupPressure = strokePressureInfo[id].avg;
+  //     const targetDrawArea = allDrawArea.find((drawArea) => drawArea.id === id);
+  //     if (targetDrawArea) {
+  //       const targetGroupDrawArea = groupDrawAreas.find(
+  //         (groupDrawArea) => groupDrawArea.groupID === groupID
+  //       );
+  //       if (targetGroupDrawArea) {
+  //         targetGroupDrawArea.ids.push(id);
+  //         targetGroupDrawArea.left = Math.min(
+  //           targetGroupDrawArea.left,
+  //           targetDrawArea.left
+  //         );
+  //         targetGroupDrawArea.top = Math.min(
+  //           targetGroupDrawArea.top,
+  //           targetDrawArea.top
+  //         );
+  //         targetGroupDrawArea.width = Math.max(
+  //           targetGroupDrawArea.width,
+  //           targetDrawArea.width
+  //         );
+  //         targetGroupDrawArea.height = Math.max(
+  //           targetGroupDrawArea.height,
+  //           targetDrawArea.height
+  //         );
+  //       } else {
+  //         groupDrawAreas.push({
+  //           ids: [id],
+  //           left: targetDrawArea.left,
+  //           top: targetDrawArea.top,
+  //           width: targetDrawArea.width,
+  //           height: targetDrawArea.height,
+  //           groupID: groupID,
+  //           groupPressure: groupPressure,
+  //         });
+  //       }
+  //     }
+  //   });
+
+  //   return groupDrawAreas;
+  // }
 
   getCameraData(): { x: number; y: number; z: number } {
     return {

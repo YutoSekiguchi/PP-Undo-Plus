@@ -42,6 +42,10 @@ body {
   height: 20px;
 }
 
+.grouping-canvas {
+  pointer-events: none;
+}
+
 .back-button {
   z-index: 9999;
 }

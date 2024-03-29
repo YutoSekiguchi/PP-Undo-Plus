@@ -62,17 +62,16 @@ export default function PPUndoSlider(props: Props) {
         erasing.delete(shape.id);
       }
     }
-
     editor.setErasingShapes(Array.from(erasing));
   };
 
-  const handlePointerUp = async (e: PointerEvent<HTMLInputElement>) => {
+  const handleSliderRelease = async () => {
     if (editor === undefined || editorUtils === undefined) return;
-    const target = e.target as HTMLInputElement;
-    const value = parseInt(target.value) / 100;
+
     const snapshot = editorUtils.getSnapshot();
     const svg = await getSvgAsString();
     const filename = `log-${generateRandomString()}`;
+
     // ストロークの削除
     const eraseShapeIds = editor.currentPageState.erasingShapeIds;
     if (eraseShapeIds.length === 0) {
@@ -102,12 +101,20 @@ export default function PPUndoSlider(props: Props) {
 
     editor.deleteShapes(eraseShapeIds);
     editor.setErasingShapes([]);
-
     setSliderValue(0);
   };
 
   return (
-    <div>
+    <div
+      style={{
+        position: "relative",
+        padding: "10px",
+        marginLeft: "-20px",
+        marginRight: "-20px",
+      }}
+      onPointerUp={handleSliderRelease}
+      onPointerLeave={handleSliderRelease}
+    >
       <input
         type="range"
         id="myRange"
@@ -115,8 +122,6 @@ export default function PPUndoSlider(props: Props) {
         max="100"
         value={sliderValue}
         onChange={(e) => handleChangeSliderValue(parseInt(e.target.value))}
-        onPointerUp={(e) => handlePointerUp(e)}
-        onPointerLeave={(e) => handlePointerUp(e)}
       />
     </div>
   );

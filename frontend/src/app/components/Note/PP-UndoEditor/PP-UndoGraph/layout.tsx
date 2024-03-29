@@ -4,6 +4,7 @@ import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphAr
 import { EditorUtils } from "../util";
 import ButtonArea from "./Areas/ButtonArea/layout";
 import ChangeParametersArea from "./Areas/ChangeParametersArea/layout";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   width: string | number;
@@ -19,6 +20,12 @@ interface Props {
   id: number;
   isDemo: boolean;
   handleResetStrokePressureInfo: (allRecords: any) => void;
+  wTime: number;
+  setWTime: Dispatch<SetStateAction<number>>; 
+  wPressure: number;
+  setWPressure: Dispatch<SetStateAction<number>>;
+  wDistance: number;
+  setWDistance: Dispatch<SetStateAction<number>>;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -36,6 +43,12 @@ export default function PPUndoGraph(props: Props) {
     id,
     isDemo,
     handleResetStrokePressureInfo,
+    wTime,
+    setWTime,
+    wPressure,
+    setWPressure,
+    wDistance,
+    setWDistance,
   } = props;
   return (
     <div>
@@ -83,6 +96,12 @@ export default function PPUndoGraph(props: Props) {
             id={id}
             editorUtils={editorUtils}
             isDemo={isDemo}
+            wTime={wTime}
+            setWTime={setWTime}
+            wPressure={wPressure}
+            setWPressure={setWPressure}
+            wDistance={wDistance}
+            setWDistance={setWDistance}
           />
         </div>
       </div>

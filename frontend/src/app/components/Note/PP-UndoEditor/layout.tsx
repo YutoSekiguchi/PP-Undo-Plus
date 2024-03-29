@@ -96,13 +96,13 @@ export default function PPUndoEditor(props: Props) {
     useState<boolean>(false);
   const [camera, setCamera] = useState<TLCamera>({ x: 0, y: 0, z: 1 });
   const [groupAreas, setGroupAreas] = useState<TLGroupDrawArea[]>([]);
-  const [wTime, setWTime] = useState<number>(1);
-  const [wPressure, setWPressure] = useState<number>(1);
-  const [wDistance, setWDistance] = useState<number>(1);
+  const [wTime, setWTime] = useState<number>(0.5);
+  const [wPressure, setWPressure] = useState<number>(0.5);
+  const [wDistance, setWDistance] = useState<number>(0.5);
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
-  const scoreThreshold = 1;
+  const scoreThreshold = 0.25;
 
   const {
     // strokeTimeInfo,
@@ -314,8 +314,8 @@ export default function PPUndoEditor(props: Props) {
     // strokePressureInfoが{}だったらreturn
     if (
       strokePressureInfo === undefined ||
-      strokePressureInfo === null ||
-      Object.keys(strokePressureInfo).length === 0
+      strokePressureInfo === null
+      // Object.keys(strokePressureInfo).length === 0
     ) {
       return;
     }
@@ -559,6 +559,12 @@ export default function PPUndoEditor(props: Props) {
         id={Number(id)}
         isDemo={isDemo}
         handleResetStrokePressureInfo={handleResetStrokePressureInfo}
+        wTime={wTime}
+        setWTime={setWTime}
+        wPressure={wPressure}
+        setWPressure={setWPressure}
+        wDistance={wDistance}
+        setWDistance={setWDistance}
       />
     </div>
   );

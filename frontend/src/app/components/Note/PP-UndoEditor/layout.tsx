@@ -553,7 +553,7 @@ export default function PPUndoEditor(props: Props) {
         )}
       </div>
       <PPUndoGraph
-        width={graphWidth}
+        width={`calc(100vw - ${width})`}
         height={graphHeight}
         padding={graphPadding}
         background={graphBackground}

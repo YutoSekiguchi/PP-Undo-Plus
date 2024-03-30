@@ -72,14 +72,13 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     groupAreas.forEach((area) => {
       const { left, top, width, height, groupPressure } = area;
 
-      const red = Math.round(groupPressure * 255);
-      const blue = Math.round((1 - groupPressure) * 255);
-      const color = `rgba(${red}, 0, ${blue}, 0.5)`;
+      const hue = Math.round((1 - groupPressure) * 240);
+      const color = `hsl(${hue}, 100%, 50%)`;
 
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.2;
 
-      const buffer = 20;
+      const buffer = 16;
       const zoomedLeft = (left + offsetX - buffer) * zoomLevel;
       const zoomedTop = (top + offsetY - buffer) * zoomLevel;
       const zoomedWidth = (width + buffer * 2) * zoomLevel;

@@ -12,7 +12,7 @@ export default function Note({
 
   return (
     <PPUndoEditor
-      width={"70vw"}
+      width={"75vw"}
       height={"100vh"}
       isDisplayChangePageButton={false}
       isDemo={false}

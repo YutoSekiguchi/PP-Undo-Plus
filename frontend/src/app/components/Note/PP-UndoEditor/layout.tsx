@@ -70,10 +70,10 @@ export default function PPUndoEditor(props: Props) {
   const {
     width,
     height,
-    graphWidth = "30vw",
+    graphWidth = "25vw",
     graphHeight = "100vh",
     graphPadding = 8,
-    graphBackground = "#343541",
+    graphBackground = "#1e1e1e",
     defaultCurrentTool = "draw",
     isDebugMode = false,
     isIncludePressureEraser = true,
@@ -99,6 +99,7 @@ export default function PPUndoEditor(props: Props) {
   const [wTime, setWTime] = useState<number>(0.5);
   const [wPressure, setWPressure] = useState<number>(0.5);
   const [wDistance, setWDistance] = useState<number>(0.5);
+  const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
@@ -528,26 +529,28 @@ export default function PPUndoEditor(props: Props) {
           overrides={isIncludePressureEraser ? uiOverrides : undefined}
           hideUi={isHideUI}
         />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 999,
-            pointerEvents: "none",
-          }}
-        >
-          <GroupAreaVisualizer
-            groupAreas={groupAreas}
-            width={width.toString()}
-            height={height.toString()}
-            zoomLevel={camera.z}
-            offsetX={camera.x}
-            offsetY={camera.y}
-          />
-        </div>
+        {pMode === "grouping" && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 999,
+              pointerEvents: "none",
+            }}
+          >
+            <GroupAreaVisualizer
+              groupAreas={groupAreas}
+              width={width.toString()}
+              height={height.toString()}
+              zoomLevel={camera.z}
+              offsetX={camera.x}
+              offsetY={camera.y}
+            />
+          </div>
+        )}
       </div>
       <PPUndoGraph
         width={graphWidth}
@@ -565,6 +568,8 @@ export default function PPUndoEditor(props: Props) {
         setWPressure={setWPressure}
         wDistance={wDistance}
         setWDistance={setWDistance}
+        pMode={pMode}
+        setPMode={setPMode}
       />
     </div>
   );

@@ -1,19 +1,15 @@
 export const AllPressureAveragePieGraphConfig = () => {
   const datasets = {
-    backgroundColor: ["#0fa", "rgba(0, 0, 0, 0.8)"],
-    borderColor: "#0fa3",
-  }
+    backgroundColor: ["#fffa", "rgba(0, 0, 0, 0.8)"],
+    // borderColor: "#0fa3",
+  };
 
-  const graphLabel: string[] = [
-    "今までの筆圧の平均",
-    "None"
-  ]
+  const graphLabel: string[] = ["今までの筆圧の平均", "None"];
 
-  const doughnutOptions: {} =
-  {
+  const doughnutOptions: {} = {
     plugins: {
-      legend:{
-        display:false,
+      legend: {
+        display: false,
       },
     },
     cutout: 45,
@@ -21,8 +17,8 @@ export const AllPressureAveragePieGraphConfig = () => {
     maintainAspectRatio: false,
     animation: {
       animateScale: true,
-    }
+    },
   };
 
-  return { datasets, graphLabel, doughnutOptions }
-}
+  return { datasets, graphLabel, doughnutOptions };
+};

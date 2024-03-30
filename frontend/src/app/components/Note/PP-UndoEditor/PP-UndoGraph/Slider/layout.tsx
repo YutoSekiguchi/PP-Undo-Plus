@@ -13,11 +13,12 @@ interface Props {
   editor?: Editor;
   id: number;
   editorUtils?: EditorUtils;
+  pMode: "average" | "grouping";
   isDemo: boolean;
 }
 
 export default function PPUndoSlider(props: Props) {
-  const { editor, id, editorUtils, isDemo } = props;
+  const { editor, id, editorUtils, pMode, isDemo } = props;
   const [sliderValue, setSliderValue] = useState(0);
   const [strokePressureInfo] = useAtom(strokePressureInfoAtom);
 
@@ -55,8 +56,13 @@ export default function PPUndoSlider(props: Props) {
     for (const shape of currentPageShapes) {
       if (editor.isShapeOfType<TLGroupShape>(shape, "group")) continue;
       if (strokePressureInfo[shape.id] === undefined) continue;
-      const avgPressure = strokePressureInfo[shape.id]["avg"];
-      if (avgPressure < sliderPressure) {
+      let targetPressure = 0;
+      if (pMode === "average") {
+        targetPressure = strokePressureInfo[shape.id]["avg"];
+      } else if (pMode === "grouping") {
+        targetPressure = strokePressureInfo[shape.id]["group"];
+      }
+      if (targetPressure < sliderPressure) {
         erasing.add(shape.id);
       } else {
         erasing.delete(shape.id);

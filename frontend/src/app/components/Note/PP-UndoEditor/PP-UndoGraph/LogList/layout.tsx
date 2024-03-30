@@ -16,8 +16,16 @@ interface Props {
 }
 
 export default function LogList(props: Props) {
-  const { editorUtils, id, width, height, background, handleClose, isDemo, handleResetStrokePressureInfo } =
-    props;
+  const {
+    editorUtils,
+    id,
+    width,
+    height,
+    background,
+    handleClose,
+    isDemo,
+    handleResetStrokePressureInfo,
+  } = props;
 
   const [logs, setLogs] = useState<TLNoteLogData[]>([]);
 
@@ -87,7 +95,12 @@ export default function LogList(props: Props) {
               >
                 {log.SvgPath !== "" && (
                   <img
-                    src={process.env.FILE_SERVER_URL + "/svgs/" + log.SvgPath + ".svg"}
+                    src={
+                      process.env.FILE_SERVER_URL +
+                      "/svgs/" +
+                      log.SvgPath +
+                      ".svg"
+                    }
                     className="log-img hover:opacity-50 hover:bg-gray-200 text-center mx-auto"
                     onError={handleImageError}
                   />

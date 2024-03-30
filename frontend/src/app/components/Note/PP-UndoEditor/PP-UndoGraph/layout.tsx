@@ -21,11 +21,13 @@ interface Props {
   isDemo: boolean;
   handleResetStrokePressureInfo: (allRecords: any) => void;
   wTime: number;
-  setWTime: Dispatch<SetStateAction<number>>; 
+  setWTime: Dispatch<SetStateAction<number>>;
   wPressure: number;
   setWPressure: Dispatch<SetStateAction<number>>;
   wDistance: number;
   setWDistance: Dispatch<SetStateAction<number>>;
+  pMode: "average" | "grouping";
+  setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -49,6 +51,8 @@ export default function PPUndoGraph(props: Props) {
     setWPressure,
     wDistance,
     setWDistance,
+    pMode,
+    setPMode,
   } = props;
   return (
     <div>
@@ -65,20 +69,21 @@ export default function PPUndoGraph(props: Props) {
           overflow: "auto",
         }}
       >
-          <PPUndoArea
-            editor={editor}
-            id={id}
-            editorUtils={editorUtils}
-            isDemo={isDemo}
-          />
+        <PPUndoArea
+          editor={editor}
+          id={id}
+          editorUtils={editorUtils}
+          pMode={pMode}
+          isDemo={isDemo}
+        />
         <div className="mt-4 flex justify-between">
           {!hideAllAveragePressurePieGraph && (
-            <div style={{ width: allAveragePressurePieGraphWidth}}>
+            <div style={{ width: allAveragePressurePieGraphWidth }}>
               <AllAveragePressurePieGraphArea />
             </div>
           )}
           {editorUtils && (
-            <div style={{ width: buttonAreaWidth, }} className="">
+            <div style={{ width: buttonAreaWidth }} className="">
               <ButtonArea
                 editorUtils={editorUtils}
                 id={id}
@@ -87,6 +92,8 @@ export default function PPUndoGraph(props: Props) {
                 background={background}
                 isDemo={isDemo}
                 handleResetStrokePressureInfo={handleResetStrokePressureInfo}
+                setPMode={setPMode}
+                pMode={pMode}
               />
             </div>
           )}

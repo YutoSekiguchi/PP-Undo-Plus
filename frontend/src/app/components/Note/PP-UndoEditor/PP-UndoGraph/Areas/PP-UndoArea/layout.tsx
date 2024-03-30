@@ -8,11 +8,12 @@ interface Props {
   editor?: Editor;
   id: number;
   editorUtils?: EditorUtils;
+  pMode: "average" | "grouping";
   isDemo: boolean;
 }
 
 export default function PPUndoArea(props: Props) {
-  const { editor, id, editorUtils, isDemo } = props;
+  const { editor, id, editorUtils, pMode, isDemo } = props;
   return (
     <div className="area">
       <div className="title">
@@ -22,6 +23,7 @@ export default function PPUndoArea(props: Props) {
         editor={editor}
         id={id}
         editorUtils={editorUtils}
+        pMode={pMode}
         isDemo={isDemo}
       />
       <PPUndoLineGraph />

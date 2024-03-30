@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  DefaultDashStyle,
   Editor,
   StoreSnapshot,
   TLEventMapHandler,
@@ -420,6 +421,9 @@ export default function PPUndoEditor(props: Props) {
           // zoom etc.
           setCamera({ x: to.x, y: to.y, z: to.z });
         }
+        // if (from.typeName !== "pointer") {
+        //   console.log(change.changes.updated)
+        // }
         if (
           from.typeName === "instance" &&
           to.typeName === "instance" &&
@@ -471,6 +475,9 @@ export default function PPUndoEditor(props: Props) {
 
     const element = document.querySelector(".tlui-layout__top__left");
     setContainer(element as HTMLElement);
+
+    editorUtils.setStrokeShape("solid");
+    editorUtils.setStrokeSize("s");
 
     editor.on("change", handleChangeEvent);
     // ボタンの表示

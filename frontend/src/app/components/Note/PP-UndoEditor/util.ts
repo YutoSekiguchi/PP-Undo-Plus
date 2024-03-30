@@ -1,6 +1,6 @@
 // EditorUtils.ts
 import { TLGroupDrawArea, TLStrokePressureInfo } from "@/@types/note";
-import { Editor, StoreSnapshot, TLRecord } from "@tldraw/tldraw";
+import { DefaultDashStyle, DefaultSizeStyle, Editor, StoreSnapshot, TLRecord } from "@tldraw/tldraw";
 
 export class EditorUtils {
   private editor: Editor;
@@ -161,59 +161,19 @@ export class EditorUtils {
     return this.editor.zoomLevel
   }
 
-  // getGroupDrawAreas(
-  //   strokePressureInfo: TLStrokePressureInfo
-  // ): TLGroupDrawArea[] {
-  //   const allDrawArea = this.getAllDrawAreas();
-  //   const groupDrawAreas: TLGroupDrawArea[] = [];
-  //   Object.keys(strokePressureInfo).forEach((id) => {
-  //     const groupID = strokePressureInfo[id].groupID;
-  //     const groupPressure = strokePressureInfo[id].avg;
-  //     const targetDrawArea = allDrawArea.find((drawArea) => drawArea.id === id);
-  //     if (targetDrawArea) {
-  //       const targetGroupDrawArea = groupDrawAreas.find(
-  //         (groupDrawArea) => groupDrawArea.groupID === groupID
-  //       );
-  //       if (targetGroupDrawArea) {
-  //         targetGroupDrawArea.ids.push(id);
-  //         targetGroupDrawArea.left = Math.min(
-  //           targetGroupDrawArea.left,
-  //           targetDrawArea.left
-  //         );
-  //         targetGroupDrawArea.top = Math.min(
-  //           targetGroupDrawArea.top,
-  //           targetDrawArea.top
-  //         );
-  //         targetGroupDrawArea.width = Math.max(
-  //           targetGroupDrawArea.width,
-  //           targetDrawArea.width
-  //         );
-  //         targetGroupDrawArea.height = Math.max(
-  //           targetGroupDrawArea.height,
-  //           targetDrawArea.height
-  //         );
-  //       } else {
-  //         groupDrawAreas.push({
-  //           ids: [id],
-  //           left: targetDrawArea.left,
-  //           top: targetDrawArea.top,
-  //           width: targetDrawArea.width,
-  //           height: targetDrawArea.height,
-  //           groupID: groupID,
-  //           groupPressure: groupPressure,
-  //         });
-  //       }
-  //     }
-  //   });
-
-  //   return groupDrawAreas;
-  // }
-
   getCameraData(): { x: number; y: number; z: number } {
     return {
       x: this.editor.camera.x,
       y: this.editor.camera.y,
       z: this.editor.camera.z,
     };
+  }
+
+  setStrokeShape(strokeShape: "dashed" | "dotted" | "draw" | "solid"): void {
+    this.editor.setStyleForNextShapes(DefaultDashStyle, strokeShape);
+  }
+
+  setStrokeSize(size: "s" | "m" | "l" | "xl"): void {
+    this.editor.setStyleForNextShapes(DefaultSizeStyle, size);
   }
 }

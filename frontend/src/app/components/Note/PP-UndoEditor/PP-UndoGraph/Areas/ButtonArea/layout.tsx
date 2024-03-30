@@ -80,10 +80,10 @@ export default function ButtonArea(props: Props) {
           <div
             className={`switch ${
               pMode === "average" ? "left" : "right"
-            } bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full cursor-pointer transition-all mb-2`}
+            } bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full cursor-pointer transition-all mb-2 text-center`}
             onClick={togglePMode}
           >
-            {pMode === "average" ? "Average Mode" : "Grouping Mode"}
+            {pMode === "average" ? "Average" : "Grouping"}
           </div>
         </div>
       </div>

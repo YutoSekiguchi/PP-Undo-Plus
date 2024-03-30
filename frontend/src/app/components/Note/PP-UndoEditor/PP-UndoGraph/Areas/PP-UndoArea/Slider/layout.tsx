@@ -3,7 +3,7 @@ import "./slider.css";
 import { Editor, TLGroupShape, TLShapeId } from "@tldraw/tldraw";
 import { strokePressureInfoAtom } from "@/app/hooks";
 import { useAtom } from "jotai";
-import { EditorUtils } from "../../util";
+import { EditorUtils } from "../../../../util";
 import { generateRandomString } from "@/app/modules/common/generateRandomString";
 import uploadSvg from "@/app/lib/upload/svg";
 import { createNoteLog } from "@/app/lib/note_log";
@@ -118,8 +118,8 @@ export default function PPUndoSlider(props: Props) {
         marginLeft: "-20px",
         marginRight: "-20px",
       }}
-      onPointerUp={handleSliderRelease}
-      onPointerLeave={handleSliderRelease}
+      onPointerUpCapture={handleSliderRelease}
+      // onPointerLeave={handleSliderRelease}
     >
       <input
         type="range"

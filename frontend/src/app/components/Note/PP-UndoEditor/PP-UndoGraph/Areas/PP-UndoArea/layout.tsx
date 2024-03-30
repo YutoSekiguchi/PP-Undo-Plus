@@ -1,6 +1,6 @@
 import { Editor } from "@tldraw/tldraw";
 import PPUndoLineGraph from "../../LineGraph/PP-Undo/layout";
-import PPUndoSlider from "../../Slider/layout";
+import PPUndoSlider from "./Slider/layout";
 import "../area.css";
 import { EditorUtils } from "../../../util";
 
@@ -26,7 +26,7 @@ export default function PPUndoArea(props: Props) {
         pMode={pMode}
         isDemo={isDemo}
       />
-      <PPUndoLineGraph />
+      <PPUndoLineGraph pMode={pMode} />
     </div>
   );
 }

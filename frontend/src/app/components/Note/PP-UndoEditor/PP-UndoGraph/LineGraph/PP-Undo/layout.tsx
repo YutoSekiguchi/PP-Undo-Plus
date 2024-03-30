@@ -18,7 +18,12 @@ import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { strokePressureInfoAtom } from "@/app/hooks";
 
-export default function PPUndoLineGraph() {
+interface Props {
+  pMode: "average" | "grouping";
+}
+
+export default function PPUndoLineGraph(props: Props) {
+  const { pMode } = props;
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -47,7 +52,12 @@ export default function PPUndoLineGraph() {
     const setGraphData = () => {
       let tmp: number[] = [...Array(SPLIT_PRESSURE_NUM + 1)].fill(0);
       for (const id in strokePressureInfo) {
-        const pressure = strokePressureInfo[id]["avg"];
+        let pressure = 0;
+        if (pMode === "average") {
+          pressure = strokePressureInfo[id]["avg"];
+        } else if (pMode === "grouping") {
+          pressure = strokePressureInfo[id]["group"];
+        }
         const j = Math.round(pressure * 100) / 100;
         tmp[Math.ceil(j * SPLIT_PRESSURE_NUM)] += 1;
       }

@@ -12,6 +12,9 @@ type Note struct {
 	PressureInfo      string    `gorm:"not null;column:pressure_info"`
 	StrokeTimeInfo    string    `gorm:"not null;column:stroke_time_info"`
 	OperationJsonPath string    `gorm:"not null;column:operation_json_path"`
+	WPressure         float64   `gorm:"not null;column:w_pressure"`
+	WTime             float64   `gorm:"not null;column:w_time"`
+	WDistance         float64   `gorm:"not null;column:w_distance"`
 	CreatedAt         time.Time `gorm:"not null;column:created_at"`
 	UpdatedAt         time.Time `gorm:"not null;column:updated_at"`
 }

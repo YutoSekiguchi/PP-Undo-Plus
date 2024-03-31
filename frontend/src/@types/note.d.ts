@@ -59,6 +59,9 @@ export interface TLPostNoteData {
   PressureInfo: string;
   StrokeTimeInfo: string;
   OperationJsonPath: string;
+  WPressure: number;
+  WTime: number;
+  WDistance: number;
 }
 
 export interface TLPostNoteLogData {

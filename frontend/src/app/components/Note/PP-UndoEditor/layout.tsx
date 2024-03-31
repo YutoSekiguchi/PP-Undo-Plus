@@ -182,7 +182,7 @@ export default function PPUndoEditor(props: Props) {
         : null;
     if (secondLastRecord === null) {
       isCreateNewGroup = true;
-      addStrokePressureInfo(drawingStrokeId, 1, avgPressure, avgPressure);
+      addStrokePressureInfo(drawingStrokeId, groupAreas.length + 1, avgPressure, avgPressure);
       drawingStrokeId = "";
       drawingPressureList = [];
       setPointerPosition({ x: 0, y: 0 });
@@ -392,6 +392,9 @@ export default function PPUndoEditor(props: Props) {
           noteData.PressureInfo = JSON.stringify(strokePressureInfo);
           noteData.SvgPath = filename;
           noteData.OperationJsonPath = operationFilename;
+          noteData.WTime = wTime;
+          noteData.WPressure = wPressure;
+          noteData.WDistance = wDistance;
           const res = await updateNote(noteData);
           if (res == null) {
             alert(l.failedToSaveNote());
@@ -480,6 +483,11 @@ export default function PPUndoEditor(props: Props) {
       setWasDrawingStrokeNum(
         Object.keys(JSON.parse(res.StrokeTimeInfo)).length
       );
+      setWTime(res.WTime);
+      setWPressure(res.WPressure);
+      setWDistance(res.WDistance);
+      editorUtils.setStrokeShape("solid");
+      editorUtils.setStrokeSize("s");
       const operationJson = await fetch(
         `${process.env.FILE_SERVER_URL}/json/operations/${res.OperationJsonPath}.json`
       )

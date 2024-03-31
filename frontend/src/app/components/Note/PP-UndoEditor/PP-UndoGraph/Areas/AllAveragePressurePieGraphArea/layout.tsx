@@ -29,7 +29,6 @@ export default function AllAveragePressurePieGraphArea() {
         avgTmp += strokePressureInfo[id]["avg"];
       }
       avgTmp /= Object.keys(strokePressureInfo).length;
-
       setValue(Math.round(avgTmp * 100) / 100 || 0);
     }
   }, [strokePressureInfo]);

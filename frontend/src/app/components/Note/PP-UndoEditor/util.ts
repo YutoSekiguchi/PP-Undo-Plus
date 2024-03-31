@@ -104,7 +104,7 @@ export class EditorUtils {
   
     Object.keys(strokePressureInfo).forEach((id) => {
       const groupID = strokePressureInfo[id].groupID;
-      const groupPressure = strokePressureInfo[id].avg;
+      const groupPressure = strokePressureInfo[id].group;
       const targetDrawArea = allDrawArea.find((drawArea) => drawArea.id === id);
   
       if (targetDrawArea) {

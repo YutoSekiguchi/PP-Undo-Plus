@@ -100,6 +100,9 @@ export default function PPUndoEditor(props: Props) {
   const [wTime, setWTime] = useState<number>(0.5);
   const [wPressure, setWPressure] = useState<number>(0.5);
   const [wDistance, setWDistance] = useState<number>(0.5);
+  const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
+    null
+  );
   const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
   const maxTime = 30000;
   const maxPressure = 1;
@@ -322,7 +325,6 @@ export default function PPUndoEditor(props: Props) {
       return;
     }
     const tmpDrawAreas = editorUtils?.getGroupDrawAreas(strokePressureInfo);
-    console.log(editorUtils?.getAllRecords());
     if (tmpDrawAreas) {
       setGroupAreas(tmpDrawAreas);
     }
@@ -336,6 +338,24 @@ export default function PPUndoEditor(props: Props) {
       return svgString;
     }
     return;
+  };
+
+  const updateGroupPressure = (
+    groupArea: TLGroupDrawArea,
+    avgPressure: number
+  ) => {
+    // Get the ids from groupArea that are in strokePressureInfo, and set their group to avgPressure
+    const groupAreaIds = groupArea.ids;
+    for (const id of groupAreaIds) {
+      if (strokePressureInfo[id]) {
+        addStrokePressureInfo(
+          id,
+          groupArea.groupID,
+          strokePressureInfo[id].avg,
+          avgPressure
+        );
+      }
+    }
   };
 
   const BackButton = () => {
@@ -504,23 +524,6 @@ export default function PPUndoEditor(props: Props) {
 
   return (
     <div style={{ display: "flex" }}>
-      {/* <div style={{ width: width, height: height }}>
-        {container && ReactDOM.createPortal(<BackButton />, container)}
-        {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (
-          <NowAvgPressureGauge
-            pointerPosition={pointerPosition}
-            nowAvgPressure={nowAvgPressure}
-            editorUtils={editorUtils}
-          />
-        )}
-        <Tldraw
-          onMount={setAppToState}
-          // shapeUtils={undefined}
-          tools={isIncludePressureEraser ? customTools : undefined}
-          overrides={isIncludePressureEraser ? uiOverrides : undefined}
-          hideUi={isHideUI}
-        />
-      </div> */}
       <div style={{ width: width, height: height, position: "relative" }}>
         {container && ReactDOM.createPortal(<BackButton />, container)}
         {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (
@@ -555,6 +558,9 @@ export default function PPUndoEditor(props: Props) {
               zoomLevel={camera.z}
               offsetX={camera.x}
               offsetY={camera.y}
+              updateGroupPressure={updateGroupPressure}
+              isOperatingGroupID={isOperatingGroupID}
+              setIsOperatingGroupID={setIsOperatingGroupID}
             />
           </div>
         )}

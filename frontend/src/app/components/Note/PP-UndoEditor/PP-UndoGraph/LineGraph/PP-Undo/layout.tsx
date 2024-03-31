@@ -64,7 +64,7 @@ export default function PPUndoLineGraph(props: Props) {
       setData(tmp);
     };
     setGraphData();
-  }, [strokePressureInfo, SPLIT_PRESSURE_NUM]);
+  }, [strokePressureInfo, SPLIT_PRESSURE_NUM, pMode]);
 
   return (
     <Line

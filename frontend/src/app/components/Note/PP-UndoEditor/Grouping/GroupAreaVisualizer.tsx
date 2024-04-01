@@ -157,7 +157,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         event.pressure !== 0 &&
         Date.now() - pointerDownTime! >= 500
       ) {
-        const random = Math.random();
+        const random = event.pointerType === 'pen' ? event.pressure : Math.random();
         const allPressures = [...pressures, random];
         const avgAllPressures =
           allPressures.reduce((a, b) => a + b, 0) / allPressures.length;
@@ -202,6 +202,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           cursor: "pointer",
           pointerEvents: "auto",
           transition: "width 0.3s, height 0.3s, left 0.3s, top 0.3s",
+          userSelect: "none",
         }}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}

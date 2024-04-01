@@ -204,6 +204,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           transition: "width 0.3s, height 0.3s, left 0.3s, top 0.3s",
           userSelect: "none",
         }}
+        className="touch-none update-pressure-button"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}

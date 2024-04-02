@@ -87,7 +87,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     groupAreas.forEach((area) => {
       const { left, top, width, height, groupPressure } = area;
 
-      const hue = Math.round((1 - groupPressure) * 240);
+      const hue = Math.round((1 - groupPressure) * 120);
       const color = `hsl(${hue}, 100%, 50%)`;
 
       ctx.strokeStyle = color;
@@ -116,7 +116,8 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     buttonSize: number;
     color: string;
   }) => {
-    let pressures: number[] = [];
+    let sumPressures: number = 0;
+    let moveCount: number = 0;
     const [isPointerDown, setIsPointerDown] = useState<boolean>(false);
     const [pointerDownTime, setPointerDownTime] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -127,11 +128,13 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         const elapsedTime = Date.now() - pointerDownTime;
         if (elapsedTime >= 500) {
           timer = setTimeout(() => {
-            pressures = pressures;
+            sumPressures = sumPressures;
+            moveCount = moveCount;
           }, 0);
         }
       } else {
-        pressures = [];
+        sumPressures = 0;
+        moveCount = 0;
       }
       return () => {
         clearTimeout(timer);
@@ -148,7 +151,8 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       setIsPointerDown(false);
       setPointerDownTime(null);
       setIsOperatingGroupID(null);
-      pressures = [];
+      sumPressures = 0;
+      moveCount = 0;
     };
 
     const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -157,12 +161,11 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         event.pressure !== 0 &&
         Date.now() - pointerDownTime! >= 500
       ) {
-        const random = event.pointerType === 'pen' ? event.pressure : Math.random();
-        const allPressures = [...pressures, random];
-        const avgAllPressures =
-          allPressures.reduce((a, b) => a + b, 0) / allPressures.length;
+        const pressure = event.pointerType === 'pen' ? event.pressure : Math.random();
+        sumPressures += pressure;
+        moveCount += 1;
+        const avgAllPressures = sumPressures / moveCount;
         updateGroupPressure(area, avgAllPressures);
-        pressures = allPressures;
       }
     };
 
@@ -176,9 +179,9 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     };
 
     const pressureColor =
-      pressures.length !== 0
+      sumPressures !== 0 && moveCount !== 0
         ? `hsl(${Math.round(
-            (1 - pressures.reduce((a, b) => a + b, 0) / pressures.length) * 240
+            (1 - sumPressures / moveCount) * 120
           )}, 100%, 50%)`
         : color;
 
@@ -229,7 +232,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       {groupAreas.map((area) => {
         const { left, top, width, height, groupID, groupPressure } = area;
 
-        const hue = Math.round((1 - groupPressure) * 240);
+        const hue = Math.round((1 - groupPressure) * 120);
         const color = `hsl(${hue}, 100%, 50%)`;
 
         const buffer = 16;

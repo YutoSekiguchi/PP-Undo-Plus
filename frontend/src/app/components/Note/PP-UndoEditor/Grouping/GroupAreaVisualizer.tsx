@@ -30,7 +30,7 @@ interface Props {
   isOperatingGroupID: number | null;
   setIsOperatingGroupID: Dispatch<SetStateAction<number | null>>;
 }
-let pressures: number[] = [];
+
 const GroupAreaVisualizer: React.FC<Props> = ({
   groupAreas,
   width,
@@ -116,7 +116,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     buttonSize: number;
     color: string;
   }) => {
-    
+    let pressures: number[] = [];
     const [isPointerDown, setIsPointerDown] = useState<boolean>(false);
     const [pointerDownTime, setPointerDownTime] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState<boolean>(false);

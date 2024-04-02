@@ -124,21 +124,6 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     const [pointerDownTime, setPointerDownTime] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
-    useEffect(() => {
-      let timer: NodeJS.Timeout;
-      if (isPointerDown && pointerDownTime) {
-        const elapsedTime = Date.now() - pointerDownTime;
-        if (elapsedTime >= 500) {
-          timer = setTimeout(() => {
-          }, 0);
-        }
-      } else {
-      }
-      return () => {
-        clearTimeout(timer);
-      };
-    }, [isPointerDown, pointerDownTime]);
-
     const handlePointerDown = () => {
       setIsPointerDown(true);
       setPointerDownTime(Date.now());
@@ -146,6 +131,22 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     };
 
     const handlePointerUp = () => {
+      // avgPressureForUpdateGroupPressureを最後から繰り返して，値が減ったところの一つ手前つまり減少し始めた場所で切り取る
+      // その部分の平均値を求める
+      // その平均値をupdateGroupPressureに渡す
+      const pressureList = avgPressureForUpdateGroupPressure;
+      const pressureListLength = pressureList.length;
+      let lastPressure = pressureList[pressureListLength - 1];
+      let i = pressureListLength - 2;
+      for (; i >= 0; i--) {
+        if (lastPressure > pressureList[i]) {
+          break;
+        }
+        lastPressure = pressureList[i];
+      }
+      const avgPressure = pressureList.slice(i + 1).reduce((acc, cur) => acc + cur, 0) / (pressureListLength - i - 1);
+      updateGroupPressure(area, avgPressure);
+
       setIsPointerDown(false);
       setPointerDownTime(null);
       setIsOperatingGroupID(null);

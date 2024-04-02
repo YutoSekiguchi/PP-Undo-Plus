@@ -347,6 +347,7 @@ export default function PPUndoEditor(props: Props) {
   ) => {
     // Get the ids from groupArea that are in strokePressureInfo, and set their group to avgPressure
     const groupAreaIds = groupArea.ids;
+    console.log(groupAreas)
     for (const id of groupAreaIds) {
       if (strokePressureInfo[id]) {
         addStrokePressureInfo(

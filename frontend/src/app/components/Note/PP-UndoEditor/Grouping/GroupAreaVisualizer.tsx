@@ -29,6 +29,8 @@ interface Props {
   ) => void;
   isOperatingGroupID: number | null;
   setIsOperatingGroupID: Dispatch<SetStateAction<number | null>>;
+  setAvgPressureForUpdateGroupPressure: Dispatch<SetStateAction<number[]>>;
+  avgPressureForUpdateGroupPressure: number[];
 }
 
 const GroupAreaVisualizer: React.FC<Props> = ({
@@ -41,6 +43,8 @@ const GroupAreaVisualizer: React.FC<Props> = ({
   updateGroupPressure,
   isOperatingGroupID,
   setIsOperatingGroupID,
+  setAvgPressureForUpdateGroupPressure,
+  avgPressureForUpdateGroupPressure,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -116,8 +120,6 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     buttonSize: number;
     color: string;
   }) => {
-    let sumPressures: number = 0;
-    let moveCount: number = 0;
     const [isPointerDown, setIsPointerDown] = useState<boolean>(false);
     const [pointerDownTime, setPointerDownTime] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -128,13 +130,9 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         const elapsedTime = Date.now() - pointerDownTime;
         if (elapsedTime >= 500) {
           timer = setTimeout(() => {
-            sumPressures = sumPressures;
-            moveCount = moveCount;
           }, 0);
         }
       } else {
-        sumPressures = 0;
-        moveCount = 0;
       }
       return () => {
         clearTimeout(timer);
@@ -151,8 +149,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       setIsPointerDown(false);
       setPointerDownTime(null);
       setIsOperatingGroupID(null);
-      sumPressures = 0;
-      moveCount = 0;
+      setAvgPressureForUpdateGroupPressure([]);
     };
 
     const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -162,9 +159,9 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         Date.now() - pointerDownTime! >= 500
       ) {
         const pressure = event.pointerType === 'pen' ? event.pressure : Math.random();
-        sumPressures += pressure;
-        moveCount += 1;
-        const avgAllPressures = sumPressures / moveCount;
+        const pressureList = [...avgPressureForUpdateGroupPressure, pressure]
+        setAvgPressureForUpdateGroupPressure(pressureList)
+        const avgAllPressures = pressureList.reduce((acc, cur) => acc + cur, 0) / pressureList.length;
         updateGroupPressure(area, avgAllPressures);
       }
     };
@@ -178,12 +175,12 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       handlePointerUp();
     };
 
-    const pressureColor =
-      sumPressures !== 0 && moveCount !== 0
-        ? `hsl(${Math.round(
-            (1 - sumPressures / moveCount) * 120
-          )}, 100%, 50%)`
-        : color;
+    // const pressureColor =
+    //   sumPressures !== 0 && moveCount !== 0
+    //     ? `hsl(${Math.round(
+    //         (1 - sumPressures / moveCount) * 120
+    //       )}, 100%, 50%)`
+    //     : color;
 
     const size =
       isHovered || isOperatingGroupID === area.groupID
@@ -199,7 +196,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           width: size,
           height: size,
           borderRadius: "50%",
-          backgroundColor: pressureColor,
+          backgroundColor: color,
           zIndex: 10000,
           opacity: 0.75,
           cursor: "pointer",

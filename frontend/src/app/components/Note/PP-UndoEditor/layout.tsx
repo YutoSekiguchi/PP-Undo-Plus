@@ -104,6 +104,7 @@ export default function PPUndoEditor(props: Props) {
     null
   );
   const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
+  const [avgPressureForUpdateGroupPressures, setAvgPressureForUpdateGroupPressures] = useState<number[]>([]);
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
@@ -569,6 +570,8 @@ export default function PPUndoEditor(props: Props) {
               updateGroupPressure={updateGroupPressure}
               isOperatingGroupID={isOperatingGroupID}
               setIsOperatingGroupID={setIsOperatingGroupID}
+              setAvgPressureForUpdateGroupPressure={setAvgPressureForUpdateGroupPressures}
+              avgPressureForUpdateGroupPressure={avgPressureForUpdateGroupPressures}
             />
           </div>
         )}

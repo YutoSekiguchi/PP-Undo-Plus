@@ -163,7 +163,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         const pressureList = [...avgPressureForUpdateGroupPressure, pressure]
         setAvgPressureForUpdateGroupPressure(pressureList)
         const avgAllPressures = pressureList.reduce((acc, cur) => acc + cur, 0) / pressureList.length;
-        updateGroupPressure(area, avgAllPressures);
+        updateGroupPressure(area, pressure);
       }
     };
 

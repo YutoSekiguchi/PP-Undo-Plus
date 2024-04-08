@@ -108,7 +108,7 @@ export default function PPUndoEditor(props: Props) {
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
-  const scoreThreshold = 0.25;
+  const scoreThreshold = 0.5;
 
   const {
     // strokeTimeInfo,

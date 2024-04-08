@@ -109,7 +109,6 @@ export default function PPUndoEditor(props: Props) {
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
-  const scoreThreshold = 0.5;
 
   const {
     // strokeTimeInfo,
@@ -221,7 +220,7 @@ export default function PPUndoEditor(props: Props) {
         wPressure * pressureScore +
         wDistance * distanceScore;
       console.log(score);
-      if (score > scoreThreshold) {
+      if (score >= boundaryValue) {
         isCreateNewGroup = true;
       }
 

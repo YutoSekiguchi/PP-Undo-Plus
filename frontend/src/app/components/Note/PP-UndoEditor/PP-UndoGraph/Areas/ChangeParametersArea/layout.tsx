@@ -114,7 +114,7 @@ export default function ChangeParametersArea(props: Props) {
           <span className="slider-value">{wDistance.toFixed(2)}</span>
         </div>
         <div className="slider-container">
-          <p className="w-20">Value</p>
+          <p className="w-20">WA value</p>
           <div className="slider-wrapper">
             <input
               type="range"

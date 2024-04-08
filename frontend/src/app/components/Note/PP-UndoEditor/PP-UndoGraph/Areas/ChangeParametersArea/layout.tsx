@@ -13,6 +13,8 @@ interface Props {
   setWPressure: Dispatch<SetStateAction<number>>;
   wDistance: number;
   setWDistance: Dispatch<SetStateAction<number>>;
+  boundaryValue: number;
+  setBoundaryValue: Dispatch<SetStateAction<number>>;
 }
 
 export default function ChangeParametersArea(props: Props) {
@@ -26,6 +28,8 @@ export default function ChangeParametersArea(props: Props) {
     setWPressure,
     wDistance,
     setWDistance,
+    boundaryValue,
+    setBoundaryValue,
   } = props;
 
   return (
@@ -108,6 +112,31 @@ export default function ChangeParametersArea(props: Props) {
             ></div>
           </div>
           <span className="slider-value">{wDistance.toFixed(2)}</span>
+        </div>
+        <div className="slider-container">
+          <p className="w-20">Value</p>
+          <div className="slider-wrapper">
+            <input
+              type="range"
+              id={`boundaryValue-${id}`}
+              min="0"
+              max="1"
+              step="0.01"
+              value={boundaryValue}
+              onChange={(e) => setBoundaryValue(Number(e.target.value))}
+            />
+            <div className="slider-track">
+              <div
+                className="slider-fill"
+                style={{ width: `${boundaryValue * 100}%` }}
+              ></div>
+            </div>
+            <div
+              className="slider-thumb"
+              style={{ left: `${boundaryValue * 100}%` }}
+            ></div>
+          </div>
+          <span className="slider-value">{boundaryValue.toFixed(2)}</span>
         </div>
       </div>
     </div>

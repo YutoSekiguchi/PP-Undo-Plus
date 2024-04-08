@@ -100,6 +100,7 @@ export default function PPUndoEditor(props: Props) {
   const [wTime, setWTime] = useState<number>(0.5);
   const [wPressure, setWPressure] = useState<number>(0.5);
   const [wDistance, setWDistance] = useState<number>(0.5);
+  const [boundaryValue, setBoundaryValue] = useState<number>(0.5);
   const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
     null
   );
@@ -397,6 +398,7 @@ export default function PPUndoEditor(props: Props) {
           noteData.WTime = wTime;
           noteData.WPressure = wPressure;
           noteData.WDistance = wDistance;
+          noteData.boundaryValue = boundaryValue;
           const res = await updateNote(noteData);
           if (res == null) {
             alert(l.failedToSaveNote());
@@ -488,6 +490,7 @@ export default function PPUndoEditor(props: Props) {
       setWTime(res.WTime);
       setWPressure(res.WPressure);
       setWDistance(res.WDistance);
+      setBoundaryValue(res.boundaryValue);
       editorUtils.setStrokeShape("solid");
       editorUtils.setStrokeSize("s");
       const operationJson = await fetch(
@@ -593,6 +596,8 @@ export default function PPUndoEditor(props: Props) {
         setWPressure={setWPressure}
         wDistance={wDistance}
         setWDistance={setWDistance}
+        boundaryValue={boundaryValue}
+        setBoundaryValue={setBoundaryValue}
         pMode={pMode}
         setPMode={setPMode}
       />

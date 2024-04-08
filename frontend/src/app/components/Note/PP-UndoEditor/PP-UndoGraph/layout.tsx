@@ -26,6 +26,8 @@ interface Props {
   setWPressure: Dispatch<SetStateAction<number>>;
   wDistance: number;
   setWDistance: Dispatch<SetStateAction<number>>;
+  boundaryValue: number;
+  setBoundaryValue: Dispatch<SetStateAction<number>>;
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
 }
@@ -51,6 +53,8 @@ export default function PPUndoGraph(props: Props) {
     setWPressure,
     wDistance,
     setWDistance,
+    boundaryValue,
+    setBoundaryValue,
     pMode,
     setPMode,
   } = props;
@@ -109,6 +113,8 @@ export default function PPUndoGraph(props: Props) {
             setWPressure={setWPressure}
             wDistance={wDistance}
             setWDistance={setWDistance}
+            boundaryValue={boundaryValue}
+            setBoundaryValue={setBoundaryValue}
           />
         </div>
       </div>

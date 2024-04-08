@@ -62,6 +62,7 @@ export interface TLPostNoteData {
   WPressure: number;
   WTime: number;
   WDistance: number;
+  boundaryValue: number;
 }
 
 export interface TLPostNoteLogData {

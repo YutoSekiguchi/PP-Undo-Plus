@@ -43,6 +43,7 @@ export default function NoteList(props: Props): JSX.Element {
       WPressure: 0.5,
       WTime: 0.5,
       WDistance: 0.5,
+      boundaryValue: 0.5,
     };
     const res = await createNote(data);
     if (res === null) {

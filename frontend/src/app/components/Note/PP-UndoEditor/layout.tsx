@@ -105,7 +105,10 @@ export default function PPUndoEditor(props: Props) {
     null
   );
   const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
-  const [avgPressureForUpdateGroupPressures, setAvgPressureForUpdateGroupPressures] = useState<number[]>([]);
+  const [
+    avgPressureForUpdateGroupPressures,
+    setAvgPressureForUpdateGroupPressures,
+  ] = useState<number[]>([]);
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
@@ -183,7 +186,12 @@ export default function PPUndoEditor(props: Props) {
         : null;
     if (secondLastRecord === null) {
       isCreateNewGroup = true;
-      addStrokePressureInfo(drawingStrokeId, groupAreas.length + 1, avgPressure, avgPressure);
+      addStrokePressureInfo(
+        drawingStrokeId,
+        groupAreas.length + 1,
+        avgPressure,
+        avgPressure
+      );
       drawingStrokeId = "";
       drawingPressureList = [];
       setPointerPosition({ x: 0, y: 0 });
@@ -191,60 +199,80 @@ export default function PPUndoEditor(props: Props) {
       endTime = 0;
     } else {
       // Calculate the minimum distance
-      const lastRecordX = lastRecord.x;
-      const lastRecordY = lastRecord.y;
-      const lastRecordPoints = lastRecord.props.segments[0].points;
-      const secondLastRecordX = secondLastRecord.x;
-      const secondLastRecordY = secondLastRecord.y;
-      const secondLastRecordPoints = secondLastRecord.props.segments[0].points;
-      const minDistance = calculateDistance(
-        lastRecordX,
-        lastRecordY,
-        lastRecordPoints,
-        secondLastRecordX,
-        secondLastRecordY,
-        secondLastRecordPoints
-      );
-
-      // Calculate the pressure difference
-      const secondLastStrokePressure =
-        strokePressureInfo[secondLastRecord.id].avg;
-      const diffPressure = Math.abs(avgPressure - secondLastStrokePressure);
-
-      // Calculate the score
-      const timeScore = diffTime / maxTime;
-      const pressureScore = diffPressure / maxPressure;
-      const distanceScore = minDistance / maxDistance;
-      const score =
-        wTime * timeScore +
-        wPressure * pressureScore +
-        wDistance * distanceScore;
-      console.log(score);
-      if (score >= boundaryValue) {
-        isCreateNewGroup = true;
-      }
-
-      if (isCreateNewGroup) {
-        addStrokePressureInfo(
-          drawingStrokeId,
-          strokePressureInfo[secondLastRecord.id].groupID + 1,
-          avgPressure,
-          avgPressure
+      try {
+        const lastRecordX = lastRecord.x;
+        const lastRecordY = lastRecord.y;
+        const lastRecordPoints = lastRecord.props.segments[0].points;
+        const secondLastRecordX = secondLastRecord.x;
+        const secondLastRecordY = secondLastRecord.y;
+        const secondLastRecordPoints =
+          secondLastRecord.props.segments[0].points;
+        const minDistance = calculateDistance(
+          lastRecordX,
+          lastRecordY,
+          lastRecordPoints,
+          secondLastRecordX,
+          secondLastRecordY,
+          secondLastRecordPoints
         );
-      } else {
-        addStrokePressureInfo(
-          drawingStrokeId,
-          strokePressureInfo[secondLastRecord.id].groupID,
-          avgPressure,
-          strokePressureInfo[secondLastRecord.id].group
+
+        // Calculate the pressure difference
+        const secondLastStrokePressure =
+          strokePressureInfo[secondLastRecord.id] &&
+          strokePressureInfo[secondLastRecord.id].avg
+            ? strokePressureInfo[secondLastRecord.id].avg
+            : secondLastRecordPoints
+                .map((point: any) => (point.z >= 1 ? 1 : point.z))
+                .reduce((a: number, b: number) => a + b) /
+              secondLastRecordPoints.length;
+        const diffPressure = Math.abs(avgPressure - secondLastStrokePressure);
+
+        // Calculate the score
+        const timeScore = diffTime / maxTime;
+        const pressureScore = diffPressure / maxPressure;
+        const distanceScore = minDistance / maxDistance;
+        const score =
+          wTime * timeScore +
+          wPressure * pressureScore +
+          wDistance * distanceScore;
+        console.log(score);
+        if (score >= boundaryValue) {
+          isCreateNewGroup = true;
+        }
+
+        if (isCreateNewGroup) {
+          addStrokePressureInfo(
+            drawingStrokeId,
+            strokePressureInfo[secondLastRecord.id] &&
+              strokePressureInfo[secondLastRecord.id].groupID
+              ? strokePressureInfo[secondLastRecord.id].groupID + 1
+              : strokePressureInfo[lastRecord.id].groupID + 1,
+            avgPressure,
+            avgPressure
+          );
+        } else {
+          addStrokePressureInfo(
+            drawingStrokeId,
+            strokePressureInfo[secondLastRecord.id] &&
+              strokePressureInfo[secondLastRecord.id].groupID
+              ? strokePressureInfo[secondLastRecord.id].groupID
+              : strokePressureInfo[lastRecord.id].groupID,
+            avgPressure,
+            strokePressureInfo[secondLastRecord.id].group
+          );
+        }
+        drawingStrokeId = "";
+        drawingPressureList = [];
+        setPointerPosition({ x: 0, y: 0 });
+        startTime = 0;
+        endTime = 0;
+      } catch (e) {
+        console.error(e);
+        alert(
+          "Failed to draw stroke. Sorry for the inconvenience. Please try again."
         );
+        editorUtils.undo();
       }
-      console.log(strokePressureInfo);
-      drawingStrokeId = "";
-      drawingPressureList = [];
-      setPointerPosition({ x: 0, y: 0 });
-      startTime = 0;
-      endTime = 0;
     }
   };
 
@@ -347,7 +375,7 @@ export default function PPUndoEditor(props: Props) {
   ) => {
     // Get the ids from groupArea that are in strokePressureInfo, and set their group to avgPressure
     const groupAreaIds = groupArea.ids;
-    console.log(groupAreas)
+    console.log(groupAreas);
     for (const id of groupAreaIds) {
       if (strokePressureInfo[id]) {
         addStrokePressureInfo(
@@ -573,8 +601,12 @@ export default function PPUndoEditor(props: Props) {
               updateGroupPressure={updateGroupPressure}
               isOperatingGroupID={isOperatingGroupID}
               setIsOperatingGroupID={setIsOperatingGroupID}
-              setAvgPressureForUpdateGroupPressure={setAvgPressureForUpdateGroupPressures}
-              avgPressureForUpdateGroupPressure={avgPressureForUpdateGroupPressures}
+              setAvgPressureForUpdateGroupPressure={
+                setAvgPressureForUpdateGroupPressures
+              }
+              avgPressureForUpdateGroupPressure={
+                avgPressureForUpdateGroupPressures
+              }
             />
           </div>
         )}

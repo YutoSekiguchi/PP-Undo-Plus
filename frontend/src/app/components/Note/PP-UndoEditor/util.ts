@@ -176,4 +176,8 @@ export class EditorUtils {
   setStrokeSize(size: "s" | "m" | "l" | "xl"): void {
     this.editor.setStyleForNextShapes(DefaultSizeStyle, size);
   }
+
+  undo(): void {
+    this.editor.undo();
+  }
 }

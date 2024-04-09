@@ -15,6 +15,7 @@ type Note struct {
 	WPressure         float64   `gorm:"not null;column:w_pressure"`
 	WTime             float64   `gorm:"not null;column:w_time"`
 	WDistance         float64   `gorm:"not null;column:w_distance"`
+	boundaryValue		  float64   `gorm:"not null;column:boundary_value"`
 	CreatedAt         time.Time `gorm:"not null;column:created_at"`
 	UpdatedAt         time.Time `gorm:"not null;column:updated_at"`
 }

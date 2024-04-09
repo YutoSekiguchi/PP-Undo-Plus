@@ -159,6 +159,19 @@
 }
 
 .parameter-area .slider-container:nth-child(3) .slider-wrapper input[type="range"]:focus + .slider-track .slider-thumb {
-  border-color: #ff4e50;
+  border-color: #ee609c;
+  box-shadow: 0 0 0 6px rgba(0, 250, 154, 0.5);
+}
+
+.parameter-area .slider-container:nth-child(4) .slider-fill {
+  background: linear-gradient(to right, #b8cbb8 0%, #b8cbb8 0%, #b465da 0%, #cf6cc9 33%, #ee609c 66%, #ee609c 100%);
+}
+
+.parameter-area .slider-container:nth-child(4) .slider-thumb {
+  border-color: #ee609c;
+}
+
+.parameter-area .slider-container:nth-child(4) .slider-wrapper input[type="range"]:focus + .slider-track .slider-thumb {
+  border-color: #ee609c;
   box-shadow: 0 0 0 6px rgba(0, 250, 154, 0.5);
 }

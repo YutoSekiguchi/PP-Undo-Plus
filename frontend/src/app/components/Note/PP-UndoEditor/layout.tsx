@@ -100,7 +100,7 @@ export default function PPUndoEditor(props: Props) {
   const [wTime, setWTime] = useState<number>(0.5);
   const [wPressure, setWPressure] = useState<number>(0.5);
   const [wDistance, setWDistance] = useState<number>(0.5);
-  const [boundaryValue, setBoundaryValue] = useState<number>(0.5);
+  const [boundaryValue, setBoundaryValue] = useState<number>(0.3);
   const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
     null
   );

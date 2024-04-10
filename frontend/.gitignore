@@ -37,3 +37,9 @@ next-env.d.ts
 
 /public/svgs/*.svg
 /public/json/*/*.json
+
+# next-pwa
+**/public/sw.js
+**/public/sw.js.map
+**/public/workbox-*.js
+**/public/workbox-*.js.map

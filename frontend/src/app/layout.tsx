@@ -25,6 +25,7 @@ export default function RootLayout({
     <html lang="ja">
       <Head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       <body className={inter.className}>
         <SessionProvider session={session}>

@@ -61,7 +61,7 @@ export default function ChangeParametersArea(props: Props) {
               style={{ left: `${wTime * 100}%` }}
             ></div>
           </div>
-          <span className="slider-value">{wTime.toFixed(2)}</span>
+          {wTime && <span className="slider-value">{wTime.toFixed(2)}</span>}
         </div>
         <div className="slider-container">
           <p className="w-20">Pressure</p>
@@ -86,7 +86,7 @@ export default function ChangeParametersArea(props: Props) {
               style={{ left: `${wPressure * 100}%` }}
             ></div>
           </div>
-          <span className="slider-value">{wPressure.toFixed(2)}</span>
+          {wPressure && <span className="slider-value">{wPressure.toFixed(2)}</span>}
         </div>
         <div className="slider-container">
           <p className="w-20">Distance</p>
@@ -111,10 +111,10 @@ export default function ChangeParametersArea(props: Props) {
               style={{ left: `${wDistance * 100}%` }}
             ></div>
           </div>
-          <span className="slider-value">{wDistance.toFixed(2)}</span>
+          {wDistance && <span className="slider-value">{wDistance.toFixed(2)}</span>}
         </div>
         <div className="slider-container">
-          <p className="w-20">WA value</p>
+          <p className="w-20">WA</p>
           <div className="slider-wrapper">
             <input
               type="range"
@@ -136,7 +136,7 @@ export default function ChangeParametersArea(props: Props) {
               style={{ left: `${boundaryValue * 100}%` }}
             ></div>
           </div>
-          <span className="slider-value">{boundaryValue.toFixed(2)}</span>
+          {boundaryValue && <span className="slider-value">{boundaryValue.toFixed(2)}</span>}
         </div>
       </div>
     </div>

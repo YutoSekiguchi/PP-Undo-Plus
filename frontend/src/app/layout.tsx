@@ -23,10 +23,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <Head>
+      <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
-      </Head>
+        <link rel="apple-touch-icon" href="/logo.png"></link>
+        <meta name="theme-color" content="#4a90e2" />
+      </head>
       <body className={inter.className}>
         <SessionProvider session={session}>
           <CommonSession />

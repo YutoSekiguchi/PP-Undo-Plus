@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS notes (
   title TEXT NOT NULL,
   svg_path TEXT NOT NULL,
   pressure_info TEXT NOT NULL,
+  all_pressure_info LONGTEXT NOT NULL,
   operation_json_path TEXT NOT NULL,
   stroke_time_info TEXT NOT NULL,
   snapshot LONGTEXT NOT NULL,

@@ -72,6 +72,18 @@ export const useStrokePressureInfo = () => {
     setStrokePressureInfoStore(strokePressureInfo);
   };
 
+  const onlyInitializeStrokePressureInfo = (
+    strokePressureInfo: TLStrokePressureInfo
+  ) => {
+    setStrokePressureInfo(strokePressureInfo);
+  }
+
+  const onlyInitializeStrokePressureInfoStore = (
+    strokePressureInfo: TLStrokePressureInfo
+  ) => {
+    setStrokePressureInfoStore(strokePressureInfo);
+  }
+
   const initializeStrokeTimeInfo = (
     strokeTimeInfo: TLStrokeTimeInfo
   ) => {
@@ -125,5 +137,7 @@ export const useStrokePressureInfo = () => {
     clearStrokeInfo,
     strokePressureInfoStore,
     clearStrokePressureInfoStore,
+    onlyInitializeStrokePressureInfo,
+    onlyInitializeStrokePressureInfoStore
   };
 };

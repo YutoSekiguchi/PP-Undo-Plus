@@ -123,6 +123,8 @@ export default function PPUndoEditor(props: Props) {
     initializeStrokePressureInfo,
     initializeStrokeTimeInfo,
     clearStrokeInfo,
+    onlyInitializeStrokePressureInfo,
+    onlyInitializeStrokePressureInfoStore
   } = useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
   const [container, setContainer] = useState<HTMLElement | null>(null);
@@ -330,14 +332,12 @@ export default function PPUndoEditor(props: Props) {
   const handleResetStrokePressureInfo = (allRecords: any) => {
     clearStrokePressureInfo();
     allRecords.forEach((record: any, index: number) => {
-      console.log(record, index);
       if (record.typeName === "shape" && record.type === "draw") {
         // const points = record.props.segments[0].points;
         // const pressureList = points.map((point: any) =>
         //   point.z >= 1 ? 1 : point.z
         // );
         // const avgPressure = getAverageOfNumberList(pressureList);
-        console.log(strokePressureInfoStore);
         const info = strokePressureInfoStore[record.id];
         addStrokePressureInfo(record.id, info.groupID, info.avg, info.group);
       }
@@ -420,6 +420,7 @@ export default function PPUndoEditor(props: Props) {
             : "";
           noteData.Snapshot = snapshot ? JSON.stringify(snapshot) : "";
           noteData.PressureInfo = JSON.stringify(strokePressureInfo);
+          noteData.AllPressureInfo = JSON.stringify(strokePressureInfoStore)
           noteData.SvgPath = filename;
           noteData.OperationJsonPath = operationFilename;
           noteData.WTime = wTime;
@@ -509,7 +510,8 @@ export default function PPUndoEditor(props: Props) {
       const snapshot = res.Snapshot;
       if (snapshot === "" || snapshot === null) return;
       editorUtils.loadSnapshot(JSON.parse(snapshot));
-      initializeStrokePressureInfo(JSON.parse(res.PressureInfo));
+      onlyInitializeStrokePressureInfo(JSON.parse(res.PressureInfo));
+      onlyInitializeStrokePressureInfoStore(JSON.parse(res.AllPressureInfo));
       initializeStrokeTimeInfo(JSON.parse(res.StrokeTimeInfo));
       setWasDrawingStrokeNum(
         Object.keys(JSON.parse(res.StrokeTimeInfo)).length

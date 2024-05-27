@@ -38,6 +38,7 @@ export default function NoteList(props: Props): JSX.Element {
       SvgPath: "",
       Snapshot: "",
       PressureInfo: "",
+      AllPressureInfo: "",
       StrokeTimeInfo: "",
       OperationJsonPath: "",
       WPressure: 0.5,

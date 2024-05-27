@@ -91,19 +91,33 @@ const GroupAreaVisualizer: React.FC<Props> = ({
     groupAreas.forEach((area) => {
       const { left, top, width, height, groupPressure } = area;
 
-      const hue = Math.round((1 - groupPressure) * 120);
+      const hue = Math.round(240 - groupPressure * 240);
       const color = `hsl(${hue}, 100%, 50%)`;
 
       ctx.strokeStyle = color;
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.5;
 
-      const buffer = 16;
+      const buffer = 2;
       const zoomedLeft = (left + offsetX - buffer) * zoomLevel;
       const zoomedTop = (top + offsetY - buffer) * zoomLevel;
       const zoomedWidth = (width + buffer * 2) * zoomLevel;
       const zoomedHeight = (height + buffer * 2) * zoomLevel;
+      const cornerRadius = 5; // Adjust corner radius as needed
 
-      ctx.strokeRect(zoomedLeft, zoomedTop, zoomedWidth, zoomedHeight);
+      // Draw rounded rectangle
+      ctx.beginPath();
+      ctx.moveTo(zoomedLeft + cornerRadius, zoomedTop);
+      ctx.lineTo(zoomedLeft + zoomedWidth - cornerRadius, zoomedTop);
+      ctx.quadraticCurveTo(zoomedLeft + zoomedWidth, zoomedTop, zoomedLeft + zoomedWidth, zoomedTop + cornerRadius);
+      ctx.lineTo(zoomedLeft + zoomedWidth, zoomedTop + zoomedHeight - cornerRadius);
+      ctx.quadraticCurveTo(zoomedLeft + zoomedWidth, zoomedTop + zoomedHeight, zoomedLeft + zoomedWidth - cornerRadius, zoomedTop + zoomedHeight);
+      ctx.lineTo(zoomedLeft + cornerRadius, zoomedTop + zoomedHeight);
+      ctx.quadraticCurveTo(zoomedLeft, zoomedTop + zoomedHeight, zoomedLeft, zoomedTop + zoomedHeight - cornerRadius);
+      ctx.lineTo(zoomedLeft, zoomedTop + cornerRadius);
+      ctx.quadraticCurveTo(zoomedLeft, zoomedTop, zoomedLeft + cornerRadius, zoomedTop);
+      ctx.closePath();
+      ctx.stroke();
     });
   }, [groupAreas, width, height, zoomLevel, offsetX, offsetY]);
 
@@ -173,7 +187,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
 
     const handlePointerLeave = () => {
       setIsHovered(false);
-      handlePointerUp();
+      // handlePointerUp();
     };
 
     // const pressureColor =
@@ -197,9 +211,8 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           width: size,
           height: size,
           borderRadius: "50%",
-          backgroundColor: color,
-          zIndex: 10000,
-          opacity: 0.75,
+          backgroundColor:color,
+          opacity: 0.5,
           cursor: "pointer",
           pointerEvents: "auto",
           transition: "width 0.3s, height 0.3s, left 0.3s, top 0.3s",
@@ -222,7 +235,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           position: "absolute",
           top: 0,
           left: 0,
-          zIndex: 9999,
+          zIndex: 999,
           pointerEvents: "none",
         }}
         className="grouping-canvas"
@@ -230,7 +243,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       {groupAreas.map((area) => {
         const { left, top, width, height, groupID, groupPressure } = area;
 
-        const hue = Math.round((1 - groupPressure) * 120);
+        const hue = Math.round(240 - groupPressure * 240);
         const color = `hsl(${hue}, 100%, 50%)`;
 
         const buffer = 16;

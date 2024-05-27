@@ -66,6 +66,8 @@ export default function PPUndoGraph(props: Props) {
           height: height,
           padding: padding,
           background: background,
+          zIndex: 9999,
+          position: "fixed",
           border: "none",
           fontFamily: "monospace",
           fontSize: 12,

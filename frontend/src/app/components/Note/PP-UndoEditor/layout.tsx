@@ -97,8 +97,8 @@ export default function PPUndoEditor(props: Props) {
     useState<boolean>(false);
   const [camera, setCamera] = useState<TLCamera>({ x: 0, y: 0, z: 1 });
   const [groupAreas, setGroupAreas] = useState<TLGroupDrawArea[]>([]);
-  const [wTime, setWTime] = useState<number>(0.5);
-  const [wPressure, setWPressure] = useState<number>(0.5);
+  const [wTime, setWTime] = useState<number>(0.7);
+  const [wPressure, setWPressure] = useState<number>(0.25);
   const [wDistance, setWDistance] = useState<number>(0.5);
   const [boundaryValue, setBoundaryValue] = useState<number>(0.3);
   const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
@@ -517,7 +517,7 @@ export default function PPUndoEditor(props: Props) {
       setWTime(res.WTime);
       setWPressure(res.WPressure);
       setWDistance(res.WDistance);
-      setBoundaryValue(res.boundaryValue);
+      setBoundaryValue(res.BoundaryValue);
       editorUtils.setStrokeShape("solid");
       editorUtils.setStrokeSize("s");
       const operationJson = await fetch(

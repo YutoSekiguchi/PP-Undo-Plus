@@ -17,7 +17,7 @@ export default function PPUndoArea(props: Props) {
   return (
     <div className="area">
       <div className="title">
-        <p className="text-center font-bold text-md mb-2">PP-Undo</p>
+        <p className="text-center font-bold text-md mb-2">PP-Editor</p>
       </div>
       <PPUndoSlider
         editor={editor}

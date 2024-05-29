@@ -10,11 +10,11 @@ export default function Terms({
   const lang = searchParams.lang;
   const text = {
     jp: {
-      title: "利用規約 - PP-Undo Plus",
+      title: "利用規約 - PP-Editor",
       heading: "利用規約",
       section1: {
         heading: "1. 総則",
-        paragraph1: "本利用規約（以下、「本規約」といいます。）は、PP-Undo Plus（以下、「当サービス」といいます。）の利用条件を定めるものです。ユーザーは、本規約に同意の上、当サービスを利用するものとします。",
+        paragraph1: "本利用規約（以下、「本規約」といいます。）は、PP-Editor（以下、「当サービス」といいます。）の利用条件を定めるものです。ユーザーは、本規約に同意の上、当サービスを利用するものとします。",
       },
       section2: {
         heading: "2. アカウント登録",
@@ -56,11 +56,11 @@ export default function Terms({
       }
     },
     en: {
-      title: "Terms of Service - PP-Undo Plus",
+      title: "Terms of Service - PP-Editor",
       heading: "Terms of Service",
       section1: {
         heading: "1. General Provisions",
-        paragraph1: "These Terms of Service (hereinafter referred to as 'Terms') govern the use of PP-Undo Plus (hereinafter referred to as 'the Service'). By using the Service, users agree to abide by these Terms."
+        paragraph1: "These Terms of Service (hereinafter referred to as 'Terms') govern the use of PP-Editor (hereinafter referred to as 'the Service'). By using the Service, users agree to abide by these Terms."
       },
       section2: {
         heading: "2. Account Registration",

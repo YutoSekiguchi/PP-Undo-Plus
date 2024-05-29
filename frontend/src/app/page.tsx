@@ -17,13 +17,12 @@ export default function Home({
         {lang.nowLang() === "en" ? (
           <>
             <p>Let's use&nbsp;</p>
-            <h1 className="title">PP-Undo&nbsp;</h1>
-            <p>Plus</p>
+            <h1 className="title">PP-Editor</h1>
           </>
         ) : (
           <>
-            <h1 className="title">PP-Undo&nbsp;</h1>
-            <p>Plusを使ってみましょう</p>
+            <h1 className="title">PP-Editor&nbsp;</h1>
+            <p>を使ってみましょう</p>
           </>
         )}
       </>

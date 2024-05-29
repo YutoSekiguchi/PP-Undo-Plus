@@ -1,4 +1,4 @@
-# PP-Undo+（日本語版）
+# PP-Editor（日本語版）
 [English](./README.md) | [日本語](./README.ja.md)
 
 **概要**

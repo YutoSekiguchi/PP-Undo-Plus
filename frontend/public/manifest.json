@@ -4,8 +4,8 @@
     "display": "fullscreen",
     "scope": "/",
     "start_url": "/",
-    "name": "PP-Undo Plus",
-    "short_name": "PP-Undo",
+    "name": "PP-Editor",
+    "short_name": "PP-Editor",
     "description": "Note",
     "icons": [
         {

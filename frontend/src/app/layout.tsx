@@ -10,8 +10,8 @@ import CommonSession from './common_session'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PP-Undo Plus',
-  description: 'PP-Undo is an innovative handwriting editing tool centered around pen pressure. Designed to enhance digital handwriting input, it allows users to selectively undo/redo strokes based on pen pressure. Intuitively designed for efficient and precise editing of handwritten notes and sketches.',
+  title: 'PP-Editor',
+  description: 'PP-Editor is an innovative handwriting editing tool centered around pen pressure. Designed to enhance digital handwriting input, it allows users to selectively undo/redo strokes based on pen pressure. Intuitively designed for efficient and precise editing of handwritten notes and sketches.',
 }
 
 export default function RootLayout({

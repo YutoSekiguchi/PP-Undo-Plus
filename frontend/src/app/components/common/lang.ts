@@ -174,10 +174,10 @@ export class Lang {
   privacyPolicy() {
     return this.lang === "en"
       ? {
-          title: "Privacy Policy - PP-Undo Plus",
+          title: "Privacy Policy - PP-Editor",
           heading: "Privacy Policy",
           paragraph1:
-            "PP-Undo Plus (hereinafter referred to as 'the Service') respects the privacy of its users and is committed to protecting their personal information.",
+            "PP-Editor (hereinafter referred to as 'the Service') respects the privacy of its users and is committed to protecting their personal information.",
           paragraph2:
             "This policy explains the information collected through the use of the Service, how it is used, and how it is protected.",
           collectionUse: {
@@ -220,10 +220,10 @@ export class Lang {
           },
         }
       : {
-          title: "プライバシーポリシー - PP-Undo Plus",
+          title: "プライバシーポリシー - PP-Editor",
           heading: "プライバシーポリシー",
           paragraph1:
-            "PP-Undo Plus（以下、「当サービス」といいます。）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めます。",
+            "PP-Editor（以下、「当サービス」といいます。）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めます。",
           paragraph2:
             "当サービスの利用により収集される情報、その利用方法、および情報の保護について説明します。",
           collectionUse: {

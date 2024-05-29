@@ -145,7 +145,7 @@ export default function Sidebar(props: Props) {
     return (
       <div className="sidebar-body--help">
         <div className="sidebar-body--help-app-name">
-          <p className="text-md font-bold mr-2">PP-Undo Plus</p>
+          <p className="text-md font-bold mr-2">PP-Editor</p>
           <p className="text-gray-400 text-xs">
             {l.version()}
             {process.env.VERSION}

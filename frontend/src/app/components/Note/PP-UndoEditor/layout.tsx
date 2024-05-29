@@ -120,7 +120,6 @@ export default function PPUndoEditor(props: Props) {
     addStrokeTimeInfo,
     addNoteOperationInfo,
     initializeNoteOperationInfo,
-    initializeStrokePressureInfo,
     initializeStrokeTimeInfo,
     clearStrokeInfo,
     onlyInitializeStrokePressureInfo,
@@ -331,7 +330,7 @@ export default function PPUndoEditor(props: Props) {
 
   const handleResetStrokePressureInfo = (allRecords: any) => {
     clearStrokePressureInfo();
-    allRecords.forEach((record: any, index: number) => {
+    allRecords.forEach((record: any, _: number) => {
       if (record.typeName === "shape" && record.type === "draw") {
         // const points = record.props.segments[0].points;
         // const pressureList = points.map((point: any) =>

@@ -1,6 +1,6 @@
 // EditorUtils.ts
 import { TLGroupDrawArea, TLStrokePressureInfo } from "@/@types/note";
-import { DefaultDashStyle, DefaultSizeStyle, Editor, StoreSnapshot, TLRecord } from "@tldraw/tldraw";
+import { DefaultDashStyle, DefaultSizeStyle, Editor, StoreSnapshot, TLParentId, TLRecord, TLShape, TLShapeId } from "@tldraw/tldraw";
 
 export class EditorUtils {
   private editor: Editor;
@@ -37,6 +37,15 @@ export class EditorUtils {
   async getSvg(): Promise<SVGElement | undefined> {
     try {
       return await this.editor.getSvg(this.editor.currentPageShapes);
+    } catch (e) {
+      console.error("エラーが発生しました。", e);
+      return undefined;
+    }
+  }
+
+  async getSvgWithStroke(shapes: TLShape[] | TLShapeId[]): Promise<SVGElement | undefined> {
+    try {
+      return await this.editor.getSvg(shapes)
     } catch (e) {
       console.error("エラーが発生しました。", e);
       return undefined;
@@ -180,4 +189,9 @@ export class EditorUtils {
   undo(): void {
     this.editor.undo();
   }
+
+  getShapeById(id: TLParentId): TLShape | undefined {
+    return this.editor.getShape(id);
+  }
+
 }

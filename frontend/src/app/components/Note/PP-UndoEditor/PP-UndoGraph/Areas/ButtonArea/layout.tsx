@@ -12,6 +12,7 @@ interface Props {
   handleResetStrokePressureInfo: (allRecords: any) => void;
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
+  setIsShowLayer: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function ButtonArea(props: Props) {
@@ -25,6 +26,7 @@ export default function ButtonArea(props: Props) {
     handleResetStrokePressureInfo,
     pMode,
     setPMode,
+    setIsShowLayer
   } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,7 +44,7 @@ export default function ButtonArea(props: Props) {
 
   const RedoButton = () => {
     return (
-      <div className="area">
+      <div className="area flex items-center justify-around">
         {isOpen && (
           <LogList
             id={id}
@@ -56,11 +58,11 @@ export default function ButtonArea(props: Props) {
           />
         )}
         <div className="title">
-          <p className="text-center font-bold text-md mb-2">Redo</p>
+          <p className="text-center font-bold text-md">Redo</p>
         </div>
         <div className="button-list flex flex-col items-center">
           <button
-            className="history-button text-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out mb-2"
+            className="history-button text-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
             onClick={handleOpen}
           >
             History
@@ -72,15 +74,15 @@ export default function ButtonArea(props: Props) {
 
   const PModeSwitch = () => {
     return (
-      <div className="area p-mode-switch-container my-4">
+      <div className="area p-mode-switch-container my-4 flex items-center justify-around">
         <div className="title">
-          <p className="text-center font-bold text-md mb-2">Mode</p>
+          <p className="text-center font-bold text-md">Mode</p>
         </div>
         <div className="p-mode-switch flex justify-center items-center">
           <div
             className={`switch ${
               pMode === "average" ? "left" : "right"
-            } bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full cursor-pointer transition-all mb-2 text-center`}
+            } bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full cursor-pointer transition-all text-center`}
             onClick={togglePMode}
           >
             {pMode === "average" ? "Average" : "Grouping"}
@@ -90,10 +92,29 @@ export default function ButtonArea(props: Props) {
     );
   };
 
+  const CheckLayerButton = () => {
+    return (
+      <div className="area flex items-center justify-around">
+        <div className="title">
+          <p className="text-center font-bold text-md">Check Layer</p>
+        </div>
+        <div className="button-list flex flex-col items-center">
+          <button
+            className="history-button text-center bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+            onClick={() => {setIsShowLayer(true)}}
+          >
+            Show
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <RedoButton />
       <PModeSwitch />
+      <CheckLayerButton />
     </>
   );
 }

@@ -57,3 +57,30 @@ body {
   overflow: hidden;
   white-space: nowrap;
 }
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* styles.css */
+@keyframes fadeIn {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: black;
+  }
+}
+
+@keyframes moveLayers {
+  from {
+    transform: translateX(0) translateZ(0) rotateY(-10deg);
+  }
+  to {
+    transform: translateX(var(--translateX)) translateZ(var(--translateZ)) rotateY(-10deg);
+  }
+}
+
+.layer-animation {
+  animation: moveLayers 1s forwards;
+}

@@ -30,6 +30,7 @@ interface Props {
   setBoundaryValue: Dispatch<SetStateAction<number>>;
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
+  setIsShowLayer: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -57,6 +58,7 @@ export default function PPUndoGraph(props: Props) {
     setBoundaryValue,
     pMode,
     setPMode,
+    setIsShowLayer,
   } = props;
   return (
     <div>
@@ -100,6 +102,7 @@ export default function PPUndoGraph(props: Props) {
                 handleResetStrokePressureInfo={handleResetStrokePressureInfo}
                 setPMode={setPMode}
                 pMode={pMode}
+                setIsShowLayer={setIsShowLayer}
               />
             </div>
           )}

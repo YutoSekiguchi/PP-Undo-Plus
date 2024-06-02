@@ -5,6 +5,7 @@ import {
   Editor,
   StoreSnapshot,
   TLEventMapHandler,
+  TLParentId,
   TLRecord,
   Tldraw,
 } from "@tldraw/tldraw";
@@ -39,6 +40,8 @@ import {
 import calculateDistance from "@/app/modules/note/calculateDistance";
 import { Lang } from "../../common/lang";
 import GroupAreaVisualizer from "./Grouping/GroupAreaVisualizer";
+import PPLayer from "./Layer/layout";
+import PPLayerVisualizer from "./Layer/layout";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -105,6 +108,7 @@ export default function PPUndoEditor(props: Props) {
     null
   );
   const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
+  const [isShowLayer, setIsShowLayer] = useState<boolean>(false);
   const [
     avgPressureForUpdateGroupPressures,
     setAvgPressureForUpdateGroupPressures,
@@ -123,7 +127,7 @@ export default function PPUndoEditor(props: Props) {
     initializeStrokeTimeInfo,
     clearStrokeInfo,
     onlyInitializeStrokePressureInfo,
-    onlyInitializeStrokePressureInfoStore
+    onlyInitializeStrokePressureInfoStore,
   } = useStrokePressureInfo();
   const [editorUtils, setEditorUtils] = useState<EditorUtils>();
   const [container, setContainer] = useState<HTMLElement | null>(null);
@@ -326,7 +330,7 @@ export default function PPUndoEditor(props: Props) {
       handleResetStrokePressureInfo(editorUtils?.getAllRecords());
       setIsResetStrokePressure(false);
     }
-  }, [isResetStrokePressure]);
+  }, [isResetStrokePressure, isShowLayer]);
 
   const handleResetStrokePressureInfo = (allRecords: any) => {
     clearStrokePressureInfo();
@@ -387,6 +391,26 @@ export default function PPUndoEditor(props: Props) {
     }
   };
 
+  // グループの合体処理
+  const combineGroupArea = (
+    fromGroupArea: TLGroupDrawArea,
+    toGroupArea: TLGroupDrawArea
+  ) => {
+    const fromGroupAreaIds = fromGroupArea.ids;
+    // const toGroupAreaIds = toGroupArea.ids;
+    // fromGroupAreaのgroupIDとavgをtoGroupAreaのものに変更
+    for (const id of fromGroupAreaIds) {
+      if (strokePressureInfo[id]) {
+        addStrokePressureInfo(
+          id,
+          toGroupArea.groupID,
+          strokePressureInfo[id].avg,
+          toGroupArea.groupPressure
+        );
+      }
+    }
+  };
+
   const BackButton = () => {
     const router = useRouter();
 
@@ -419,7 +443,7 @@ export default function PPUndoEditor(props: Props) {
             : "";
           noteData.Snapshot = snapshot ? JSON.stringify(snapshot) : "";
           noteData.PressureInfo = JSON.stringify(strokePressureInfo);
-          noteData.AllPressureInfo = JSON.stringify(strokePressureInfoStore)
+          noteData.AllPressureInfo = JSON.stringify(strokePressureInfoStore);
           noteData.SvgPath = filename;
           noteData.OperationJsonPath = operationFilename;
           noteData.WTime = wTime;
@@ -564,75 +588,86 @@ export default function PPUndoEditor(props: Props) {
   }, [editor]);
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ width: width, height: height, position: "relative" }}>
-        {container && ReactDOM.createPortal(<BackButton />, container)}
-        {pointerPosition.x !== 0 && pointerPosition.y !== 0 && editorUtils && (
-          <NowAvgPressureGauge
-            pointerPosition={pointerPosition}
-            nowAvgPressure={nowAvgPressure}
-            editorUtils={editorUtils}
-          />
-        )}
-        <Tldraw
-          onMount={setAppToState}
-          tools={isIncludePressureEraser ? customTools : undefined}
-          overrides={isIncludePressureEraser ? uiOverrides : undefined}
-          hideUi={isHideUI}
-        />
-        {pMode === "grouping" && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 999,
-              pointerEvents: "none",
-            }}
-          >
-            <GroupAreaVisualizer
-              groupAreas={groupAreas}
-              width={width.toString()}
-              height={height.toString()}
-              zoomLevel={camera.z}
-              offsetX={camera.x}
-              offsetY={camera.y}
-              updateGroupPressure={updateGroupPressure}
-              isOperatingGroupID={isOperatingGroupID}
-              setIsOperatingGroupID={setIsOperatingGroupID}
-              setAvgPressureForUpdateGroupPressure={
-                setAvgPressureForUpdateGroupPressures
-              }
-              avgPressureForUpdateGroupPressure={
-                avgPressureForUpdateGroupPressures
-              }
+    <>
+      {isShowLayer && (
+        <div>
+          <PPLayerVisualizer groupAreas={groupAreas} editorUtils={editorUtils} setIsShowLayer={setIsShowLayer} />
+        </div>
+      )}
+        <div style={{ display: isShowLayer ? "hidden" : "flex" }}>
+          <div style={{ width: width, height: height, position: "relative" }}>
+            {container && ReactDOM.createPortal(<BackButton />, container)}
+            {pointerPosition.x !== 0 &&
+              pointerPosition.y !== 0 &&
+              editorUtils && (
+                <NowAvgPressureGauge
+                  pointerPosition={pointerPosition}
+                  nowAvgPressure={nowAvgPressure}
+                  editorUtils={editorUtils}
+                />
+              )}
+            <Tldraw
+              onMount={setAppToState}
+              tools={isIncludePressureEraser ? customTools : undefined}
+              overrides={isIncludePressureEraser ? uiOverrides : undefined}
+              hideUi={isHideUI}
             />
+            {pMode === "grouping" && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  zIndex: 999,
+                  pointerEvents: "none",
+                }}
+              >
+                <GroupAreaVisualizer
+                  groupAreas={groupAreas}
+                  width={width.toString()}
+                  height={height.toString()}
+                  zoomLevel={camera.z}
+                  offsetX={camera.x}
+                  offsetY={camera.y}
+                  updateGroupPressure={updateGroupPressure}
+                  combineGroupArea={combineGroupArea}
+                  isOperatingGroupID={isOperatingGroupID}
+                  setIsOperatingGroupID={setIsOperatingGroupID}
+                  setAvgPressureForUpdateGroupPressure={
+                    setAvgPressureForUpdateGroupPressures
+                  }
+                  avgPressureForUpdateGroupPressure={
+                    avgPressureForUpdateGroupPressures
+                  }
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <PPUndoGraph
-        width={`calc(100vw - ${width})`}
-        height={graphHeight}
-        padding={graphPadding}
-        background={graphBackground}
-        editor={editor}
-        editorUtils={editorUtils}
-        id={Number(id)}
-        isDemo={isDemo}
-        handleResetStrokePressureInfo={handleResetStrokePressureInfo}
-        wTime={wTime}
-        setWTime={setWTime}
-        wPressure={wPressure}
-        setWPressure={setWPressure}
-        wDistance={wDistance}
-        setWDistance={setWDistance}
-        boundaryValue={boundaryValue}
-        setBoundaryValue={setBoundaryValue}
-        pMode={pMode}
-        setPMode={setPMode}
-      />
-    </div>
+          <PPUndoGraph
+            width={`calc(100vw - ${width})`}
+            height={graphHeight}
+            padding={graphPadding}
+            background={graphBackground}
+            editor={editor}
+            editorUtils={editorUtils}
+            id={Number(id)}
+            isDemo={isDemo}
+            handleResetStrokePressureInfo={handleResetStrokePressureInfo}
+            wTime={wTime}
+            setWTime={setWTime}
+            wPressure={wPressure}
+            setWPressure={setWPressure}
+            wDistance={wDistance}
+            setWDistance={setWDistance}
+            boundaryValue={boundaryValue}
+            setBoundaryValue={setBoundaryValue}
+            pMode={pMode}
+            setPMode={setPMode}
+            setIsShowLayer={setIsShowLayer}
+          />
+        </div>
+    </>
   );
 }

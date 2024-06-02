@@ -6,7 +6,7 @@ export default function NoteDemo() {
       width={"75vw"}
       height={"100vh"}
       isDisplayChangePageButton={false}
-      isDemo={false}
+      isDemo={true}
       mode={"demo"}
     />
   );

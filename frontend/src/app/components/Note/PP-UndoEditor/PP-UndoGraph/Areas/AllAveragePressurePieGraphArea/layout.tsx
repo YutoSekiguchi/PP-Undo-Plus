@@ -26,6 +26,7 @@ export default function AllAveragePressurePieGraphArea() {
     if (strokePressureInfo) {
       let avgTmp = 0;
       for (const id in strokePressureInfo) {
+        if (!strokePressureInfo[id]["avg"]) continue;
         avgTmp += strokePressureInfo[id]["avg"];
       }
       avgTmp /= Object.keys(strokePressureInfo).length;

@@ -80,39 +80,40 @@ export default function LogList(props: Props) {
           History List
         </div>
       </div>
-      {isDemo && (
+      {isDemo ? (
         <div className="text-center text-sm text-gray-400 my-4">
           This function is not available in demo mode.
         </div>
+      ) : (
+        <div className="loglist flex flex-col items-center pb-24">
+          {logs.map((log: TLNoteLogData, i: number) => {
+            return (
+              <div key={i} className="text-xs mx-auto">
+                <div
+                  className="loglist-item-img mb-2"
+                  onClick={handleClickLog(log)}
+                >
+                  {log.SvgPath !== "" && (
+                    <img
+                      src={
+                        process.env.FILE_SERVER_URL +
+                        "/svgs/" +
+                        log.SvgPath +
+                        ".svg"
+                      }
+                      className="log-img hover:opacity-50 hover:bg-gray-200 text-center mx-auto"
+                      onError={handleImageError}
+                    />
+                  )}
+                </div>
+                <div className="notelist-main-item-date text-gray-400 text-center cursor-default">
+                  {formatDate(log.UpdatedAt)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
-      <div className="loglist flex flex-col items-center pb-24">
-        {logs.map((log: TLNoteLogData, i: number) => {
-          return (
-            <div key={i} className="text-xs mx-auto">
-              <div
-                className="loglist-item-img mb-2"
-                onClick={handleClickLog(log)}
-              >
-                {log.SvgPath !== "" && (
-                  <img
-                    src={
-                      process.env.FILE_SERVER_URL +
-                      "/svgs/" +
-                      log.SvgPath +
-                      ".svg"
-                    }
-                    className="log-img hover:opacity-50 hover:bg-gray-200 text-center mx-auto"
-                    onError={handleImageError}
-                  />
-                )}
-              </div>
-              <div className="notelist-main-item-date text-gray-400 text-center cursor-default">
-                {formatDate(log.UpdatedAt)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

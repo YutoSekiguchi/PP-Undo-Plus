@@ -244,27 +244,63 @@ export default function PPUndoEditor(props: Props) {
         if (score >= boundaryValue) {
           isCreateNewGroup = true;
         }
-
+        console.log(strokePressureInfo)
+        console.log(secondLastRecord.id)
+        console.log(lastRecord.id)
         if (isCreateNewGroup) {
-          addStrokePressureInfo(
-            drawingStrokeId,
-            strokePressureInfo[secondLastRecord.id] &&
-              strokePressureInfo[secondLastRecord.id].groupID
-              ? strokePressureInfo[secondLastRecord.id].groupID + 1
-              : strokePressureInfo[lastRecord.id].groupID + 1,
-            avgPressure,
-            avgPressure
-          );
+          if (strokePressureInfo[secondLastRecord.id] && strokePressureInfo[secondLastRecord.id].groupID) {
+            addStrokePressureInfo(
+              drawingStrokeId,
+              strokePressureInfo[secondLastRecord.id].groupID + 1,
+              avgPressure,
+              avgPressure
+            );
+          } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
+            addStrokePressureInfo(
+              drawingStrokeId,
+              strokePressureInfo[lastRecord.id].groupID + 1,
+              avgPressure,
+              avgPressure
+            );
+          } else {
+            // strokePressureInfoの中で最も大きいgroupIDを取得
+            const groupIDs = Object.values(strokePressureInfo).map((info) => info.groupID);
+            const maxGroupID = Math.max(...groupIDs);
+            addStrokePressureInfo(
+              drawingStrokeId,
+              maxGroupID,
+              avgPressure,
+              avgPressure
+            )
+          }
         } else {
-          addStrokePressureInfo(
-            drawingStrokeId,
-            strokePressureInfo[secondLastRecord.id] &&
-              strokePressureInfo[secondLastRecord.id].groupID
-              ? strokePressureInfo[secondLastRecord.id].groupID
-              : strokePressureInfo[lastRecord.id].groupID,
-            avgPressure,
-            strokePressureInfo[secondLastRecord.id].group
-          );
+          if (strokePressureInfo[secondLastRecord.id] && strokePressureInfo[secondLastRecord.id].groupID) {
+            addStrokePressureInfo(
+              drawingStrokeId,
+              strokePressureInfo[secondLastRecord.id].groupID,
+              avgPressure,
+              strokePressureInfo[secondLastRecord.id].group
+            );
+          } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
+            addStrokePressureInfo(
+              drawingStrokeId,
+              strokePressureInfo[lastRecord.id].groupID,
+              avgPressure,
+              strokePressureInfo[lastRecord.id].group
+            );
+          } else {
+            // strokePressureInfoの中で最も大きいgroupIDを取得
+            const groupIDs = Object.values(strokePressureInfo).map((info) => info.groupID);
+            const maxGroupID = Math.max(...groupIDs);
+            // groupAreaでmaxGroupIDと一致する要素のgroupPressureを取得
+            const groupPressure = groupAreas.filter((area) => area.groupID === maxGroupID)[0]? groupAreas.filter((area) => area.groupID === maxGroupID)[0].groupPressure: 0;
+            addStrokePressureInfo(
+              drawingStrokeId,
+              maxGroupID,
+              avgPressure,
+              groupPressure ?? 0,
+            )
+          }
         }
         drawingStrokeId = "";
         drawingPressureList = [];
@@ -342,8 +378,10 @@ export default function PPUndoEditor(props: Props) {
         // );
         // const avgPressure = getAverageOfNumberList(pressureList);
         const info = strokePressureInfoStore[record.id];
-        addStrokePressureInfo(record.id, info.groupID, info.avg, info.group);
-      }
+        if (info) {
+          addStrokePressureInfo(record.id, info.groupID, info.avg, info.group);
+        }
+        }
     });
   };
 

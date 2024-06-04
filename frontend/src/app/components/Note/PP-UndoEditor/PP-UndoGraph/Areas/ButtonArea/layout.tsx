@@ -57,9 +57,9 @@ export default function ButtonArea(props: Props) {
             handleResetStrokePressureInfo={handleResetStrokePressureInfo}
           />
         )}
-        <div className="title">
+        {/* <div className="title">
           <p className="text-center font-bold text-md">Redo</p>
-        </div>
+        </div> */}
         <div className="button-list flex flex-col items-center">
           <button
             className="history-button text-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
@@ -75,9 +75,9 @@ export default function ButtonArea(props: Props) {
   const PModeSwitch = () => {
     return (
       <div className="area p-mode-switch-container my-4 flex items-center justify-around">
-        <div className="title">
+        {/* <div className="title">
           <p className="text-center font-bold text-md">Mode</p>
-        </div>
+        </div> */}
         <div className="p-mode-switch flex justify-center items-center">
           <div
             className={`switch ${
@@ -95,15 +95,15 @@ export default function ButtonArea(props: Props) {
   const CheckLayerButton = () => {
     return (
       <div className="area flex items-center justify-around">
-        <div className="title">
+        {/* <div className="title">
           <p className="text-center font-bold text-md">Check Layer</p>
-        </div>
+        </div> */}
         <div className="button-list flex flex-col items-center">
           <button
             className="history-button text-center bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
             onClick={() => {setIsShowLayer(true)}}
           >
-            Show
+            Layer
           </button>
         </div>
       </div>

@@ -221,6 +221,8 @@ const GroupAreaVisualizer: React.FC<Props> = ({
 
     let dragStartPosition: { x: number; y: number } | null = null;
 
+    let updatePressureList: number[] = [];
+
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
       setIsPointerDown(true);
       setPointerDownTime(Date.now());
@@ -229,6 +231,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       // setDragStartPosition({ x: e.clientX, y: e.clientY });
       dragStartPosition = { x: e.clientX, y: e.clientY };
       setDraggingPosition({ x: e.clientX, y: e.clientY });
+      updatePressureList = [];
 
       // ドキュメント全体に対してポインタムーブとポインタアップのイベントリスナーを追加
       document.addEventListener("pointermove", handleDocumentPointerMove);
@@ -249,12 +252,13 @@ const GroupAreaVisualizer: React.FC<Props> = ({
           const pressure =
             event.pointerType === "pen" ? event.pressure : Math.random();
           const pressureList = [...avgPressureForUpdateGroupPressure, pressure];
-          setAvgPressureForUpdateGroupPressure(pressureList);
+          updatePressureList.push(pressure);
+          // console.log(updatePressureList)
+          setAvgPressureForUpdateGroupPressure(updatePressureList);
           const avgAllPressures =
-            pressureList.reduce((acc, cur) => acc + cur, 0) /
-            pressureList.length;
+            updatePressureList.reduce((acc, cur) => acc + cur, 0) /
+            updatePressureList.length;
           updateGroupPressure(area, avgAllPressures);
-          
         }
       }
       // }
@@ -262,7 +266,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
 
     const handleDocumentPointerUp = () => {
       if (isPointerDown) {
-        const pressureList = avgPressureForUpdateGroupPressure;
+        const pressureList = updatePressureList;
         const pressureListLength = pressureList.length;
         let lastPressure = pressureList[pressureListLength - 1];
         let i = pressureListLength - 2;
@@ -302,6 +306,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
       dragStartPosition = null;
       setDraggingPosition(null);
       setIsHovered(false);
+      updatePressureList = [];
       document.removeEventListener("pointermove", handleDocumentPointerMove);
       document.removeEventListener("pointerup", handleDocumentPointerUp);
     };

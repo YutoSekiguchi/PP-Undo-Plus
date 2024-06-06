@@ -1,6 +1,15 @@
 // EditorUtils.ts
 import { TLGroupDrawArea, TLStrokePressureInfo } from "@/@types/note";
-import { DefaultDashStyle, DefaultSizeStyle, Editor, StoreSnapshot, TLParentId, TLRecord, TLShape, TLShapeId } from "@tldraw/tldraw";
+import {
+  DefaultDashStyle,
+  DefaultSizeStyle,
+  Editor,
+  StoreSnapshot,
+  TLParentId,
+  TLRecord,
+  TLShape,
+  TLShapeId,
+} from "@tldraw/tldraw";
 
 export class EditorUtils {
   private editor: Editor;
@@ -43,9 +52,11 @@ export class EditorUtils {
     }
   }
 
-  async getSvgWithStroke(shapes: TLShape[] | TLShapeId[]): Promise<SVGElement | undefined> {
+  async getSvgWithStroke(
+    shapes: TLShape[] | TLShapeId[]
+  ): Promise<SVGElement | undefined> {
     try {
-      return await this.editor.getSvg(shapes)
+      return await this.editor.getSvg(shapes);
     } catch (e) {
       console.error("エラーが発生しました。", e);
       return undefined;
@@ -107,23 +118,25 @@ export class EditorUtils {
     });
   }
 
-  getGroupDrawAreas(strokePressureInfo: TLStrokePressureInfo): TLGroupDrawArea[] {
+  getGroupDrawAreas(
+    strokePressureInfo: TLStrokePressureInfo
+  ): TLGroupDrawArea[] {
     const allDrawArea = this.getAllDrawAreas();
     const groupDrawAreas: TLGroupDrawArea[] = [];
-  
+
     Object.keys(strokePressureInfo).forEach((id) => {
       const groupID = strokePressureInfo[id].groupID;
       const groupPressure = strokePressureInfo[id].group;
       const targetDrawArea = allDrawArea.find((drawArea) => drawArea.id === id);
-  
+
       if (targetDrawArea) {
         const targetGroupDrawArea = groupDrawAreas.find(
           (groupDrawArea) => groupDrawArea.groupID === groupID
         );
-  
+
         if (targetGroupDrawArea) {
           targetGroupDrawArea.ids.push(id);
-  
+
           // Calculate the right and bottom coordinates
           const right = Math.max(
             targetGroupDrawArea.left + targetGroupDrawArea.width,
@@ -133,15 +146,18 @@ export class EditorUtils {
             targetGroupDrawArea.top + targetGroupDrawArea.height,
             targetDrawArea.top + targetDrawArea.height
           );
-  
+
           // Update left and top coordinates
-          const newLeft = Math.min(targetGroupDrawArea.left, targetDrawArea.left);
+          const newLeft = Math.min(
+            targetGroupDrawArea.left,
+            targetDrawArea.left
+          );
           const newTop = Math.min(targetGroupDrawArea.top, targetDrawArea.top);
-  
+
           // Update width and height based on the new left and top coordinates
           targetGroupDrawArea.width = right - newLeft;
           targetGroupDrawArea.height = bottom - newTop;
-  
+
           // Update left and top coordinates
           targetGroupDrawArea.left = newLeft;
           targetGroupDrawArea.top = newTop;
@@ -149,7 +165,7 @@ export class EditorUtils {
           // Calculate the right and bottom coordinates for the first draw area in the group
           const right = targetDrawArea.left + targetDrawArea.width;
           const bottom = targetDrawArea.top + targetDrawArea.height;
-  
+
           groupDrawAreas.push({
             ids: [id],
             left: targetDrawArea.left,
@@ -162,12 +178,31 @@ export class EditorUtils {
         }
       }
     });
-  
+
     return groupDrawAreas;
   }
 
+  getGroupDrawAreasByGroupID(
+    groupID: number,
+    strokePressureInfo: TLStrokePressureInfo
+  ): TLGroupDrawArea | undefined {
+    const groupDrawAreas = this.getGroupDrawAreas(strokePressureInfo);
+    return groupDrawAreas.find((groupDrawArea) => groupDrawArea.groupID === groupID);
+  }
+
+  getGroupDrawAreaPressureByGroupID(
+    groupID: number,
+    strokePressureInfo: TLStrokePressureInfo
+  ): number | undefined {
+    const groupDrawAreas = this.getGroupDrawAreas(strokePressureInfo);
+    const targetGroupDrawArea = groupDrawAreas.find(
+      (groupDrawArea) => groupDrawArea.groupID === groupID
+    );
+    return targetGroupDrawArea ? targetGroupDrawArea.groupPressure : undefined;
+  }
+
   getZoomLevel(): number {
-    return this.editor.zoomLevel
+    return this.editor.zoomLevel;
   }
 
   getCameraData(): { x: number; y: number; z: number } {
@@ -194,4 +229,63 @@ export class EditorUtils {
     return this.editor.getShape(id);
   }
 
+  getShapeColor(id: TLParentId): "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" {
+    const shape = this.editor.getShape(id);
+    if (shape && "props" in shape && "color" in shape.props) {
+      return shape.props.color;
+    }
+    return "black";
+  }
+
+  setColorOfGroupingShapes(
+    strokePressureInfo: TLStrokePressureInfo,
+  ): void {
+    const allRecords = this.editor.store.allRecords();
+    allRecords.forEach((record: any) => {
+      if (record.type === "draw") {
+        const shape = this.editor.getShape(record.id as TLShapeId);
+        if (shape && "props" in shape && "color" in shape.props) {
+          const id = shape.id;
+          const groupID = strokePressureInfo[id].groupID;
+          const groupPressure = strokePressureInfo[id].group;
+          const color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" = 
+            groupPressure > 0.9 ? "red" :
+            groupPressure > 0.8 ? "orange" :
+            groupPressure > 0.7 ? "yellow" :
+            groupPressure > 0.6 ? "light-green" :
+            groupPressure > 0.5 ? "green" :
+            groupPressure > 0.4 ? "light-blue" :
+            groupPressure > 0.3 ? "blue" :
+            groupPressure > 0.2 ? "light-violet" :
+            groupPressure > 0.1 ? "violet" :
+            "grey";
+
+
+          if (groupID === 0) {
+            shape.props.color = color;
+          } else {
+            const groupShape = this.editor.getShape(record.id);
+            if (groupShape && "props" in groupShape && "color" in groupShape.props) {
+              groupShape.props.color = color;
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // strokePressureInfoを渡してidが一致するもののストロークの色をstrokePressureInfo.colorに変える
+  setColorOfShapes(strokePressureInfo: TLStrokePressureInfo): void {
+    const allRecords = this.editor.store.allRecords();
+    allRecords.forEach((record: any) => {
+      if (record.type === "draw") {
+        const shape = this.editor.getShape(record.id as TLShapeId);
+        if (shape && "props" in shape && "color" in shape.props) {
+          const id = shape.id;
+          const color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" = strokePressureInfo[id].color;
+          shape.props.color = color;
+        }
+      }
+    });
+  }
 }

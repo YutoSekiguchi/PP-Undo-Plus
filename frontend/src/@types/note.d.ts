@@ -4,6 +4,7 @@ export interface TLStrokePressureInfoItem {
   groupID: number;
   avg: number;
   group: number;
+  color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow";
 }
 
 export interface TLStrokeTimeAndLengthInfoItem {
@@ -71,6 +72,8 @@ export interface TLPostNoteLogData {
   Snapshot: string;
   SvgPath: string;
 }
+
+export type TLGroupVisualMode = "area" | "line" | "none";
 
 export interface TLNoteData extends TLPostNoteData, TLIDAndCreatedAtAndUpdatedAt{}
 

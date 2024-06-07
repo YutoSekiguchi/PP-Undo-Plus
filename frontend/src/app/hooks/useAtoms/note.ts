@@ -15,6 +15,7 @@ export const useStrokePressureInfo = () => {
     groupID: number,
     avg: number,
     group: number,
+    color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow"
   ) => {
     setStrokePressureInfo((prev: TLStrokePressureInfo) => ({
       ...prev,
@@ -22,6 +23,7 @@ export const useStrokePressureInfo = () => {
         groupID,
         avg,
         group,
+        color,
       },
     }));
     setStrokePressureInfoStore((prev: TLStrokePressureInfo) => ({
@@ -30,6 +32,7 @@ export const useStrokePressureInfo = () => {
         groupID,
         avg,
         group,
+        color,
       },
     }));
   };

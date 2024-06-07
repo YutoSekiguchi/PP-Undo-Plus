@@ -12,7 +12,7 @@ export const AllPressureAveragePieGraphConfig = () => {
         display: false,
       },
     },
-    cutout: 45,
+    cutout: "80%",
     radius: "90%",
     maintainAspectRatio: false,
     animation: {

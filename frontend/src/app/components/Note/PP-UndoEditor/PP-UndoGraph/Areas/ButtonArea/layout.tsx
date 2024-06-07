@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { EditorUtils } from "../../../util";
 import LogList from "../../LogList/layout";
+import { TLGroupVisualMode } from "@/@types/note";
 
 interface Props {
   editorUtils: EditorUtils;
@@ -13,6 +14,8 @@ interface Props {
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
   setIsShowLayer: Dispatch<SetStateAction<boolean>>;
+  groupVisualMode: TLGroupVisualMode;
+  setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
 }
 
 export default function ButtonArea(props: Props) {
@@ -26,7 +29,9 @@ export default function ButtonArea(props: Props) {
     handleResetStrokePressureInfo,
     pMode,
     setPMode,
-    setIsShowLayer
+    setIsShowLayer,
+    groupVisualMode,
+    setGroupVisualMode
   } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,11 +45,11 @@ export default function ButtonArea(props: Props) {
 
   const togglePMode = () => {
     setPMode(pMode === "average" ? "grouping" : "average");
-  };
+  }
 
   const RedoButton = () => {
     return (
-      <div className="area flex items-center justify-around">
+      <div className="flex items-center justify-around">
         {isOpen && (
           <LogList
             id={id}
@@ -74,7 +79,7 @@ export default function ButtonArea(props: Props) {
 
   const PModeSwitch = () => {
     return (
-      <div className="area p-mode-switch-container my-4 flex items-center justify-around">
+      <div className="p-mode-switch-container my-4 flex items-center justify-around">
         {/* <div className="title">
           <p className="text-center font-bold text-md">Mode</p>
         </div> */}
@@ -94,7 +99,7 @@ export default function ButtonArea(props: Props) {
 
   const CheckLayerButton = () => {
     return (
-      <div className="area flex items-center justify-around">
+      <div className="flex items-center justify-around">
         {/* <div className="title">
           <p className="text-center font-bold text-md">Check Layer</p>
         </div> */}
@@ -110,11 +115,61 @@ export default function ButtonArea(props: Props) {
     );
   }
 
+  const ChangeGroupVisualButton = () => {
+    const nextMode = () => {
+      switch (groupVisualMode) {
+        case "area":
+          return "line";
+        case "line":
+          return "none";
+        case "none":
+          return "area";
+        default:
+          return "none";
+      }
+    };
+
+    const buttonText = () => {
+      switch (groupVisualMode) {
+        case "area":
+          return "Area";
+        case "line":
+          return "Line";
+        case "none":
+          return "None";
+        default:
+          return "Unknown";
+      }
+    };
+
+    return (
+      <div className="flex items-center justify-around">
+        <div className="button-list flex flex-col items-center">
+          <button
+            className="history-button text-center bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+            onClick={() => setGroupVisualMode(nextMode())}
+          >
+            {buttonText()}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <RedoButton />
-      <PModeSwitch />
-      <CheckLayerButton />
+      <div className="area my-auto">
+        <div className="flex flex-col gap-4 items-center justify-center mt-4">
+          <div className="flex gap-2">
+            <RedoButton />
+            <CheckLayerButton />
+          </div>
+          <div className="flex gap-2">
+            <PModeSwitch />
+            <ChangeGroupVisualButton />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

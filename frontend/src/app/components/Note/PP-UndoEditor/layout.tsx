@@ -28,6 +28,7 @@ import { getNoteByID, updateNote } from "@/app/lib/note";
 import {
   TLCamera,
   TLGroupDrawArea,
+  TLGroupVisualMode,
   TLNoteData,
   TLStrokePressureInfo,
 } from "@/@types/note";
@@ -113,6 +114,7 @@ export default function PPUndoEditor(props: Props) {
     avgPressureForUpdateGroupPressures,
     setAvgPressureForUpdateGroupPressures,
   ] = useState<number[]>([]);
+  const [groupVisualMode, setGroupVisualMode] = useState<TLGroupVisualMode>("area");
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
@@ -195,7 +197,8 @@ export default function PPUndoEditor(props: Props) {
         drawingStrokeId,
         groupAreas.length + 1,
         avgPressure,
-        avgPressure
+        avgPressure,
+        editorUtils.getShapeColor(drawingStrokeId as TLParentId)
       );
       drawingStrokeId = "";
       drawingPressureList = [];
@@ -244,23 +247,23 @@ export default function PPUndoEditor(props: Props) {
         if (score >= boundaryValue) {
           isCreateNewGroup = true;
         }
-        console.log(strokePressureInfo)
-        console.log(secondLastRecord.id)
-        console.log(lastRecord.id)
+        console.log(editorUtils.getAllRecords());
         if (isCreateNewGroup) {
           if (strokePressureInfo[secondLastRecord.id] && strokePressureInfo[secondLastRecord.id].groupID) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[secondLastRecord.id].groupID + 1,
               avgPressure,
-              avgPressure
+              avgPressure,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
           } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[lastRecord.id].groupID + 1,
               avgPressure,
-              avgPressure
+              avgPressure,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
           } else {
             // strokePressureInfoの中で最も大きいgroupIDを取得
@@ -270,7 +273,8 @@ export default function PPUndoEditor(props: Props) {
               drawingStrokeId,
               maxGroupID,
               avgPressure,
-              avgPressure
+              avgPressure,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             )
           }
         } else {
@@ -279,14 +283,16 @@ export default function PPUndoEditor(props: Props) {
               drawingStrokeId,
               strokePressureInfo[secondLastRecord.id].groupID,
               avgPressure,
-              strokePressureInfo[secondLastRecord.id].group
+              strokePressureInfo[secondLastRecord.id].group,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
           } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[lastRecord.id].groupID,
               avgPressure,
-              strokePressureInfo[lastRecord.id].group
+              strokePressureInfo[lastRecord.id].group,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
           } else {
             // strokePressureInfoの中で最も大きいgroupIDを取得
@@ -299,6 +305,7 @@ export default function PPUndoEditor(props: Props) {
               maxGroupID,
               avgPressure,
               groupPressure ?? 0,
+              editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             )
           }
         }
@@ -369,6 +376,7 @@ export default function PPUndoEditor(props: Props) {
   }, [isResetStrokePressure, isShowLayer]);
 
   const handleResetStrokePressureInfo = (allRecords: any) => {
+    if (editorUtils === undefined) return;
     clearStrokePressureInfo();
     allRecords.forEach((record: any, _: number) => {
       if (record.typeName === "shape" && record.type === "draw") {
@@ -379,7 +387,7 @@ export default function PPUndoEditor(props: Props) {
         // const avgPressure = getAverageOfNumberList(pressureList);
         const info = strokePressureInfoStore[record.id];
         if (info) {
-          addStrokePressureInfo(record.id, info.groupID, info.avg, info.group);
+          addStrokePressureInfo(record.id, info.groupID, info.avg, info.group, editorUtils.getShapeColor(record.id as TLParentId));
         }
         }
     });
@@ -415,6 +423,7 @@ export default function PPUndoEditor(props: Props) {
     avgPressure: number
   ) => {
     // Get the ids from groupArea that are in strokePressureInfo, and set their group to avgPressure
+    if (editorUtils === undefined) return;
     const groupAreaIds = groupArea.ids;
     console.log(groupAreas);
     for (const id of groupAreaIds) {
@@ -423,7 +432,8 @@ export default function PPUndoEditor(props: Props) {
           id,
           groupArea.groupID,
           strokePressureInfo[id].avg,
-          avgPressure
+          avgPressure,
+          editorUtils.getShapeColor(id as TLParentId)
         );
       }
     }
@@ -434,6 +444,7 @@ export default function PPUndoEditor(props: Props) {
     fromGroupArea: TLGroupDrawArea,
     toGroupArea: TLGroupDrawArea
   ) => {
+    if (editorUtils === undefined) return;
     const fromGroupAreaIds = fromGroupArea.ids;
     // const toGroupAreaIds = toGroupArea.ids;
     // fromGroupAreaのgroupIDとavgをtoGroupAreaのものに変更
@@ -443,7 +454,8 @@ export default function PPUndoEditor(props: Props) {
           id,
           toGroupArea.groupID,
           strokePressureInfo[id].avg,
-          toGroupArea.groupPressure
+          toGroupArea.groupPressure,
+          editorUtils.getShapeColor(id as TLParentId)
         );
       }
     }
@@ -625,6 +637,23 @@ export default function PPUndoEditor(props: Props) {
     };
   }, [editor]);
 
+  useEffect(() => {
+    // groupVisualModeが変更されたら、描画の更新
+    if (editorUtils === undefined || strokePressureInfo === undefined) return;
+    switch (groupVisualMode) {
+      case "area":
+        editorUtils.setColorOfShapes(strokePressureInfo)
+        break;
+      case "line":
+        editorUtils.setColorOfGroupingShapes(strokePressureInfo)
+        break;
+      case "none":
+        break;
+      default:
+        break;
+    }
+  }, [groupVisualMode, strokePressureInfo])
+
   return (
     <>
       {isShowLayer && (
@@ -650,7 +679,7 @@ export default function PPUndoEditor(props: Props) {
               overrides={isIncludePressureEraser ? uiOverrides : undefined}
               hideUi={isHideUI}
             />
-            {pMode === "grouping" && (
+            {pMode === "grouping" && groupVisualMode === "area" && (
               <div
                 style={{
                   position: "absolute",
@@ -704,6 +733,8 @@ export default function PPUndoEditor(props: Props) {
             pMode={pMode}
             setPMode={setPMode}
             setIsShowLayer={setIsShowLayer}
+            groupVisualMode={groupVisualMode}
+            setGroupVisualMode={setGroupVisualMode}
           />
         </div>
     </>

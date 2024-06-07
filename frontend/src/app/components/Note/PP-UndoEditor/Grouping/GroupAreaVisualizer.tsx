@@ -432,7 +432,7 @@ const GroupAreaVisualizer: React.FC<Props> = ({
         const zoomedWidth = (width + buffer * 2) * zoomLevel;
         const zoomedHeight = (height + buffer * 2) * zoomLevel;
 
-        const buttonSize = 12 * zoomLevel;
+        const buttonSize = 18 * zoomLevel;
         const buttonX = zoomedLeft + zoomedWidth - buttonSize / 2;
         const buttonY = zoomedTop - buttonSize / 2;
 

@@ -5,6 +5,7 @@ import { EditorUtils } from "../util";
 import ButtonArea from "./Areas/ButtonArea/layout";
 import ChangeParametersArea from "./Areas/ChangeParametersArea/layout";
 import { Dispatch, SetStateAction } from "react";
+import { TLGroupVisualMode } from "@/@types/note";
 
 interface Props {
   width: string | number;
@@ -31,6 +32,8 @@ interface Props {
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
   setIsShowLayer: Dispatch<SetStateAction<boolean>>;
+  groupVisualMode: TLGroupVisualMode;
+  setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -41,8 +44,8 @@ export default function PPUndoGraph(props: Props) {
     background,
     isDebugMode = false,
     hideAllAveragePressurePieGraph = false,
-    allAveragePressurePieGraphWidth = "48%",
-    buttonAreaWidth = "48%",
+    allAveragePressurePieGraphWidth = "35%",
+    buttonAreaWidth = "60%",
     editor,
     editorUtils,
     id,
@@ -59,6 +62,8 @@ export default function PPUndoGraph(props: Props) {
     pMode,
     setPMode,
     setIsShowLayer,
+    groupVisualMode,
+    setGroupVisualMode,
   } = props;
   return (
     <div>
@@ -91,7 +96,7 @@ export default function PPUndoGraph(props: Props) {
             </div>
           )}
           {editorUtils && (
-            <div style={{ width: buttonAreaWidth }} className="">
+            <div style={{ width: buttonAreaWidth }} className="flex items-center">
               <ButtonArea
                 editorUtils={editorUtils}
                 id={id}
@@ -103,6 +108,8 @@ export default function PPUndoGraph(props: Props) {
                 setPMode={setPMode}
                 pMode={pMode}
                 setIsShowLayer={setIsShowLayer}
+                groupVisualMode={groupVisualMode}
+                setGroupVisualMode={setGroupVisualMode}
               />
             </div>
           )}

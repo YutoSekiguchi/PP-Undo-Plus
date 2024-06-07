@@ -4,11 +4,13 @@ import {
   DefaultDashStyle,
   DefaultSizeStyle,
   Editor,
+  JsonObject,
   StoreSnapshot,
   TLParentId,
   TLRecord,
   TLShape,
   TLShapeId,
+  TLUnknownShape,
 } from "@tldraw/tldraw";
 
 export class EditorUtils {
@@ -187,7 +189,9 @@ export class EditorUtils {
     strokePressureInfo: TLStrokePressureInfo
   ): TLGroupDrawArea | undefined {
     const groupDrawAreas = this.getGroupDrawAreas(strokePressureInfo);
-    return groupDrawAreas.find((groupDrawArea) => groupDrawArea.groupID === groupID);
+    return groupDrawAreas.find(
+      (groupDrawArea) => groupDrawArea.groupID === groupID
+    );
   }
 
   getGroupDrawAreaPressureByGroupID(
@@ -229,7 +233,21 @@ export class EditorUtils {
     return this.editor.getShape(id);
   }
 
-  getShapeColor(id: TLParentId): "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" {
+  getShapeColor(
+    id: TLParentId
+  ):
+    | "black"
+    | "blue"
+    | "green"
+    | "grey"
+    | "light-blue"
+    | "light-green"
+    | "light-red"
+    | "light-violet"
+    | "orange"
+    | "red"
+    | "violet"
+    | "yellow" {
     const shape = this.editor.getShape(id);
     if (shape && "props" in shape && "color" in shape.props) {
       return shape.props.color;
@@ -237,9 +255,7 @@ export class EditorUtils {
     return "black";
   }
 
-  setColorOfGroupingShapes(
-    strokePressureInfo: TLStrokePressureInfo,
-  ): void {
+  setColorOfGroupingShapes(strokePressureInfo: TLStrokePressureInfo): void {
     const allRecords = this.editor.store.allRecords();
     allRecords.forEach((record: any) => {
       if (record.type === "draw") {
@@ -248,25 +264,58 @@ export class EditorUtils {
           const id = shape.id;
           const groupID = strokePressureInfo[id].groupID;
           const groupPressure = strokePressureInfo[id].group;
-          const color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" = 
-            groupPressure > 0.9 ? "red" :
-            groupPressure > 0.8 ? "orange" :
-            groupPressure > 0.7 ? "yellow" :
-            groupPressure > 0.6 ? "light-green" :
-            groupPressure > 0.5 ? "green" :
-            groupPressure > 0.4 ? "light-blue" :
-            groupPressure > 0.3 ? "blue" :
-            groupPressure > 0.2 ? "light-violet" :
-            groupPressure > 0.1 ? "violet" :
-            "grey";
-
+          const color:
+            | "black"
+            | "blue"
+            | "green"
+            | "grey"
+            | "light-blue"
+            | "light-green"
+            | "light-red"
+            | "light-violet"
+            | "orange"
+            | "red"
+            | "violet"
+            | "yellow" =
+            groupPressure > 0.9
+              ? "red"
+              : groupPressure > 0.8
+              ? "orange"
+              : groupPressure > 0.7
+              ? "yellow"
+              : groupPressure > 0.6
+              ? "light-green"
+              : groupPressure > 0.5
+              ? "green"
+              : groupPressure > 0.4
+              ? "grey"
+              : groupPressure > 0.3
+              ? "light-blue"
+              : groupPressure > 0.2
+              ? "blue"
+              : groupPressure > 0.1
+              ? "light-violet"
+              : "violet";
 
           if (groupID === 0) {
             shape.props.color = color;
           } else {
             const groupShape = this.editor.getShape(record.id);
-            if (groupShape && "props" in groupShape && "color" in groupShape.props) {
-              groupShape.props.color = color;
+            if (
+              groupShape &&
+              "props" in groupShape &&
+              "color" in groupShape.props
+            ) {
+              console.log("groupShape", groupShape);
+              console.log(groupShape.props);
+              this.editor.getShape(groupShape.id);
+              this.editor.updateShape({
+                id: groupShape.id,
+                props: {
+                  ...groupShape.props,
+                  color: color,
+                },
+              } as { id: TLShapeId; type: string; props?: object | undefined; meta?: Partial<JsonObject> | undefined } & Partial<Omit<TLUnknownShape, "props" | "id" | "meta" | "type">>);
             }
           }
         }
@@ -282,8 +331,27 @@ export class EditorUtils {
         const shape = this.editor.getShape(record.id as TLShapeId);
         if (shape && "props" in shape && "color" in shape.props) {
           const id = shape.id;
-          const color: "black" | "blue" | "green" | "grey" | "light-blue" | "light-green" | "light-red" | "light-violet" | "orange" | "red" | "violet" | "yellow" = strokePressureInfo[id].color;
-          shape.props.color = color;
+          const color:
+            | "black"
+            | "blue"
+            | "green"
+            | "grey"
+            | "light-blue"
+            | "light-green"
+            | "light-red"
+            | "light-violet"
+            | "orange"
+            | "red"
+            | "violet"
+            | "yellow" = strokePressureInfo[id].color;
+
+          this.editor.updateShape({
+            id: record.id,
+            props: {
+              ...shape.props,
+              color: color,
+            },
+          } as { id: TLShapeId; type: string; props?: object | undefined; meta?: Partial<JsonObject> | undefined } & Partial<Omit<TLUnknownShape, "props" | "id" | "meta" | "type">>);
         }
       }
     });

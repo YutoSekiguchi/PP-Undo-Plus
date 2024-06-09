@@ -648,6 +648,7 @@ export default function PPUndoEditor(props: Props) {
         editorUtils.setColorOfGroupingShapes(strokePressureInfo)
         break;
       case "none":
+        editorUtils.setColorOfShapes(strokePressureInfo)
         break;
       default:
         break;

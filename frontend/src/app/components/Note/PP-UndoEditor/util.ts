@@ -277,25 +277,19 @@ export class EditorUtils {
             | "red"
             | "violet"
             | "yellow" =
-            groupPressure > 0.9
+            groupPressure > 0.8
               ? "red"
-              : groupPressure > 0.8
-              ? "orange"
               : groupPressure > 0.7
-              ? "yellow"
+              ? "orange"
               : groupPressure > 0.6
-              ? "light-green"
-              : groupPressure > 0.5
+              ? "yellow"
+              : groupPressure >= 0.5
               ? "green"
               : groupPressure > 0.4
-              ? "grey"
+              ? "light-green"
               : groupPressure > 0.3
               ? "light-blue"
-              : groupPressure > 0.2
-              ? "blue"
-              : groupPressure > 0.1
-              ? "light-violet"
-              : "violet";
+              : "blue";
 
           if (groupID === 0) {
             shape.props.color = color;

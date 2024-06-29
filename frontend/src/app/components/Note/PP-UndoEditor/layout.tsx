@@ -7,6 +7,7 @@ import {
   TLEventMapHandler,
   TLParentId,
   TLRecord,
+  TLShapeId,
   Tldraw,
 } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
@@ -30,6 +31,7 @@ import {
   TLGroupDrawArea,
   TLGroupVisualMode,
   TLNoteData,
+  TLNoteSettings,
   TLStrokePressureInfo,
 } from "@/@types/note";
 import { generateRandomString } from "@/app/modules/common/generateRandomString";
@@ -43,6 +45,8 @@ import { Lang } from "../../common/lang";
 import GroupAreaVisualizer from "./Grouping/GroupAreaVisualizer";
 import PPLayer from "./Layer/layout";
 import PPLayerVisualizer from "./Layer/layout";
+import { isEnclosing } from "@/app/modules/note/isStrokeEnclosing";
+import SettingModal from "./Settings/layout";
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -110,11 +114,22 @@ export default function PPUndoEditor(props: Props) {
   );
   const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
   const [isShowLayer, setIsShowLayer] = useState<boolean>(false);
+  const [isEnclose, setIsEnclose] = useState<boolean>(false);
   const [
     avgPressureForUpdateGroupPressures,
     setAvgPressureForUpdateGroupPressures,
   ] = useState<number[]>([]);
-  const [groupVisualMode, setGroupVisualMode] = useState<TLGroupVisualMode>("area");
+  const [groupVisualMode, setGroupVisualMode] =
+    useState<TLGroupVisualMode>("area");
+  const [enclosingStroke, setEncloseStroke] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+    pressure: number;
+  } | null>(null);
+  const [settings, setSettings] = useState<TLNoteSettings>({availableEnclosed: true})
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
@@ -158,6 +173,12 @@ export default function PPUndoEditor(props: Props) {
     );
     // FIXME: draw以外のoperationも追加する
     addNoteOperationInfo("draw", drawingStrokeId, startTime);
+    if (editorUtils === undefined) return;
+    const erasingShapeIds = editorUtils.getErasingShapes();
+    if (erasingShapeIds.length > 0) {
+      editorUtils.deleteShapes(erasingShapeIds);
+    }
+    editorUtils.setErasingShapes([]);
   };
 
   const findStrokeGroup = (records: any[]) => {
@@ -249,7 +270,10 @@ export default function PPUndoEditor(props: Props) {
         }
         console.log(editorUtils.getAllRecords());
         if (isCreateNewGroup) {
-          if (strokePressureInfo[secondLastRecord.id] && strokePressureInfo[secondLastRecord.id].groupID) {
+          if (
+            strokePressureInfo[secondLastRecord.id] &&
+            strokePressureInfo[secondLastRecord.id].groupID
+          ) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[secondLastRecord.id].groupID + 1,
@@ -257,7 +281,10 @@ export default function PPUndoEditor(props: Props) {
               avgPressure,
               editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
-          } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
+          } else if (
+            strokePressureInfo[lastRecord.id] &&
+            strokePressureInfo[lastRecord.id].groupID
+          ) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[lastRecord.id].groupID + 1,
@@ -267,7 +294,9 @@ export default function PPUndoEditor(props: Props) {
             );
           } else {
             // strokePressureInfoの中で最も大きいgroupIDを取得
-            const groupIDs = Object.values(strokePressureInfo).map((info) => info.groupID);
+            const groupIDs = Object.values(strokePressureInfo).map(
+              (info) => info.groupID
+            );
             const maxGroupID = Math.max(...groupIDs);
             addStrokePressureInfo(
               drawingStrokeId,
@@ -275,10 +304,13 @@ export default function PPUndoEditor(props: Props) {
               avgPressure,
               avgPressure,
               editorUtils.getShapeColor(drawingStrokeId as TLParentId)
-            )
+            );
           }
         } else {
-          if (strokePressureInfo[secondLastRecord.id] && strokePressureInfo[secondLastRecord.id].groupID) {
+          if (
+            strokePressureInfo[secondLastRecord.id] &&
+            strokePressureInfo[secondLastRecord.id].groupID
+          ) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[secondLastRecord.id].groupID,
@@ -286,7 +318,10 @@ export default function PPUndoEditor(props: Props) {
               strokePressureInfo[secondLastRecord.id].group,
               editorUtils.getShapeColor(drawingStrokeId as TLParentId)
             );
-          } else if (strokePressureInfo[lastRecord.id] && strokePressureInfo[lastRecord.id].groupID) {
+          } else if (
+            strokePressureInfo[lastRecord.id] &&
+            strokePressureInfo[lastRecord.id].groupID
+          ) {
             addStrokePressureInfo(
               drawingStrokeId,
               strokePressureInfo[lastRecord.id].groupID,
@@ -296,17 +331,24 @@ export default function PPUndoEditor(props: Props) {
             );
           } else {
             // strokePressureInfoの中で最も大きいgroupIDを取得
-            const groupIDs = Object.values(strokePressureInfo).map((info) => info.groupID);
+            const groupIDs = Object.values(strokePressureInfo).map(
+              (info) => info.groupID
+            );
             const maxGroupID = Math.max(...groupIDs);
             // groupAreaでmaxGroupIDと一致する要素のgroupPressureを取得
-            const groupPressure = groupAreas.filter((area) => area.groupID === maxGroupID)[0]? groupAreas.filter((area) => area.groupID === maxGroupID)[0].groupPressure: 0;
+            const groupPressure = groupAreas.filter(
+              (area) => area.groupID === maxGroupID
+            )[0]
+              ? groupAreas.filter((area) => area.groupID === maxGroupID)[0]
+                  .groupPressure
+              : 0;
             addStrokePressureInfo(
               drawingStrokeId,
               maxGroupID,
               avgPressure,
               groupPressure ?? 0,
               editorUtils.getShapeColor(drawingStrokeId as TLParentId)
-            )
+            );
           }
         }
         drawingStrokeId = "";
@@ -336,6 +378,8 @@ export default function PPUndoEditor(props: Props) {
     }
   }, [strokeTimeInfo]);
 
+  let enclosingStrokeIds: TLShapeId[] = [];
+
   const drawing = (allRecords: any) => {
     if (
       allRecords[allRecords.length - 1].type === "draw" &&
@@ -357,6 +401,34 @@ export default function PPUndoEditor(props: Props) {
       drawingPressureList.push(drawingPressure);
       setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
       // setNowAvgPressure(Math.random());
+
+      // ===================================================================
+      // 囲って消す処理
+      if (settings.availableEnclosed) {
+        if (editorUtils !== undefined) {
+          const gridSize = 10; // グリッドのサイズを適切に設定
+          const densityThreshold = 2; // グリッドセルの密度の閾値を設定
+          const areaThreshold = 2; // 十分な密度を持つセルの数の閾値を設定
+          const centerThreshold = 2;
+          const intersectionThreshold = 3; // 自己交差の閾値を設定
+  
+          const isEnclosingStroke = isEnclosing(
+            points,
+            gridSize,
+            densityThreshold,
+            areaThreshold,
+            intersectionThreshold,
+            centerThreshold
+          );
+  
+          setIsEnclose(isEnclosingStroke);
+  
+          console.log(isEnclosingStroke);
+          console.log(enclosingStrokeIds);
+        }
+      }
+      // ここまで
+      // ===================================================================
     }
 
     if (
@@ -364,9 +436,55 @@ export default function PPUndoEditor(props: Props) {
       allRecords[allRecords.length - 1].props.isComplete === true &&
       isFinishedDraw === false
     ) {
+      enclosingStrokeIds = [];
       finishDrawing();
     }
   };
+
+  useEffect(() => {
+    if (settings.availableEnclosed) {
+    if (isEnclose && editorUtils !== undefined) {
+      const allRecords: any[] = editorUtils.getAllRecords();
+      const enclosedStrokeIds = allRecords
+        .filter(
+          (record: any) =>
+            record.type === "draw" &&
+            record.id !== drawingStrokeId &&
+            editorUtils.isStrokeEnclosed(
+              record,
+              allRecords[allRecords.length - 1]
+            )
+        )
+        .map((record: any) => record.id);
+
+      enclosedStrokeIds.forEach((id: TLShapeId) => {
+        if (!enclosingStrokeIds.includes(id)) {
+          switch (pMode) {
+            case "grouping":
+              if (nowAvgPressure >= strokePressureInfo[id].group) {
+                enclosingStrokeIds.push(id);
+              }
+              break;
+            case "average":
+              if (nowAvgPressure >= strokePressureInfo[id].avg) {
+                enclosingStrokeIds.push(id);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+
+      const currentStrokeId = allRecords[allRecords.length - 1].id;
+      if (!enclosingStrokeIds.includes(currentStrokeId)) {
+        enclosingStrokeIds.push(currentStrokeId);
+        editorUtils.setEnclosingShapeStyles(currentStrokeId, "red");
+      }
+      editorUtils.setErasingShapes(enclosingStrokeIds);
+    }
+    }
+  }, [isEnclose]);
 
   useEffect(() => {
     if (isResetStrokePressure) {
@@ -387,9 +505,15 @@ export default function PPUndoEditor(props: Props) {
         // const avgPressure = getAverageOfNumberList(pressureList);
         const info = strokePressureInfoStore[record.id];
         if (info) {
-          addStrokePressureInfo(record.id, info.groupID, info.avg, info.group, editorUtils.getShapeColor(record.id as TLParentId));
+          addStrokePressureInfo(
+            record.id,
+            info.groupID,
+            info.avg,
+            info.group,
+            editorUtils.getShapeColor(record.id as TLParentId)
+          );
         }
-        }
+      }
     });
   };
 
@@ -642,102 +766,116 @@ export default function PPUndoEditor(props: Props) {
     if (editorUtils === undefined || strokePressureInfo === undefined) return;
     switch (groupVisualMode) {
       case "area":
-        editorUtils.setColorOfShapes(strokePressureInfo)
+        editorUtils.setColorOfShapes(strokePressureInfo);
         break;
       case "line":
-        editorUtils.setColorOfGroupingShapes(strokePressureInfo)
+        editorUtils.setColorOfGroupingShapes(strokePressureInfo);
         break;
       case "none":
-        editorUtils.setColorOfShapes(strokePressureInfo)
+        editorUtils.setColorOfShapes(strokePressureInfo);
         break;
       default:
         break;
     }
-  }, [groupVisualMode, strokePressureInfo])
+  }, [groupVisualMode, strokePressureInfo]);
 
   return (
     <>
       {isShowLayer && (
         <div>
-          <PPLayerVisualizer groupAreas={groupAreas} editorUtils={editorUtils} setIsShowLayer={setIsShowLayer} />
-        </div>
-      )}
-        <div style={{ display: isShowLayer ? "hidden" : "flex" }}>
-          <div style={{ width: width, height: height, position: "relative" }}>
-            {container && ReactDOM.createPortal(<BackButton />, container)}
-            {pointerPosition.x !== 0 &&
-              pointerPosition.y !== 0 &&
-              editorUtils && (
-                <NowAvgPressureGauge
-                  pointerPosition={pointerPosition}
-                  nowAvgPressure={nowAvgPressure}
-                  editorUtils={editorUtils}
-                />
-              )}
-            <Tldraw
-              onMount={setAppToState}
-              tools={isIncludePressureEraser ? customTools : undefined}
-              overrides={isIncludePressureEraser ? uiOverrides : undefined}
-              hideUi={isHideUI}
-            />
-            {pMode === "grouping" && groupVisualMode === "area" && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  zIndex: 999,
-                  pointerEvents: "none",
-                }}
-              >
-                <GroupAreaVisualizer
-                  groupAreas={groupAreas}
-                  width={width.toString()}
-                  height={height.toString()}
-                  zoomLevel={camera.z}
-                  offsetX={camera.x}
-                  offsetY={camera.y}
-                  updateGroupPressure={updateGroupPressure}
-                  combineGroupArea={combineGroupArea}
-                  isOperatingGroupID={isOperatingGroupID}
-                  setIsOperatingGroupID={setIsOperatingGroupID}
-                  setAvgPressureForUpdateGroupPressure={
-                    setAvgPressureForUpdateGroupPressures
-                  }
-                  avgPressureForUpdateGroupPressure={
-                    avgPressureForUpdateGroupPressures
-                  }
-                />
-              </div>
-            )}
-          </div>
-          <PPUndoGraph
-            width={`calc(100vw - ${width})`}
-            height={graphHeight}
-            padding={graphPadding}
-            background={graphBackground}
-            editor={editor}
+          <PPLayerVisualizer
+            groupAreas={groupAreas}
             editorUtils={editorUtils}
-            id={Number(id)}
-            isDemo={isDemo}
-            handleResetStrokePressureInfo={handleResetStrokePressureInfo}
-            wTime={wTime}
-            setWTime={setWTime}
-            wPressure={wPressure}
-            setWPressure={setWPressure}
-            wDistance={wDistance}
-            setWDistance={setWDistance}
-            boundaryValue={boundaryValue}
-            setBoundaryValue={setBoundaryValue}
-            pMode={pMode}
-            setPMode={setPMode}
             setIsShowLayer={setIsShowLayer}
-            groupVisualMode={groupVisualMode}
-            setGroupVisualMode={setGroupVisualMode}
           />
         </div>
+      )}
+      <div style={{ display: isShowLayer ? "hidden" : "flex" }}>
+        <div style={{ width: width, height: height, position: "relative" }}>
+          {container && ReactDOM.createPortal(<BackButton />, container)}
+          {pointerPosition.x !== 0 &&
+            pointerPosition.y !== 0 &&
+            editorUtils && (
+              <NowAvgPressureGauge
+                pointerPosition={pointerPosition}
+                nowAvgPressure={nowAvgPressure}
+                editorUtils={editorUtils}
+              />
+            )}
+          <Tldraw
+            onMount={setAppToState}
+            tools={isIncludePressureEraser ? customTools : undefined}
+            overrides={isIncludePressureEraser ? uiOverrides : undefined}
+            hideUi={isHideUI}
+          />
+          {pMode === "grouping" && groupVisualMode === "area" && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 999,
+                pointerEvents: "none",
+              }}
+            >
+              <GroupAreaVisualizer
+                groupAreas={groupAreas}
+                width={width.toString()}
+                height={height.toString()}
+                zoomLevel={camera.z}
+                offsetX={camera.x}
+                offsetY={camera.y}
+                updateGroupPressure={updateGroupPressure}
+                combineGroupArea={combineGroupArea}
+                isOperatingGroupID={isOperatingGroupID}
+                setIsOperatingGroupID={setIsOperatingGroupID}
+                setAvgPressureForUpdateGroupPressure={
+                  setAvgPressureForUpdateGroupPressures
+                }
+                avgPressureForUpdateGroupPressure={
+                  avgPressureForUpdateGroupPressures
+                }
+              />
+            </div>
+          )}
+        </div>
+        <PPUndoGraph
+          width={`calc(100vw - ${width})`}
+          height={graphHeight}
+          padding={graphPadding}
+          background={graphBackground}
+          editor={editor}
+          editorUtils={editorUtils}
+          id={Number(id)}
+          isDemo={isDemo}
+          handleResetStrokePressureInfo={handleResetStrokePressureInfo}
+          wTime={wTime}
+          setWTime={setWTime}
+          wPressure={wPressure}
+          setWPressure={setWPressure}
+          wDistance={wDistance}
+          setWDistance={setWDistance}
+          boundaryValue={boundaryValue}
+          setBoundaryValue={setBoundaryValue}
+          pMode={pMode}
+          setPMode={setPMode}
+          setIsSettingOpen={setIsSettingsOpen}
+          setIsShowLayer={setIsShowLayer}
+          groupVisualMode={groupVisualMode}
+          setGroupVisualMode={setGroupVisualMode}
+        />
+      </div>
+      {isSettingsOpen && (
+      <SettingModal
+        settings={settings}
+        setSettings={setSettings}
+        pMode={pMode}
+        setPMode={setPMode}
+        onClose={() => setIsSettingsOpen(false)}
+      />
+    )}
     </>
   );
 }

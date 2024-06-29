@@ -1,0 +1,17 @@
+/* toggle.css */
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #68d3d1; /* Tailwindのgreen-400 */
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #68d3d1; /* Tailwindのgreen-400 */
+}
+
+.toggle-checkbox:focus {
+  outline: none;
+}
+
+.toggle-checkbox:checked:focus + .toggle-label {
+  box-shadow: 0 0 2px 2px #68d3d1; /* Tailwindのgreen-400 */
+}

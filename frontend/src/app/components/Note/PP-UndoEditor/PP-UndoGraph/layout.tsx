@@ -31,6 +31,7 @@ interface Props {
   setBoundaryValue: Dispatch<SetStateAction<number>>;
   pMode: "average" | "grouping";
   setPMode: Dispatch<SetStateAction<"grouping" | "average">>;
+  setIsSettingOpen: Dispatch<SetStateAction<boolean>>;
   setIsShowLayer: Dispatch<SetStateAction<boolean>>;
   groupVisualMode: TLGroupVisualMode;
   setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
@@ -61,6 +62,7 @@ export default function PPUndoGraph(props: Props) {
     setBoundaryValue,
     pMode,
     setPMode,
+    setIsSettingOpen,
     setIsShowLayer,
     groupVisualMode,
     setGroupVisualMode,
@@ -110,6 +112,7 @@ export default function PPUndoGraph(props: Props) {
                 setIsShowLayer={setIsShowLayer}
                 groupVisualMode={groupVisualMode}
                 setGroupVisualMode={setGroupVisualMode}
+                setIsSettingOpen={setIsSettingOpen}
               />
             </div>
           )}

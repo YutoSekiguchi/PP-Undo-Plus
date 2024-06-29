@@ -16,6 +16,7 @@ interface Props {
   setIsShowLayer: Dispatch<SetStateAction<boolean>>;
   groupVisualMode: TLGroupVisualMode;
   setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
+  setIsSettingOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function ButtonArea(props: Props) {
@@ -31,7 +32,8 @@ export default function ButtonArea(props: Props) {
     setPMode,
     setIsShowLayer,
     groupVisualMode,
-    setGroupVisualMode
+    setGroupVisualMode,
+    setIsSettingOpen
   } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -96,6 +98,24 @@ export default function ButtonArea(props: Props) {
       </div>
     );
   };
+
+  const SettingButton = () => {
+    return (
+      <div className="flex items-center justify-around">
+        {/* <div className="title">
+          <p className="text-center font-bold text-md">Settings</p>
+        </div> */}
+        <div className="button-list flex flex-col items-center">
+          <button
+            className="history-button text-center bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+            onClick={() => setIsSettingOpen(true)}
+          >
+            Setting
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const CheckLayerButton = () => {
     return (
@@ -165,7 +185,7 @@ export default function ButtonArea(props: Props) {
             <CheckLayerButton />
           </div>
           <div className="flex gap-2">
-            <PModeSwitch />
+            <SettingButton />
             <ChangeGroupVisualButton />
           </div>
         </div>

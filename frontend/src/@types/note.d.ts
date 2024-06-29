@@ -73,6 +73,10 @@ export interface TLPostNoteLogData {
   SvgPath: string;
 }
 
+export interface TLNoteSettings {
+  availableEnclosed: boolean;
+}
+
 export type TLGroupVisualMode = "area" | "line" | "none";
 
 export interface TLNoteData extends TLPostNoteData, TLIDAndCreatedAtAndUpdatedAt{}

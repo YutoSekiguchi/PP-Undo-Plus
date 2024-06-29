@@ -488,7 +488,8 @@ export default function PPUndoEditor(props: Props) {
 
   useEffect(() => {
     if (isResetStrokePressure) {
-      handleResetStrokePressureInfo(editorUtils?.getAllRecords());
+      const allRecords = editorUtils?.getAllRecords()
+      handleResetStrokePressureInfo(allRecords);
       setIsResetStrokePressure(false);
     }
   }, [isResetStrokePressure, isShowLayer]);
@@ -777,7 +778,7 @@ export default function PPUndoEditor(props: Props) {
       default:
         break;
     }
-  }, [groupVisualMode, strokePressureInfo]);
+  }, [groupVisualMode]);
 
   return (
     <>

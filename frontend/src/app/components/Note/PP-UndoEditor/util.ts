@@ -352,4 +352,86 @@ export class EditorUtils {
       }
     });
   }
+
+  // ストロークのバウンディングボックスを取得する関数
+  getBounds(stroke: any): { minX: number; minY: number; maxX: number; maxY: number }{
+    if (!stroke || !stroke.props || !stroke.props.segments) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    const points = stroke.props.segments[0].points;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+  
+    for (const point of points) {
+      minX = Math.min(minX, point.x);
+      minY = Math.min(minY, point.y);
+      maxX = Math.max(maxX, point.x);
+      maxY = Math.max(maxY, point.y);
+    }
+
+    minX += stroke.x;
+    minY += stroke.y;
+    maxX += stroke.x;
+    maxY += stroke.y;
+  
+    return { minX, minY, maxX, maxY };
+  };
+
+  isStrokeEnclosed(stroke: any, enclosingStroke: any): boolean {
+    const strokeBounds = this.getBounds(stroke);
+    const enclosingStrokeBounds = this.getBounds(enclosingStroke);
+    
+    console.log(stroke);
+    console.log(strokeBounds);
+    console.log(enclosingStrokeBounds);
+
+    return (
+      strokeBounds.minX >= enclosingStrokeBounds.minX &&
+      strokeBounds.maxX <= enclosingStrokeBounds.maxX &&
+      strokeBounds.minY >= enclosingStrokeBounds.minY &&
+      strokeBounds.maxY <= enclosingStrokeBounds.maxY
+    );
+  };
+  
+  setErasingShapes(erasingShapeIds: TLShapeId[]): void {
+    const erasingShapeIdsCopy = [...erasingShapeIds];
+    this.editor.setErasingShapes(erasingShapeIdsCopy);
+  }
+
+  getErasingShapes(): TLShapeId[] {
+    return this.editor.currentPageState.erasingShapeIds;
+  }
+
+  // ストロークの削除
+  deleteShapes(shapeIds: TLShapeId[]): void {
+    this.editor.deleteShapes(shapeIds);
+  }
+
+  setEnclosingShapeStyles(
+    enclosingShapeId: TLShapeId,
+    color: string,
+    strokeStyle?: "dashed" | "dotted" | "draw" | "solid",
+    strokeWidth?: "s" | "m" | "l" | "xl",
+  ): void {
+    const allRecords = this.editor.store.allRecords();
+    allRecords.forEach((record: any) => {
+      if (record.type === "draw") {
+        const shape = this.editor.getShape(record.id as TLShapeId);
+        if (shape && "props" in shape && "color" in shape.props) {
+          if (this.isStrokeEnclosed(shape, enclosingShapeId)) {
+            this.editor.updateShape({
+              id: record.id,
+              props: {
+                ...shape.props,
+                strokeStyle: strokeStyle || "dashed",
+                strokeWidth: strokeWidth || "s",
+                color: color,
+              },
+            } as { id: TLShapeId; type: string; props?: object | undefined; meta?: Partial<JsonObject> | undefined } & Partial<Omit<TLUnknownShape, "props" | "id" | "meta" | "type">>);
+          }
+        }
+      }
+    }
+    );
+  }
 }

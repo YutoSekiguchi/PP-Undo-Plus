@@ -8,7 +8,9 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
-})
+});
+
+// const withTM = require('next-transpile-modules')(['pdfjs-dist']);
 
 const nextConfig = withPWA({
   reactStrictMode: true,
@@ -24,18 +26,19 @@ const nextConfig = withPWA({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     VERSION: process.env.VERSION,
-    // APP_PASS: process.env.APP_PASS,
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.module.rules.push({
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: 'javascript/auto',
+        test: /\.worker\.min\.mjs$/,
+        use: { loader: 'file-loader' },
       });
+
+      config.output.globalObject = 'self';
     }
+
     return config;
   },
 });
 
-module.exports = nextConfig
+module.exports = nextConfig;

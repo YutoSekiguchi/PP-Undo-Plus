@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import './components/Note/PP-UndoEditor/PdfEditor/pdf-editor.css'
 
 import { Session } from 'next-auth'
 import SessionProvider from '../providers/session_provider'

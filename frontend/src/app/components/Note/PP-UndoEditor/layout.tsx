@@ -62,7 +62,7 @@ import { isEnclosing } from "@/app/modules/note/isStrokeEnclosing";
 import SettingModal from "./Settings/layout";
 import { PdfEditor } from "./PdfEditor/PdfEditor";
 import { Pdf, PdfPicker } from "./PdfEditor/PdfPicker";
-import "./PdfEditor/pdf-editor.css";
+// import "./PdfEditor/pdf-editor.css";
 import { ExportPdfButton } from "./PdfEditor/ExportPdfButton";
 import { PPUndoBasicIcon } from "@/icons/PPUndoBasic";
 

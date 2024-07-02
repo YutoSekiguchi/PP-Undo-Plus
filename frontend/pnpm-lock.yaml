@@ -14,6 +14,9 @@ dependencies:
   dotenv:
     specifier: ^16.3.1
     version: 16.4.5
+  file-loader:
+    specifier: ^6.2.0
+    version: 6.2.0(webpack@5.92.1)
   jotai:
     specifier: ^2.6.0
     version: 2.8.4(@types/react@18.3.3)(react@18.3.1)
@@ -4532,6 +4535,17 @@ packages:
     dependencies:
       flat-cache: 3.2.0
     dev: true
+
+  /file-loader@6.2.0(webpack@5.92.1):
+    resolution: {integrity: sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.3.0
+      webpack: 5.92.1
+    dev: false
 
   /filelist@1.0.4:
     resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}

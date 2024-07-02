@@ -1,3 +1,5 @@
+// TODO: むずすぎる！！！！
+
 import { useState } from 'react';
 import { AssetRecordType, Box, TLAssetId, TLShapeId, createShapeId } from 'tldraw';
 
@@ -20,12 +22,18 @@ export function PdfPicker({ onOpenPdf }: { onOpenPdf: (pdf: Pdf | null) => void 
   const [isLoading, setIsLoading] = useState(false);
 
   async function loadPdf(name: string, source: ArrayBuffer): Promise<Pdf> {
-    const PdfJS = await import('pdfjs-dist/webpack');
+    const PdfJS = await import('pdfjs-dist');
     PdfJS.GlobalWorkerOptions.workerSrc = new URL(
-      'pdfjs-dist/build/pdf.worker.min.js',
-      import.meta.url
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url as any
     ).toString();
-    const pdf = await PdfJS.getDocument(source.slice(0)).promise;
+    const pdf = await PdfJS.getDocument({ data: source }).promise;
+		// const PdfJS = await import('pdfjs-dist');
+    // PdfJS.GlobalWorkerOptions.workerSrc = new URL(
+    //   'pdfjs-dist/build/pdf.worker.min.mjs',
+    //   import.meta.url
+    // ).toString();
+    // const pdf = await PdfJS.getDocument({ data: source }).promise;
     const pages: PdfPage[] = [];
 
     const canvas = window.document.createElement('canvas');

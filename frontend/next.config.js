@@ -27,11 +27,20 @@ const nextConfig = withPWA({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     VERSION: process.env.VERSION,
   },
+  // TODO: pdf読み取りがおかしいので確認
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.module.rules.push({
-        test: /\.worker\.min\.mjs$/,
-        use: { loader: 'file-loader' },
+        test: /pdf\.worker\.min\.mjs$/,
+        type: 'javascript/auto',
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[hash].[ext]',
+            outputPath: 'static/js/',
+            publicPath: '/_next/static/js/',
+          },
+        },
       });
 
       config.output.globalObject = 'self';

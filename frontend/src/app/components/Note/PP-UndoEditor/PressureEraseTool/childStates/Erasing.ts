@@ -1,5 +1,4 @@
 import {
-  HIT_TEST_MARGIN,
   StateNode,
   TLEventHandlers,
   TLFrameShape,
@@ -7,7 +6,9 @@ import {
   TLPointerEventInfo,
   TLShapeId,
   pointInPolygon,
-} from "@tldraw/tldraw";
+} from "tldraw";
+
+const HIT_TEST_MARGIN = 4;
 
 export class Erasing extends StateNode {
   static override id = "pressure-erasing";
@@ -24,7 +25,7 @@ export class Erasing extends StateNode {
 
     const { originPagePoint } = this.editor.inputs;
     this.excludedShapeIds = new Set(
-      this.editor.currentPageShapes
+      this.editor.getCurrentPageShapes()
         .filter((shape) => {
           //If the shape is locked, we shouldn't erase it
           if (this.editor.isShapeOrAncestorLocked(shape)) return true;
@@ -81,9 +82,9 @@ export class Erasing extends StateNode {
   };
 
   update() {
-    const erasingShapeIds = this.editor.erasingShapeIds;
-    const zoomLevel = this.editor.zoomLevel;
-    const currentPageShapes = this.editor.currentPageShapes;
+    const erasingShapeIds = this.editor.getErasingShapeIds();
+    const zoomLevel = this.editor.getZoomLevel();
+    const currentPageShapes = this.editor.getCurrentPageShapes();
     const {
       inputs: { currentPagePoint, previousPagePoint },
     } = this.editor;
@@ -147,7 +148,7 @@ export class Erasing extends StateNode {
   }
 
   complete() {
-    this.editor.deleteShapes(this.editor.currentPageState.erasingShapeIds);
+    this.editor.deleteShapes(this.editor.getCurrentPageState().erasingShapeIds);
     this.editor.setErasingShapes([]);
     this.parent.transition("idle", this.info);
   }

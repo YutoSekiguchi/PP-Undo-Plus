@@ -11,7 +11,7 @@ import {
   TLShape,
   TLShapeId,
   TLUnknownShape,
-} from "@tldraw/tldraw";
+} from "tldraw";
 
 export class EditorUtils {
   private editor: Editor;
@@ -47,7 +47,7 @@ export class EditorUtils {
 
   async getSvg(): Promise<SVGElement | undefined> {
     try {
-      return await this.editor.getSvg(this.editor.currentPageShapes);
+      return await this.editor.getSvg(this.editor.getCurrentPageShapes());
     } catch (e) {
       console.error("エラーが発生しました。", e);
       return undefined;
@@ -206,14 +206,14 @@ export class EditorUtils {
   }
 
   getZoomLevel(): number {
-    return this.editor.zoomLevel;
+    return this.editor.getZoomLevel();
   }
 
   getCameraData(): { x: number; y: number; z: number } {
     return {
-      x: this.editor.camera.x,
-      y: this.editor.camera.y,
-      z: this.editor.camera.z,
+      x: this.editor.getCamera().x,
+      y: this.editor.getCamera().y,
+      z: this.editor.getCamera().z,
     };
   }
 
@@ -236,6 +236,7 @@ export class EditorUtils {
   getShapeColor(
     id: TLParentId
   ):
+    | "white"
     | "black"
     | "blue"
     | "green"
@@ -266,6 +267,7 @@ export class EditorUtils {
             const groupID = strokePressureInfo[id].groupID;
             const groupPressure = strokePressureInfo[id].group;
             const color:
+              | "white"
               | "black"
               | "blue"
               | "green"
@@ -327,6 +329,7 @@ export class EditorUtils {
           const id = shape.id;
           if (strokePressureInfo[id] && strokePressureInfo[id].color) {
             const color:
+              | "white"
               | "black"
               | "blue"
               | "green"
@@ -399,7 +402,7 @@ export class EditorUtils {
   }
 
   getErasingShapes(): TLShapeId[] {
-    return this.editor.currentPageState.erasingShapeIds;
+    return this.editor.getCurrentPageState().erasingShapeIds;
   }
 
   // ストロークの削除

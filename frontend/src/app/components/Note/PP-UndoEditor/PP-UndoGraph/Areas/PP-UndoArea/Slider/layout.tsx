@@ -1,6 +1,6 @@
 import { useState, useEffect, PointerEvent } from "react";
 import "./slider.css";
-import { Editor, TLGroupShape, TLShapeId } from "@tldraw/tldraw";
+import { Editor, TLGroupShape, TLShapeId } from "tldraw";
 import { strokePressureInfoAtom } from "@/app/hooks";
 import { useAtom } from "jotai";
 import { EditorUtils } from "../../../../util";
@@ -49,9 +49,9 @@ export default function PPUndoSlider(props: Props) {
     if (editor === undefined) return;
 
     // 削除予定のストロークの更新
-    const erasingShapeIds = editor.erasingShapeIds;
+    const erasingShapeIds = editor.getErasingShapeIds();
     const erasing = new Set<TLShapeId>(erasingShapeIds);
-    const currentPageShapes = editor.currentPageShapes;
+    const currentPageShapes = editor.getCurrentPageShapes();
 
     for (const shape of currentPageShapes) {
       if (editor.isShapeOfType<TLGroupShape>(shape, "group")) continue;
@@ -79,7 +79,7 @@ export default function PPUndoSlider(props: Props) {
     const filename = `log-${generateRandomString()}`;
 
     // ストロークの削除
-    const eraseShapeIds = editor.currentPageState.erasingShapeIds;
+    const eraseShapeIds = editor.getCurrentPageState().erasingShapeIds;
     if (eraseShapeIds.length === 0) {
       editor.setErasingShapes([]);
       setSliderValue(0);

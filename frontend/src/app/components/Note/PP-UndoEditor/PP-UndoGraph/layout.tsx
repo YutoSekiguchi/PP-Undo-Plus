@@ -1,4 +1,4 @@
-import { Editor } from "@tldraw/tldraw";
+import { Editor } from "tldraw";
 import PPUndoArea from "./Areas/PP-UndoArea/layout";
 import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphArea/layout";
 import { EditorUtils } from "../util";
@@ -6,6 +6,7 @@ import ButtonArea from "./Areas/ButtonArea/layout";
 import ChangeParametersArea from "./Areas/ChangeParametersArea/layout";
 import { Dispatch, SetStateAction } from "react";
 import { TLGroupVisualMode } from "@/@types/note";
+import { Pdf } from "../PdfEditor/PdfPicker";
 
 interface Props {
   width: string | number;
@@ -35,6 +36,7 @@ interface Props {
   setIsShowLayer: Dispatch<SetStateAction<boolean>>;
   groupVisualMode: TLGroupVisualMode;
   setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
+  onOpenPdf: (pdf: Pdf | null) => void;
 }
 
 export default function PPUndoGraph(props: Props) {
@@ -66,6 +68,7 @@ export default function PPUndoGraph(props: Props) {
     setIsShowLayer,
     groupVisualMode,
     setGroupVisualMode,
+    onOpenPdf
   } = props;
   return (
     <div>
@@ -113,6 +116,7 @@ export default function PPUndoGraph(props: Props) {
                 groupVisualMode={groupVisualMode}
                 setGroupVisualMode={setGroupVisualMode}
                 setIsSettingOpen={setIsSettingOpen}
+                onOpenPdf={onOpenPdf}
               />
             </div>
           )}

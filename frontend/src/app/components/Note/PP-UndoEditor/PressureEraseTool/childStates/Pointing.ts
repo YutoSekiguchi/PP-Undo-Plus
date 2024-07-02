@@ -1,12 +1,13 @@
 import {
-	HIT_TEST_MARGIN,
 	StateNode,
 	TLEventHandlers,
 	TLFrameShape,
 	TLGroupShape,
 	TLPointerEventInfo,
 	TLShapeId,
-} from '@tldraw/tldraw'
+} from 'tldraw'
+
+const HIT_TEST_MARGIN = 4
 
 export class Pointing extends StateNode {
 	static override id = 'pointing'
@@ -14,8 +15,8 @@ export class Pointing extends StateNode {
   private info = {} as TLPointerEventInfo
 
 	override onEnter = () => {
-		const zoomLevel = this.editor.zoomLevel
-		const currentPageShapesSorted = this.editor.currentPageShapesSorted
+		const zoomLevel = this.editor.getZoomLevel()
+		const currentPageShapesSorted = this.editor.getCurrentPageShapesSorted()
 		const {
 			inputs: { currentPagePoint },
 		} = this.editor
@@ -78,7 +79,7 @@ export class Pointing extends StateNode {
 	}
 
 	complete() {
-		const erasingShapeIds = this.editor.erasingShapeIds
+		const erasingShapeIds = this.editor.getErasingShapeIds()
 
 		if (erasingShapeIds.length) {
 			this.editor.mark('pressure-erase end')

@@ -84,3 +84,22 @@ body {
 .layer-animation {
   animation: moveLayers 1s forwards;
 }
+
+.tl-background__wrapper {
+  z-index: -1;
+}
+
+.tlui-layout {
+  z-index: 9999;
+}
+.tlui-layout__top {
+  z-index: 9999;
+}
+
+.tl-background {
+  z-index: -1;
+}
+
+.tl-image {
+  z-index: -1;
+}

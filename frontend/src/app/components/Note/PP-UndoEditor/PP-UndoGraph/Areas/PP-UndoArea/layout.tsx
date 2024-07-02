@@ -1,4 +1,4 @@
-import { Editor } from "@tldraw/tldraw";
+import { Editor } from "tldraw";
 import PPUndoLineGraph from "../../LineGraph/PP-Undo/layout";
 import PPUndoSlider from "./Slider/layout";
 import "../area.css";

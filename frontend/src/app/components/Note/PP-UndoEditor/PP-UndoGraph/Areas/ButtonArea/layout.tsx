@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { EditorUtils } from "../../../util";
 import LogList from "../../LogList/layout";
 import { TLGroupVisualMode } from "@/@types/note";
+import { Pdf, PdfPicker } from "../../../PdfEditor/PdfPicker";
 
 interface Props {
   editorUtils: EditorUtils;
@@ -17,6 +18,7 @@ interface Props {
   groupVisualMode: TLGroupVisualMode;
   setGroupVisualMode: Dispatch<SetStateAction<TLGroupVisualMode>>;
   setIsSettingOpen: Dispatch<SetStateAction<boolean>>;
+  onOpenPdf: (pdf: Pdf | null) => void;
 }
 
 export default function ButtonArea(props: Props) {
@@ -33,7 +35,8 @@ export default function ButtonArea(props: Props) {
     setIsShowLayer,
     groupVisualMode,
     setGroupVisualMode,
-    setIsSettingOpen
+    setIsSettingOpen,
+    onOpenPdf,
   } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -47,7 +50,7 @@ export default function ButtonArea(props: Props) {
 
   const togglePMode = () => {
     setPMode(pMode === "average" ? "grouping" : "average");
-  }
+  };
 
   const RedoButton = () => {
     return (
@@ -115,7 +118,7 @@ export default function ButtonArea(props: Props) {
         </div>
       </div>
     );
-  }
+  };
 
   const CheckLayerButton = () => {
     return (
@@ -126,14 +129,16 @@ export default function ButtonArea(props: Props) {
         <div className="button-list flex flex-col items-center">
           <button
             className="history-button text-center bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
-            onClick={() => {setIsShowLayer(true)}}
+            onClick={() => {
+              setIsShowLayer(true);
+            }}
           >
             Layer
           </button>
         </div>
       </div>
     );
-  }
+  };
 
   const ChangeGroupVisualButton = () => {
     const nextMode = () => {
@@ -174,7 +179,7 @@ export default function ButtonArea(props: Props) {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <>
@@ -188,6 +193,7 @@ export default function ButtonArea(props: Props) {
             <SettingButton />
             <ChangeGroupVisualButton />
           </div>
+          <PdfPicker onOpenPdf={onOpenPdf} />
         </div>
       </div>
     </>

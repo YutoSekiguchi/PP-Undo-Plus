@@ -1,5 +1,5 @@
 import { TLGroupDrawArea } from "@/@types/note";
-import { TLShapeId } from "@tldraw/tldraw";
+import { TLShapeId } from "tldraw";
 import { useEffect, useRef, useState } from "react";
 import { EditorUtils } from "../util";
 

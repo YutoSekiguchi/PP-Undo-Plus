@@ -10,14 +10,18 @@
   },
   "dependencies": {
     "@tldraw/tldraw": "2.0.0-alpha.18",
+    "@types/pdfjs-dist": "^2.10.378",
     "dotenv": "^16.3.1",
     "jotai": "^2.6.0",
     "lucide-react": "^0.316.0",
     "next": "14.0.3",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.3.136",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tldraw": "^2.3.0"
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",

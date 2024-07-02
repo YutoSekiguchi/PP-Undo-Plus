@@ -1,4 +1,4 @@
-import { StateNode } from '@tldraw/tldraw'
+import { StateNode } from 'tldraw'
 import { Erasing } from './childStates/Erasing'
 import { Idle } from './childStates/Idle'
 import { Pointing } from './childStates/Pointing'

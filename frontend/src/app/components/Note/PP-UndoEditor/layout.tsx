@@ -1,17 +1,32 @@
 "use client";
 
 import {
-  DefaultDashStyle,
+  Box,
+  DefaultKeyboardShortcutsDialog,
+  DefaultKeyboardShortcutsDialogContent,
+  DefaultToolbar,
+  DefaultToolbarContent,
   Editor,
-  StoreSnapshot,
+  SVGContainer,
+  TLComponents,
   TLEventMapHandler,
+  TLImageShape,
   TLParentId,
   TLRecord,
   TLShapeId,
+  TLShapePartial,
   Tldraw,
-} from "@tldraw/tldraw";
-import "@tldraw/tldraw/tldraw.css";
-import { useCallback, useEffect, useState } from "react";
+  TldrawUiMenuItem,
+  getIndicesBetween,
+  react,
+  sortByIndex,
+  track,
+  useEditor,
+  useIsToolSelected,
+  useTools,
+} from "tldraw";
+import "tldraw/tldraw.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { uiOverrides } from "./ui-overrides";
 import { PressureEraserTool } from "./PressureEraseTool/PressureEraserTool";
@@ -32,7 +47,6 @@ import {
   TLGroupVisualMode,
   TLNoteData,
   TLNoteSettings,
-  TLStrokePressureInfo,
 } from "@/@types/note";
 import { generateRandomString } from "@/app/modules/common/generateRandomString";
 import {
@@ -43,10 +57,15 @@ import {
 import calculateDistance from "@/app/modules/note/calculateDistance";
 import { Lang } from "../../common/lang";
 import GroupAreaVisualizer from "./Grouping/GroupAreaVisualizer";
-import PPLayer from "./Layer/layout";
 import PPLayerVisualizer from "./Layer/layout";
 import { isEnclosing } from "@/app/modules/note/isStrokeEnclosing";
 import SettingModal from "./Settings/layout";
+import { PdfEditor } from "./PdfEditor/PdfEditor";
+import { Pdf, PdfPicker } from "./PdfEditor/PdfPicker";
+import "./PdfEditor/pdf-editor.css";
+import { ExportPdfButton } from "./PdfEditor/ExportPdfButton";
+import { PPUndoBasicIcon } from "@/icons/PPUndoBasic";
+
 
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
@@ -74,6 +93,15 @@ interface Props {
   lang?: string | string[] | undefined;
   id?: string | string[] | undefined;
 }
+
+export type PdfState =
+  | {
+      phase: "pick";
+    }
+  | {
+      phase: "edit";
+      pdf: Pdf | null;
+    };
 
 export default function PPUndoEditor(props: Props) {
   const {
@@ -128,7 +156,10 @@ export default function PPUndoEditor(props: Props) {
     height: number;
     pressure: number;
   } | null>(null);
-  const [settings, setSettings] = useState<TLNoteSettings>({availableEnclosed: true})
+  const [settings, setSettings] = useState<TLNoteSettings>({
+    availableEnclosed: true,
+  });
+  const [pdfState, setPdfState] = useState<PdfState>({ phase: "pick" });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const maxTime = 30000;
   const maxPressure = 1;
@@ -411,7 +442,7 @@ export default function PPUndoEditor(props: Props) {
           const areaThreshold = 2; // 十分な密度を持つセルの数の閾値を設定
           const centerThreshold = 2;
           const intersectionThreshold = 3; // 自己交差の閾値を設定
-  
+
           const isEnclosingStroke = isEnclosing(
             points,
             gridSize,
@@ -420,9 +451,9 @@ export default function PPUndoEditor(props: Props) {
             intersectionThreshold,
             centerThreshold
           );
-  
+
           setIsEnclose(isEnclosingStroke);
-  
+
           console.log(isEnclosingStroke);
           console.log(enclosingStrokeIds);
         }
@@ -443,52 +474,52 @@ export default function PPUndoEditor(props: Props) {
 
   useEffect(() => {
     if (settings.availableEnclosed) {
-    if (isEnclose && editorUtils !== undefined) {
-      const allRecords: any[] = editorUtils.getAllRecords();
-      const enclosedStrokeIds = allRecords
-        .filter(
-          (record: any) =>
-            record.type === "draw" &&
-            record.id !== drawingStrokeId &&
-            editorUtils.isStrokeEnclosed(
-              record,
-              allRecords[allRecords.length - 1]
-            )
-        )
-        .map((record: any) => record.id);
+      if (isEnclose && editorUtils !== undefined) {
+        const allRecords: any[] = editorUtils.getAllRecords();
+        const enclosedStrokeIds = allRecords
+          .filter(
+            (record: any) =>
+              record.type === "draw" &&
+              record.id !== drawingStrokeId &&
+              editorUtils.isStrokeEnclosed(
+                record,
+                allRecords[allRecords.length - 1]
+              )
+          )
+          .map((record: any) => record.id);
 
-      enclosedStrokeIds.forEach((id: TLShapeId) => {
-        if (!enclosingStrokeIds.includes(id)) {
-          switch (pMode) {
-            case "grouping":
-              if (nowAvgPressure >= strokePressureInfo[id].group) {
-                enclosingStrokeIds.push(id);
-              }
-              break;
-            case "average":
-              if (nowAvgPressure >= strokePressureInfo[id].avg) {
-                enclosingStrokeIds.push(id);
-              }
-              break;
-            default:
-              break;
+        enclosedStrokeIds.forEach((id: TLShapeId) => {
+          if (!enclosingStrokeIds.includes(id)) {
+            switch (pMode) {
+              case "grouping":
+                if (nowAvgPressure >= strokePressureInfo[id].group) {
+                  enclosingStrokeIds.push(id);
+                }
+                break;
+              case "average":
+                if (nowAvgPressure >= strokePressureInfo[id].avg) {
+                  enclosingStrokeIds.push(id);
+                }
+                break;
+              default:
+                break;
+            }
           }
-        }
-      });
+        });
 
-      const currentStrokeId = allRecords[allRecords.length - 1].id;
-      if (!enclosingStrokeIds.includes(currentStrokeId)) {
-        enclosingStrokeIds.push(currentStrokeId);
-        editorUtils.setEnclosingShapeStyles(currentStrokeId, "red");
+        const currentStrokeId = allRecords[allRecords.length - 1].id;
+        if (!enclosingStrokeIds.includes(currentStrokeId)) {
+          enclosingStrokeIds.push(currentStrokeId);
+          editorUtils.setEnclosingShapeStyles(currentStrokeId, "red");
+        }
+        editorUtils.setErasingShapes(enclosingStrokeIds);
       }
-      editorUtils.setErasingShapes(enclosingStrokeIds);
-    }
     }
   }, [isEnclose]);
 
   useEffect(() => {
     if (isResetStrokePressure) {
-      const allRecords = editorUtils?.getAllRecords()
+      const allRecords = editorUtils?.getAllRecords();
       handleResetStrokePressureInfo(allRecords);
       setIsResetStrokePressure(false);
     }
@@ -757,6 +788,30 @@ export default function PPUndoEditor(props: Props) {
       }
     }
 
+    const handlePointerMoveOfPPUndoBasic = (event: PointerEvent) => {
+      if (event.pressure > 0) {
+        console.log("Pointer move pressure:", event.pressure);
+      }
+    };
+
+    const addButtonToToolbar = () => {
+      const toolbarElement = document.querySelector(".tlui-buttons__horizontal");
+      if (toolbarElement) {
+        const newButton = document.createElement("button");
+        newButton.innerHTML = `<div style="display: flex; width: 18px; height: 18px; justify-content: center; align-items: center;">${PPUndoBasicIcon}</div>`;
+        newButton.className = "tlui-button tlui-button__icon";
+        newButton.addEventListener("pointermove", handlePointerMoveOfPPUndoBasic);
+        const firstButton = toolbarElement.querySelector("button");
+        if (firstButton && firstButton.nextSibling) {
+          toolbarElement.insertBefore(newButton, firstButton.nextSibling);
+        } else {
+          toolbarElement.appendChild(newButton);
+        }
+      }
+    };
+
+    addButtonToToolbar();
+
     return () => {
       editor.off("change", handleChangeEvent);
     };
@@ -779,6 +834,102 @@ export default function PPUndoEditor(props: Props) {
         break;
     }
   }, [groupVisualMode]);
+
+  const components: TLComponents = {
+    Toolbar: (props) => {
+      const tools = useTools();
+      const isStickerSelected = useIsToolSelected(tools["card"]);
+      return (
+        <DefaultToolbar {...props}>
+          <TldrawUiMenuItem {...tools["card"]} isSelected={isStickerSelected} />
+          <DefaultToolbarContent />
+        </DefaultToolbar>
+      );
+    },
+    KeyboardShortcutsDialog: (props) => {
+      const tools = useTools();
+      return (
+        <DefaultKeyboardShortcutsDialog {...props}>
+          <DefaultKeyboardShortcutsDialogContent />
+          {/* Ideally, we'd interleave this into the tools group */}
+          <TldrawUiMenuItem {...tools["card"]} />
+        </DefaultKeyboardShortcutsDialog>
+      );
+    },
+  };
+
+  const pdfComponent = useMemo<TLComponents>(
+    () => ({
+      PageMenu: null,
+      InFrontOfTheCanvas: () =>
+        pdfState.phase === "edit" && pdfState.pdf !== null ? (
+          <PageOverlayScreen pdf={pdfState.pdf} />
+        ) : null,
+      SharePanel: () =>
+        pdfState.phase === "edit" && pdfState.pdf !== null ? (
+          <ExportPdfButton pdf={pdfState.pdf} />
+        ) : null,
+    }),
+    [pdfState]
+  );
+
+  const PageOverlayScreen = track(function PageOverlayScreen({
+    pdf,
+  }: {
+    pdf: Pdf;
+  }) {
+    const editor = useEditor();
+
+    const viewportPageBounds = editor.getViewportPageBounds();
+    const viewportScreenBounds = editor.getViewportScreenBounds();
+
+    const relevantPageBounds = pdf.pages
+      .map((page) => {
+        if (!viewportPageBounds.collides(page.bounds)) return null;
+        const topLeft = editor.pageToViewport(page.bounds);
+        const bottomRight = editor.pageToViewport({
+          x: page.bounds.maxX,
+          y: page.bounds.maxY,
+        });
+        return new Box(
+          topLeft.x,
+          topLeft.y,
+          bottomRight.x - topLeft.x,
+          bottomRight.y - topLeft.y
+        );
+      })
+      .filter((bounds): bounds is Box => bounds !== null);
+
+    function pathForPageBounds(bounds: Box) {
+      return `M ${bounds.x} ${bounds.y} L ${bounds.maxX} ${bounds.y} L ${bounds.maxX} ${bounds.maxY} L ${bounds.x} ${bounds.maxY} Z`;
+    }
+
+    const viewportPath = `M 0 0 L ${viewportScreenBounds.w} 0 L ${viewportScreenBounds.w} ${viewportScreenBounds.h} L 0 ${viewportScreenBounds.h} Z`;
+
+    return (
+      <>
+        <SVGContainer className="PageOverlayScreen-screen">
+          <path
+            d={`${viewportPath} ${relevantPageBounds
+              .map(pathForPageBounds)
+              .join(" ")}`}
+            fillRule="evenodd"
+          />
+        </SVGContainer>
+        {relevantPageBounds.map((bounds, i) => (
+          <div
+            key={i}
+            className="PageOverlayScreen-outline"
+            style={{
+              width: bounds.w,
+              height: bounds.h,
+              transform: `translate(${bounds.x}px, ${bounds.y}px)`,
+            }}
+          />
+        ))}
+      </>
+    );
+  });
 
   return (
     <>
@@ -803,12 +954,165 @@ export default function PPUndoEditor(props: Props) {
                 editorUtils={editorUtils}
               />
             )}
-          <Tldraw
-            onMount={setAppToState}
-            tools={isIncludePressureEraser ? customTools : undefined}
-            overrides={isIncludePressureEraser ? uiOverrides : undefined}
-            hideUi={isHideUI}
-          />
+          {pdfState.phase === "edit" && pdfState.pdf ? (
+            <div className="PdfEditor">
+              <Tldraw
+                onMount={(editor) => {
+                  setAppToState(editor);
+                  if (pdfState.pdf) {
+                    editor.updateInstanceState({ isDebugMode: false });
+                    editor.createAssets(
+                      pdfState.pdf.pages.map((page) => ({
+                        id: page.assetId,
+                        typeName: "asset",
+                        type: "image",
+                        meta: {},
+                        props: {
+                          w: page.bounds.w,
+                          h: page.bounds.h,
+                          fileSize: -1,
+                          mimeType: "image/png",
+                          src: page.src,
+                          name: "page",
+                          isAnimated: false,
+                        },
+                      }))
+                    );
+                    editor.createShapes(
+                      pdfState.pdf.pages.map(
+                        (page): TLShapePartial<TLImageShape> => ({
+                          id: page.shapeId,
+                          type: "image",
+                          x: page.bounds.x,
+                          y: page.bounds.y,
+                          isLocked: true,
+                          props: {
+                            assetId: page.assetId,
+                            w: page.bounds.w,
+                            h: page.bounds.h,
+                          },
+                        })
+                      )
+                    );
+
+                    const shapeIds = pdfState.pdf.pages.map(
+                      (page) => page.shapeId
+                    );
+                    const shapeIdSet = new Set(shapeIds);
+
+                    // Don't let the user unlock the pages
+                    editor.sideEffects.registerBeforeChangeHandler(
+                      "shape",
+                      (prev, next) => {
+                        if (!shapeIdSet.has(next.id)) return next;
+                        if (next.isLocked) return next;
+                        return { ...prev, isLocked: true };
+                      }
+                    );
+
+                    // Make sure the shapes are below any of the other shapes
+                    const makeSureShapesAreAtBottom = () => {
+                      const shapes = shapeIds
+                        .map((id) => editor.getShape(id)!)
+                        .sort(sortByIndex);
+                      const pageId = editor.getCurrentPageId();
+
+                      const siblings =
+                        editor.getSortedChildIdsForParent(pageId);
+                      const currentBottomShapes = siblings
+                        .slice(0, shapes.length)
+                        .map((id) => editor.getShape(id)!);
+
+                      if (
+                        currentBottomShapes.every(
+                          (shape, i) => shape.id === shapes[i].id
+                        )
+                      )
+                        return;
+
+                      const otherSiblings = siblings.filter(
+                        (id) => !shapeIdSet.has(id)
+                      );
+                      const bottomSibling = otherSiblings[0];
+                      const lowestIndex = editor.getShape(bottomSibling)!.index;
+
+                      const indexes = getIndicesBetween(
+                        undefined,
+                        lowestIndex,
+                        shapes.length
+                      );
+                      editor.updateShapes(
+                        shapes.map((shape, i) => ({
+                          id: shape.id,
+                          type: shape.type,
+                          isLocked: shape.isLocked,
+                          index: indexes[i],
+                        }))
+                      );
+                    };
+
+                    makeSureShapesAreAtBottom();
+                    editor.sideEffects.registerAfterCreateHandler(
+                      "shape",
+                      makeSureShapesAreAtBottom
+                    );
+                    editor.sideEffects.registerAfterChangeHandler(
+                      "shape",
+                      makeSureShapesAreAtBottom
+                    );
+
+                    // Constrain the camera to the bounds of the pages
+                    const targetBounds = pdfState.pdf.pages.reduce(
+                      (acc, page) => acc.union(page.bounds),
+                      pdfState.pdf.pages[0].bounds.clone()
+                    );
+
+                    const updateCameraBounds = (isMobile: boolean) => {
+                      editor.setCameraOptions({
+                        constraints: {
+                          bounds: targetBounds,
+                          padding: { x: isMobile ? 16 : 164, y: 64 },
+                          origin: { x: 0.5, y: 0 },
+                          initialZoom: "fit-x-100",
+                          baseZoom: "default",
+                          behavior: "contain",
+                        },
+                      });
+                      editor.setCamera(editor.getCamera(), { reset: true });
+                    };
+
+                    let isMobile = editor.getViewportScreenBounds().width < 840;
+
+                    react("update camera", () => {
+                      const isMobileNow =
+                        editor.getViewportScreenBounds().width < 840;
+                      if (isMobileNow === isMobile) return;
+                      isMobile = isMobileNow;
+                      updateCameraBounds(isMobile);
+                    });
+
+                    updateCameraBounds(isMobile);
+                  }
+                }}
+                tools={isIncludePressureEraser ? customTools : undefined}
+                overrides={isIncludePressureEraser ? uiOverrides : undefined}
+                // overrides={uiOverrides}
+                components={{ ...components, ...pdfComponent }}
+                // assetUrls={customAssetUrls}
+                hideUi={isHideUI}
+              />
+            </div>
+          ) : (
+            <Tldraw
+              onMount={setAppToState}
+              tools={isIncludePressureEraser ? customTools : undefined}
+              overrides={isIncludePressureEraser ? uiOverrides : undefined}
+              components={components}
+              // overrides={uiOverrides}
+              // assetUrls={customAssetUrls}
+              hideUi={isHideUI}
+            />
+          )}
           {pMode === "grouping" && groupVisualMode === "area" && (
             <div
               style={{
@@ -866,17 +1170,20 @@ export default function PPUndoEditor(props: Props) {
           setIsShowLayer={setIsShowLayer}
           groupVisualMode={groupVisualMode}
           setGroupVisualMode={setGroupVisualMode}
+          onOpenPdf={(pdf: Pdf | null) =>
+            setPdfState({ phase: "edit", pdf: pdf })
+          }
         />
       </div>
       {isSettingsOpen && (
-      <SettingModal
-        settings={settings}
-        setSettings={setSettings}
-        pMode={pMode}
-        setPMode={setPMode}
-        onClose={() => setIsSettingsOpen(false)}
-      />
-    )}
+        <SettingModal
+          settings={settings}
+          setSettings={setSettings}
+          pMode={pMode}
+          setPMode={setPMode}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
     </>
   );
 }

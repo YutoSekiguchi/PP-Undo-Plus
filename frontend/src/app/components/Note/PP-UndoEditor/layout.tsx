@@ -66,7 +66,6 @@ import "./PdfEditor/pdf-editor.css";
 import { ExportPdfButton } from "./PdfEditor/ExportPdfButton";
 import { PPUndoBasicIcon } from "@/icons/PPUndoBasic";
 
-
 // const customShapeUtils = [CardShapeUtil];
 const customTools = [PressureEraserTool];
 let isFinishedDraw = false;
@@ -147,6 +146,9 @@ export default function PPUndoEditor(props: Props) {
     avgPressureForUpdateGroupPressures,
     setAvgPressureForUpdateGroupPressures,
   ] = useState<number[]>([]);
+  const [pressureOfPPUndoBasic, setPressureOfPPUndoBasic] = useState<number[]>(
+    []
+  );
   const [groupVisualMode, setGroupVisualMode] =
     useState<TLGroupVisualMode>("area");
   const [enclosingStroke, setEncloseStroke] = useState<{
@@ -788,34 +790,115 @@ export default function PPUndoEditor(props: Props) {
       }
     }
 
-    const handlePointerMoveOfPPUndoBasic = (event: PointerEvent) => {
-      if (event.pressure > 0) {
-        console.log("Pointer move pressure:", event.pressure);
-      }
-    };
-
-    const addButtonToToolbar = () => {
-      const toolbarElement = document.querySelector(".tlui-buttons__horizontal");
-      if (toolbarElement) {
-        const newButton = document.createElement("button");
-        newButton.innerHTML = `<div style="display: flex; width: 18px; height: 18px; justify-content: center; align-items: center;">${PPUndoBasicIcon}</div>`;
-        newButton.className = "tlui-button tlui-button__icon";
-        newButton.addEventListener("pointermove", handlePointerMoveOfPPUndoBasic);
-        const firstButton = toolbarElement.querySelector("button");
-        if (firstButton && firstButton.nextSibling) {
-          toolbarElement.insertBefore(newButton, firstButton.nextSibling);
-        } else {
-          toolbarElement.appendChild(newButton);
-        }
-      }
-    };
-
-    addButtonToToolbar();
+    setPPUndoBasic(editor);
 
     return () => {
       editor.off("change", handleChangeEvent);
     };
   }, [editor]);
+
+  useEffect(() => {
+    if (!editor || !editorUtils) return;
+    setPPUndoBasic(editor);
+  }, [editor?.getCanUndo()]);
+
+  const setPPUndoBasic = (editor: Editor) => {
+    // 与えられたpressureの値によって最新のストロークから順に削除
+    let pressureListOfPPUndoBasic: number[] = [];
+    const determineStrokesToDelete = (
+      pressure: number,
+      deleteStroke?: boolean
+    ) => {
+      if (editorUtils === undefined || !pressure) return;
+      console.log(pressure);
+      const MAX_DELETE_STROKE_NUM = 10;
+      const allRecords = editorUtils.getAllRecords();
+      const allStrokeIds = allRecords
+        .filter((record: any) => record.type === "draw")
+        .map((record: any) => record.id);
+      let deleteStrokeIds: TLShapeId[] = [];
+      const deleteStrokeNum = Math.floor(pressure * MAX_DELETE_STROKE_NUM);
+      for (let i = 0; i < deleteStrokeNum; i++) {
+        if (i >= allStrokeIds.length) {
+          break;
+        }
+        deleteStrokeIds.push(allStrokeIds[allStrokeIds.length - i - 1]);
+      }
+      editorUtils.setErasingShapes(deleteStrokeIds);
+      if (deleteStroke) {
+        // deleteStrokeIdsの長さの回数だけundoする
+        for (let i = 0; i < deleteStrokeIds.length; i++) {
+          editorUtils.undo();
+        }
+        editorUtils.setErasingShapes([]);
+      }
+    };
+
+    const handlePointerDownOfPPUndoBasic = (event: PointerEvent) => {
+      if (event.pressure > 0) {
+        // setPressureOfPPUndoBasic((prev) => [...prev, event.pressure]);
+        pressureListOfPPUndoBasic.push(event.pressure);
+        const avgPressure = getAverageOfNumberList(pressureListOfPPUndoBasic);
+        determineStrokesToDelete(avgPressure);
+        // console.log("Pointer down pressure:", event.pressure);
+      }
+    };
+
+    const handlePointerMoveOfPPUndoBasic = (event: PointerEvent) => {
+      if (event.pressure > 0) {
+        // setPressureOfPPUndoBasic((prev) => [...prev, event.pressure]);
+        // 平均値を求める
+        // const avgPressure = getAverageOfNumberList(pressureOfPPUndoBasic);
+        pressureListOfPPUndoBasic.push(event.pressure);
+        const avgPressure = getAverageOfNumberList(pressureListOfPPUndoBasic);
+        determineStrokesToDelete(avgPressure);
+        // console.log("Pointer move pressure:", event.pressure);
+      }
+    };
+
+    const handlePointerUpOfPPUndoBasic = (event: PointerEvent) => {
+      const avgPressure = getAverageOfNumberList(pressureListOfPPUndoBasic);
+      determineStrokesToDelete(avgPressure, true);
+      pressureListOfPPUndoBasic = [];
+      // setPressureOfPPUndoBasic([]);
+    };
+
+    const addButtonToToolbar = () => {
+      const toolbarElement = document.querySelector(
+        ".tlui-buttons__horizontal"
+      );
+      if (toolbarElement) {
+        let newButton = document.querySelector(".pp-undo-basic-button");
+        console.log(editor.getCanUndo());
+        const svgIcon = `<div style="display: flex; width: 18px; height: 18px; justify-content: center; align-items: center; color: ${
+          editor.getCanUndo() ? "black" : "lightgray"
+        };">${PPUndoBasicIcon}</div>`;
+        if (!newButton) {
+          newButton = document.createElement("button");
+          newButton.className =
+            "tlui-button tlui-button__icon pp-undo-basic-button";
+          newButton.addEventListener(
+            "pointerdown",
+            (event) => handlePointerDownOfPPUndoBasic(event as PointerEvent)
+          );
+          newButton.addEventListener(
+            "pointermove",
+            (event) => handlePointerMoveOfPPUndoBasic(event as PointerEvent)
+          );
+          newButton.addEventListener("pointerup", (event) => handlePointerUpOfPPUndoBasic(event as PointerEvent));
+          const firstButton = toolbarElement.querySelector("button");
+          if (firstButton && firstButton.nextSibling) {
+            toolbarElement.insertBefore(newButton, firstButton.nextSibling);
+          } else {
+            toolbarElement.appendChild(newButton);
+          }
+        }
+        newButton.innerHTML = svgIcon;
+      }
+    };
+
+    addButtonToToolbar();
+  };
 
   useEffect(() => {
     // groupVisualModeが変更されたら、描画の更新

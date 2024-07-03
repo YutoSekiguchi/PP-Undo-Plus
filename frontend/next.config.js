@@ -28,26 +28,26 @@ const nextConfig = withPWA({
     VERSION: process.env.VERSION,
   },
   // TODO: pdf読み取りがおかしいので確認
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.module.rules.push({
-        test: /pdf\.worker\.min\.mjs$/,
-        type: 'javascript/auto',
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[hash].[ext]',
-            outputPath: 'static/js/',
-            publicPath: '/_next/static/js/',
-          },
-        },
-      });
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     config.module.rules.push({
+  //       test: /pdf\.worker\.min\.mjs$/,
+  //       type: 'javascript/auto',
+  //       use: {
+  //         loader: 'file-loader',
+  //         options: {
+  //           name: '[name].[hash].[ext]',
+  //           outputPath: 'static/js/',
+  //           publicPath: '/_next/static/js/',
+  //         },
+  //       },
+  //     });
 
-      config.output.globalObject = 'self';
-    }
+  //     config.output.globalObject = 'self';
+  //   }
 
-    return config;
-  },
+  //   return config;
+  // },
 });
 
 module.exports = nextConfig;

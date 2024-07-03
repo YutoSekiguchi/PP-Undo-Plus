@@ -1,7 +1,13 @@
 // TODO: むずすぎる！！！！
 
-import { useState } from 'react';
-import { AssetRecordType, Box, TLAssetId, TLShapeId, createShapeId } from 'tldraw';
+import { useState } from "react";
+import {
+  AssetRecordType,
+  Box,
+  TLAssetId,
+  TLShapeId,
+  createShapeId,
+} from "tldraw";
 
 export interface PdfPage {
   src: string;
@@ -18,24 +24,22 @@ export interface Pdf {
 
 const pageSpacing = 32;
 
-export function PdfPicker({ onOpenPdf }: { onOpenPdf: (pdf: Pdf | null) => void }) {
+export function PdfPicker({
+  onOpenPdf,
+}: {
+  onOpenPdf: (pdf: Pdf | null) => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function loadPdf(name: string, source: ArrayBuffer): Promise<Pdf> {
-    const PdfJS = await import('pdfjs-dist');
-    PdfJS.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
-    const pdf = await PdfJS.getDocument({ data: source }).promise;
-		// const PdfJS = await import('pdfjs-dist');
-    // PdfJS.GlobalWorkerOptions.workerSrc = new URL(
-    //   'pdfjs-dist/build/pdf.worker.min.mjs',
-    //   import.meta.url
-    // ).toString();
-    // const pdf = await PdfJS.getDocument({ data: source }).promise;
+    const PdfJS = await import("pdfjs-dist");
+    PdfJS.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    const pdf = await PdfJS.getDocument(source.slice(0)).promise;
     const pages: PdfPage[] = [];
 
-    const canvas = window.document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('Failed to create canvas context');
+    const canvas = window.document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Failed to create canvas context");
 
     const visualScale = 1.5;
     const scale = window.devicePixelRatio;
@@ -79,10 +83,10 @@ export function PdfPicker({ onOpenPdf }: { onOpenPdf: (pdf: Pdf | null) => void 
   }
 
   function onClickOpenPdf() {
-    const input = window.document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/pdf';
-    input.addEventListener('change', async (e) => {
+    const input = window.document.createElement("input");
+    input.type = "file";
+    input.accept = "application/pdf";
+    input.addEventListener("change", async (e) => {
       const fileList = (e.target as HTMLInputElement).files;
       if (!fileList || fileList.length === 0) return;
       const file = fileList[0];
@@ -108,10 +112,14 @@ export function PdfPicker({ onOpenPdf }: { onOpenPdf: (pdf: Pdf | null) => void 
 
   return (
     <div className="PdfPicker">
-      <button onClick={onClickOpenPdf} className="mx-2">Open PDF</button>
-      <button onClick={onClickOpenNote} className="mx-2">Open Note</button>
+      <button onClick={onClickOpenPdf} className="mx-2">
+        Open PDF
+      </button>
+      <button onClick={onClickOpenNote} className="mx-2">
+        Open Note
+      </button>
     </div>
   );
 
-	// return <div></div>
+  // return <div></div>
 }

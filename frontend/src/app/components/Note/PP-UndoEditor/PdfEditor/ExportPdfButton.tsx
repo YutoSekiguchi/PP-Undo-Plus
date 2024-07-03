@@ -2,7 +2,7 @@ import { PDFDocument } from "pdf-lib";
 import { useState } from "react";
 import { Editor, exportToBlob, useEditor } from "tldraw";
 import { Pdf } from "./PdfPicker";
-// import "./pdf-editor.css"
+import "./pdf-editor.css";
 
 export function ExportPdfButton({ pdf }: { pdf: Pdf }) {
   const [exportProgress, setExportProgress] = useState<number | null>(null);

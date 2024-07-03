@@ -160,6 +160,7 @@ export default function PPUndoEditor(props: Props) {
   } | null>(null);
   const [settings, setSettings] = useState<TLNoteSettings>({
     availableEnclosed: true,
+    maxDeleteStrokeNum: 10,
   });
   const [pdfState, setPdfState] = useState<PdfState>({ phase: "pick" });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -810,8 +811,8 @@ export default function PPUndoEditor(props: Props) {
       deleteStroke?: boolean
     ) => {
       if (editorUtils === undefined || !pressure) return;
-      console.log(pressure);
-      const MAX_DELETE_STROKE_NUM = 10;
+      console.log(settings);
+      const MAX_DELETE_STROKE_NUM = settings.maxDeleteStrokeNum;
       const allRecords = editorUtils.getAllRecords();
       const allStrokeIds = allRecords
         .filter((record: any) => record.type === "draw")

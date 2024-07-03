@@ -75,6 +75,7 @@ export interface TLPostNoteLogData {
 
 export interface TLNoteSettings {
   availableEnclosed: boolean;
+  maxDeleteStrokeNum: number;
 }
 
 export type TLGroupVisualMode = "area" | "line" | "none";

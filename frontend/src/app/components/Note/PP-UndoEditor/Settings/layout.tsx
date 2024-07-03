@@ -1,7 +1,6 @@
 import { TLNoteSettings } from "@/@types/note";
 import "./toggle.css";
 
-
 interface Props {
   settings: TLNoteSettings;
   setSettings: (settings: TLNoteSettings) => void;
@@ -12,6 +11,7 @@ interface Props {
 
 export default function SettingModal(props: Props) {
   const { settings, setSettings, pMode, setPMode, onClose } = props;
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setSettings({
@@ -19,10 +19,12 @@ export default function SettingModal(props: Props) {
       [name]: type === "checkbox" ? checked : parseFloat(value),
     });
   };
+  
   const handleSave = () => {
     // 保存処理
     onClose();
   };
+  
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
@@ -30,6 +32,7 @@ export default function SettingModal(props: Props) {
     >
       <div className="bg-white p-6 rounded shadow-lg w-80">
         <h2 className="text-xl mb-1">Settings</h2>
+        
         <div className="mb-4">
           <p className="block text-gray-500">Pen Pressure Mode</p>
           <select
@@ -42,6 +45,7 @@ export default function SettingModal(props: Props) {
             <option value="grouping">grouping</option>
           </select>
         </div>
+        
         <div className="mb-4">
           <div className="flex items-center">
             <span className="block text-gray-500 mr-2">Allow Enclose Gesture</span>
@@ -58,6 +62,18 @@ export default function SettingModal(props: Props) {
             </div>
           </div>
         </div>
+        
+        <div className="mb-4">
+          <p className="block text-gray-500 mb-1">Max Delete Stroke Num</p>
+          <input
+            type="number"
+            name="maxDeleteStrokeNum"
+            value={settings.maxDeleteStrokeNum}
+            onChange={handleChange}
+            className="w-full p-2 rounded border border-gray-300"
+          />
+        </div>
+        
         <div className="flex justify-end space-x-2 mt-4">
           <button
             onClick={handleSave}

@@ -1,4 +1,4 @@
-export { strokePressureInfoAtom, strokePressureInfoStoreAtom } from "./atoms/note";
+export { strokePressureInfoAtom, strokePressureInfoStoreAtom, pModeAtom } from "./atoms/note";
 export { userAtom } from "./atoms/user";
 export { selectedCollectionAtom } from "./atoms/collection";
 export { useStrokePressureInfo } from "./useAtoms/note";

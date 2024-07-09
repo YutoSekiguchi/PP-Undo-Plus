@@ -8,3 +8,5 @@ export const strokePressureInfoStoreAtom = atom<TLStrokePressureInfo>({});
 export const strokeTimeInfoAtom = atom<TLStrokeTimeInfo>({});
 
 export const noteOperationInfoAtom = atom<TLNoteOperationInfo[]>([]);
+
+export const pModeAtom = atom<"average" | "grouping">("grouping");

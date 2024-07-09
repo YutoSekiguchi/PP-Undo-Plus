@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { noteOperationInfoAtom, strokePressureInfoAtom, strokePressureInfoStoreAtom, strokeTimeInfoAtom } from "@/app/hooks/atoms/note";
+import { noteOperationInfoAtom, strokePressureInfoAtom, strokePressureInfoStoreAtom, strokeTimeInfoAtom, pModeAtom } from "@/app/hooks/atoms/note";
 import { TLNoteOperationInfo, TLStrokePressureInfo, TLStrokeTimeInfo } from "@/@types/note";
 
 export const useStrokePressureInfo = () => {
@@ -9,6 +9,7 @@ export const useStrokePressureInfo = () => {
   const [strokePressureInfoStore, setStrokePressureInfoStore] = useAtom(strokePressureInfoStoreAtom);
   const [strokeTimeInfo, setStrokeTimeInfo] = useAtom(strokeTimeInfoAtom);
   const [noteOperationInfo, setNoteOperationInfo] = useAtom(noteOperationInfoAtom);
+  const [pMode, setPMode] = useAtom(pModeAtom);
 
   const addStrokePressureInfo = (
     id: string,
@@ -73,7 +74,7 @@ export const useStrokePressureInfo = () => {
   ) => {
     setStrokePressureInfo(strokePressureInfo);
     setStrokePressureInfoStore(strokePressureInfo);
-  };
+  }
 
   const onlyInitializeStrokePressureInfo = (
     strokePressureInfo: TLStrokePressureInfo
@@ -141,6 +142,7 @@ export const useStrokePressureInfo = () => {
     strokePressureInfoStore,
     clearStrokePressureInfoStore,
     onlyInitializeStrokePressureInfo,
-    onlyInitializeStrokePressureInfoStore
+    onlyInitializeStrokePressureInfoStore,
+    pMode,
   };
 };

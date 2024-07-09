@@ -1,3 +1,4 @@
+import { getDefaultStore } from "jotai";
 import {
   StateNode,
   TLEventHandlers,
@@ -7,6 +8,7 @@ import {
   TLShapeId,
   pointInPolygon,
 } from "tldraw";
+import { pModeAtom, strokePressureInfoAtom } from "@/app/hooks";
 
 const HIT_TEST_MARGIN = 4;
 
@@ -25,7 +27,8 @@ export class Erasing extends StateNode {
 
     const { originPagePoint } = this.editor.inputs;
     this.excludedShapeIds = new Set(
-      this.editor.getCurrentPageShapes()
+      this.editor
+        .getCurrentPageShapes()
         .filter((shape) => {
           //If the shape is locked, we shouldn't erase it
           if (this.editor.isShapeOrAncestorLocked(shape)) return true;
@@ -89,6 +92,10 @@ export class Erasing extends StateNode {
       inputs: { currentPagePoint, previousPagePoint },
     } = this.editor;
 
+    const store = getDefaultStore();
+    const strokePressureInfo = store.get(strokePressureInfoAtom);
+    const pMode = store.get(pModeAtom);
+
     const { excludedShapeIds } = this;
 
     this.pushPointToScribble();
@@ -113,29 +120,61 @@ export class Erasing extends StateNode {
       const shapeProps: any = shape.props;
 
       try {
-        if (geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)) {
-          const avg =
-            shapeProps.segments[0].points.reduce(
-              (acc: number, cur: any) => acc + cur.z,
-              0
-            ) / shapeProps.segments[0].points.length;
-          let isErase = false;
-          if (0.3 >= currentPagePoint.z && 0.3 >= avg) {
-            isErase = true;
-          } else if (
-            0.7 >= currentPagePoint.z &&
-            0.7 >= avg &&
-            0.3 < currentPagePoint.z &&
-            0.3 < avg
-          ) {
-            isErase = true;
-          } else if (0.7 <= currentPagePoint.z && 0.7 <= avg) {
-            isErase = true;
-          }
+        switch (pMode) {
+          case "average":
+            if (
+              geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)
+            ) {
+              const avg =
+                shapeProps.segments[0].points.reduce(
+                  (acc: number, cur: any) => acc + cur.z,
+                  0
+                ) / shapeProps.segments[0].points.length;
+              let isErase = false;
+              if (0.3 >= currentPagePoint.z && 0.3 >= avg) {
+                isErase = true;
+              } else if (
+                0.7 >= currentPagePoint.z &&
+                0.7 >= avg &&
+                0.3 < currentPagePoint.z &&
+                0.3 < avg
+              ) {
+                isErase = true;
+              } else if (0.7 <= currentPagePoint.z && 0.7 <= avg) {
+                isErase = true;
+              }
 
-          if (isErase) {
-            erasing.add(this.editor.getOutermostSelectableShape(shape).id);
-          }
+              if (isErase) {
+                erasing.add(this.editor.getOutermostSelectableShape(shape).id);
+              }
+            }
+            break;
+          case "grouping":
+            if (
+              geometry.hitTestLineSegment(A, B, HIT_TEST_MARGIN / zoomLevel)
+            ) {
+              const groupPressure = strokePressureInfo[shape.id].group;
+              let isErase = false;
+              if (0.3 >= currentPagePoint.z && 0.3 >= groupPressure) {
+                isErase = true;
+              } else if (
+                0.7 >= currentPagePoint.z &&
+                0.7 >= groupPressure &&
+                0.3 < currentPagePoint.z &&
+                0.3 < groupPressure
+              ) {
+                isErase = true;
+              } else if (0.7 <= currentPagePoint.z && 0.7 <= groupPressure) {
+                isErase = true;
+              }
+
+              if (isErase) {
+                erasing.add(this.editor.getOutermostSelectableShape(shape).id);
+              }
+            }
+            break;
+          default:
+            break;
         }
       } catch (e) {
         continue;

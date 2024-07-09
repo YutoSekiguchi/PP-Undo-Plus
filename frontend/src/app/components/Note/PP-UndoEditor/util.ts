@@ -205,6 +205,13 @@ export class EditorUtils {
     return targetGroupDrawArea ? targetGroupDrawArea.groupPressure : undefined;
   }
 
+  getGroupPressureByStrokeID(
+    strokeID: string,
+    strokePressureInfo: TLStrokePressureInfo
+  ): number | undefined {
+    return strokePressureInfo[strokeID] ? strokePressureInfo[strokeID].group : undefined;
+  }
+
   getZoomLevel(): number {
     return this.editor.getZoomLevel();
   }

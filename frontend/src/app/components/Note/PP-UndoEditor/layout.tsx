@@ -51,6 +51,7 @@ import {
 import { generateRandomString } from "@/app/modules/common/generateRandomString";
 import {
   noteOperationInfoAtom,
+  pModeAtom,
   strokePressureInfoStoreAtom,
   strokeTimeInfoAtom,
 } from "@/app/hooks/atoms/note";
@@ -77,7 +78,7 @@ let endTime: number = 0;
 
 interface Props {
   width: string | number;
-  height: string | number;
+  height?: string | number;
   graphWidth?: string | number;
   graphHeight?: string | number;
   graphPadding?: string | number;
@@ -105,7 +106,7 @@ export type PdfState =
 export default function PPUndoEditor(props: Props) {
   const {
     width,
-    height,
+    height = "100vh",
     graphWidth = "25vw",
     graphHeight = "100vh",
     graphPadding = 8,
@@ -139,7 +140,7 @@ export default function PPUndoEditor(props: Props) {
   const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
     null
   );
-  const [pMode, setPMode] = useState<"grouping" | "average">("grouping");
+  const [pMode, setPMode] = useAtom(pModeAtom);
   const [isShowLayer, setIsShowLayer] = useState<boolean>(false);
   const [isEnclose, setIsEnclose] = useState<boolean>(false);
   const [
@@ -159,8 +160,8 @@ export default function PPUndoEditor(props: Props) {
     pressure: number;
   } | null>(null);
   const [settings, setSettings] = useState<TLNoteSettings>({
-    availableEnclosed: true,
-    maxDeleteStrokeNum: 10,
+    availableEnclosed: false,
+    maxDeleteStrokeNum: 20,
   });
   const [pdfState, setPdfState] = useState<PdfState>({ phase: "pick" });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

@@ -103,3 +103,13 @@ body {
 .tl-image {
   z-index: -1;
 }
+
+.tlui-buttons__horizontal button {
+  width: 60px;
+  height: 60px;
+}
+
+.tlui-buttons__vertical button div {
+  width: 60px !important;
+  height: 60px !important;
+}

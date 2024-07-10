@@ -136,7 +136,7 @@ export default function PPUndoEditor(props: Props) {
   const [wTime, setWTime] = useState<number>(0.7);
   const [wPressure, setWPressure] = useState<number>(0.25);
   const [wDistance, setWDistance] = useState<number>(0.5);
-  const [boundaryValue, setBoundaryValue] = useState<number>(0.3);
+  const [boundaryValue, setBoundaryValue] = useState<number>(0.25);
   const [isOperatingGroupID, setIsOperatingGroupID] = useState<number | null>(
     null
   );
@@ -299,7 +299,6 @@ export default function PPUndoEditor(props: Props) {
           wTime * timeScore +
           wPressure * pressureScore +
           wDistance * distanceScore;
-        console.log(score);
         if (score >= boundaryValue) {
           isCreateNewGroup = true;
         }
@@ -812,7 +811,6 @@ export default function PPUndoEditor(props: Props) {
       deleteStroke?: boolean
     ) => {
       if (editorUtils === undefined || !pressure) return;
-      console.log(settings);
       const MAX_DELETE_STROKE_NUM = settings.maxDeleteStrokeNum;
       const allRecords = editorUtils.getAllRecords();
       const allStrokeIds = allRecords
@@ -879,18 +877,22 @@ export default function PPUndoEditor(props: Props) {
           newButton = document.createElement("button");
           newButton.className =
             "tlui-button tlui-button__icon pp-undo-basic-button";
-          newButton.addEventListener(
-            "pointerdown",
-            (event) => handlePointerDownOfPPUndoBasic(event as PointerEvent)
+          newButton.addEventListener("pointerdown", (event) =>
+            handlePointerDownOfPPUndoBasic(event as PointerEvent)
           );
-          newButton.addEventListener(
-            "pointermove",
-            (event) => handlePointerMoveOfPPUndoBasic(event as PointerEvent)
+          newButton.addEventListener("pointermove", (event) =>
+            handlePointerMoveOfPPUndoBasic(event as PointerEvent)
           );
-          newButton.addEventListener("pointerup", (event) => handlePointerUpOfPPUndoBasic(event as PointerEvent));
-          const firstButton = toolbarElement.querySelector("button");
-          if (firstButton && firstButton.nextSibling) {
-            toolbarElement.insertBefore(newButton, firstButton.nextSibling);
+          newButton.addEventListener("pointerup", (event) =>
+            handlePointerUpOfPPUndoBasic(event as PointerEvent)
+          );
+
+          const allButtons = toolbarElement.querySelectorAll("button");
+          if (allButtons.length >= 6) {
+            toolbarElement.insertBefore(
+              newButton,
+              allButtons[6].parentNode === toolbarElement ? allButtons[6] : null
+            );
           } else {
             toolbarElement.appendChild(newButton);
           }

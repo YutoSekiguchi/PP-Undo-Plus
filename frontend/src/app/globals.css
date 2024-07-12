@@ -113,3 +113,12 @@ body {
   width: 60px !important;
   height: 60px !important;
 }
+
+.pp-undo-basic-button {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

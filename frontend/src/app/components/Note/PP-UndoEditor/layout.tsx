@@ -874,7 +874,7 @@ export default function PPUndoEditor(props: Props) {
           editor.getCanUndo() ? "black" : "lightgray"
         };">${PPUndoBasicIcon}</div>`;
         if (!newButton) {
-          newButton = document.createElement("button");
+          newButton = document.createElement("div");
           newButton.className =
             "tlui-button tlui-button__icon pp-undo-basic-button";
           newButton.addEventListener("pointerdown", (event) =>

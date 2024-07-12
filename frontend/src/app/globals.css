@@ -121,4 +121,6 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  width: 60px !important;
+  height: 60px !important;
 }

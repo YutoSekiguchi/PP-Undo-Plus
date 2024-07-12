@@ -115,7 +115,7 @@ body {
 }
 
 .pp-undo-basic-button {
-  touch-action: manipulation;
+  touch-action: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;

@@ -874,7 +874,7 @@ export default function PPUndoEditor(props: Props) {
           editor.getCanUndo() ? "black" : "lightgray"
         };">${PPUndoBasicIcon}</div>`;
         if (!newButton) {
-          newButton = document.createElement("div");
+          newButton = document.createElement("button");
           newButton.className =
             "tlui-button tlui-button__icon pp-undo-basic-button";
           newButton.addEventListener("pointerdown", (event) =>
@@ -886,6 +886,9 @@ export default function PPUndoEditor(props: Props) {
           newButton.addEventListener("pointerup", (event) =>
             handlePointerUpOfPPUndoBasic(event as PointerEvent)
           );
+          newButton.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+          });
 
           const allButtons = toolbarElement.querySelectorAll("button");
           if (allButtons.length >= 6) {

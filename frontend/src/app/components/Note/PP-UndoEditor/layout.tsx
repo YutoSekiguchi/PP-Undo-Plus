@@ -891,7 +891,7 @@ export default function PPUndoEditor(props: Props) {
           });
 
           const allButtons = toolbarElement.querySelectorAll("button");
-          if (allButtons.length >= 6) {
+          if (allButtons.length > 6) {
             toolbarElement.insertBefore(
               newButton,
               allButtons[6].parentNode === toolbarElement ? allButtons[6] : null

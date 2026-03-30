@@ -114,13 +114,33 @@ export default function PPUndoSlider(props: Props) {
     <div
       style={{
         position: "relative",
-        padding: "10px",
-        marginLeft: "-20px",
-        marginRight: "-20px",
+        padding: "8px 0",
       }}
       onPointerUpCapture={handleSliderRelease}
-      // onPointerLeave={handleSliderRelease}
     >
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 4,
+      }}>
+        <span style={{
+          fontSize: 11,
+          color: "rgba(255, 255, 255, 0.4)",
+          fontWeight: 500,
+        }}>
+          Erase below
+        </span>
+        <span style={{
+          fontSize: 12,
+          fontWeight: 600,
+          fontVariantNumeric: "tabular-nums",
+          color: sliderValue > 0 ? "#c4b5fd" : "rgba(255, 255, 255, 0.35)",
+          transition: "color 0.15s ease",
+        }}>
+          {sliderValue}%
+        </span>
+      </div>
       <input
         type="range"
         id="myRange"

@@ -1,17 +1,56 @@
-/* toggle.css */
-.toggle-checkbox:checked {
+/* toggle.css - Modern Toggle Switch */
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
   right: 0;
-  border-color: #68d3d1; /* Tailwindのgreen-400 */
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.toggle-checkbox:checked + .toggle-label {
-  background-color: #68d3d1; /* Tailwindのgreen-400 */
+.toggle-slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-checkbox:focus {
-  outline: none;
+.toggle-switch input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  border-color: rgba(139, 92, 246, 0.5);
 }
 
-.toggle-checkbox:checked:focus + .toggle-label {
-  box-shadow: 0 0 2px 2px #68d3d1; /* Tailwindのgreen-400 */
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(139, 92, 246, 0.3);
+}
+
+.toggle-switch input:focus + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }

@@ -1,6 +1,7 @@
 import { Editor } from "tldraw";
 import PPUndoArea from "./Areas/PP-UndoArea/layout";
 import AllAveragePressurePieGraphArea from "./Areas/AllAveragePressurePieGraphArea/layout";
+import StrokeStatsArea from "./Areas/StrokeStatsArea/layout";
 import { EditorUtils } from "../util";
 import ButtonArea from "./Areas/ButtonArea/layout";
 import ChangeParametersArea from "./Areas/ChangeParametersArea/layout";
@@ -47,8 +48,6 @@ export default function PPUndoGraph(props: Props) {
     background,
     isDebugMode = false,
     hideAllAveragePressurePieGraph = false,
-    allAveragePressurePieGraphWidth = "35%",
-    buttonAreaWidth = "60%",
     editor,
     editorUtils,
     id,
@@ -70,23 +69,28 @@ export default function PPUndoGraph(props: Props) {
     setGroupVisualMode,
     onOpenPdf
   } = props;
+
   return (
     <div>
       <div
         style={{
           width: width,
           height: height,
-          padding: padding,
-          background: background,
+          padding: typeof padding === "number" ? `${padding}px` : padding,
+          background: "linear-gradient(180deg, #0c0c11 0%, #111118 50%, #0c0c11 100%)",
           zIndex: 9999,
           position: "fixed",
           border: "none",
-          fontFamily: "monospace",
-          fontSize: 12,
-          borderLeft: "solid 2px #333",
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+          fontSize: 13,
+          borderLeft: "1px solid rgba(255, 255, 255, 0.06)",
           overflow: "auto",
+          scrollbarWidth: "thin" as any,
+          scrollbarColor: "rgba(255,255,255,0.06) transparent",
         }}
+        className="panel-scrollbar"
       >
+        {/* Section 1: Pressure Threshold + Graph */}
         <PPUndoArea
           editor={editor}
           id={id}
@@ -94,34 +98,45 @@ export default function PPUndoGraph(props: Props) {
           pMode={pMode}
           isDemo={isDemo}
         />
-        <div className="mt-4 flex justify-between">
+
+        {/* Section 2: Visualizations Row - AvgPressure + StrokeStats */}
+        <div style={{
+          marginTop: 12,
+          display: "flex",
+          gap: 8,
+          alignItems: "stretch",
+          minHeight: 0,
+        }}>
           {!hideAllAveragePressurePieGraph && (
-            <div style={{ width: allAveragePressurePieGraphWidth }}>
-              <AllAveragePressurePieGraphArea />
-            </div>
+            <AllAveragePressurePieGraphArea />
           )}
-          {editorUtils && (
-            <div style={{ width: buttonAreaWidth }} className="flex items-center">
-              <ButtonArea
-                editorUtils={editorUtils}
-                id={id}
-                width={width}
-                height={height}
-                background={background}
-                isDemo={isDemo}
-                handleResetStrokePressureInfo={handleResetStrokePressureInfo}
-                setPMode={setPMode}
-                pMode={pMode}
-                setIsShowLayer={setIsShowLayer}
-                groupVisualMode={groupVisualMode}
-                setGroupVisualMode={setGroupVisualMode}
-                setIsSettingOpen={setIsSettingOpen}
-                onOpenPdf={onOpenPdf}
-              />
-            </div>
-          )}
+          <StrokeStatsArea />
         </div>
-        <div className="mt-4">
+
+        {/* Section 3: Quick Actions Toolbar */}
+        {editorUtils && (
+          <div style={{ marginTop: 12 }}>
+            <ButtonArea
+              editorUtils={editorUtils}
+              id={id}
+              width={width}
+              height={height}
+              background={background}
+              isDemo={isDemo}
+              handleResetStrokePressureInfo={handleResetStrokePressureInfo}
+              setPMode={setPMode}
+              pMode={pMode}
+              setIsShowLayer={setIsShowLayer}
+              groupVisualMode={groupVisualMode}
+              setGroupVisualMode={setGroupVisualMode}
+              setIsSettingOpen={setIsSettingOpen}
+              onOpenPdf={onOpenPdf}
+            />
+          </div>
+        )}
+
+        {/* Section 4: Parameters */}
+        <div style={{ marginTop: 12 }}>
           <ChangeParametersArea
             id={id}
             editorUtils={editorUtils}
@@ -136,6 +151,9 @@ export default function PPUndoGraph(props: Props) {
             setBoundaryValue={setBoundaryValue}
           />
         </div>
+
+        {/* Footer spacer */}
+        <div style={{ height: 20 }} />
       </div>
     </div>
   );

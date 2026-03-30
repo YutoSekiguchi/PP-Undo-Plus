@@ -25,30 +25,78 @@ export default function AllAveragePressurePieGraphArea() {
   useEffect(() => {
     if (strokePressureInfo) {
       let avgTmp = 0;
+      let count = 0;
       for (const id in strokePressureInfo) {
         if (!strokePressureInfo[id]["avg"]) continue;
         avgTmp += strokePressureInfo[id]["avg"];
+        count++;
       }
-      avgTmp /= Object.keys(strokePressureInfo).length;
+      if (count > 0) avgTmp /= count;
       setValue(Math.round(avgTmp * 100) / 100 || 0);
     }
   }, [strokePressureInfo]);
 
+  const getPressureLabel = (v: number) => {
+    if (v === 0) return "No data";
+    if (v < 0.3) return "Light";
+    if (v < 0.5) return "Moderate";
+    if (v < 0.7) return "Firm";
+    return "Heavy";
+  };
+
   return (
-    <div className="area">
-      <div className="title">
-        <p className="text-center font-bold text-md mb-2">
-          All Average Pressure
-        </p>
-      </div>
-      <div className="text-center relative w-full">
-        <div className="absolute text-center top-1/2 left-1/2 doughnut-graph-value">
-          <p className="font-bold">{value}</p>
+    <div className="area" style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      minWidth: 0,
+      flexShrink: 0,
+      width: "auto",
+    }}>
+      <span className="section-title" style={{ alignSelf: "flex-start" }}>Avg. Pressure</span>
+      <div style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
+        <div style={{
+          position: "relative",
+          width: 90,
+          height: 90,
+        }}>
+          <div style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+          }}>
+            <div style={{
+              fontSize: 18,
+              fontWeight: 700,
+              fontVariantNumeric: "tabular-nums",
+              color: value > 0 ? "#c4b5fd" : "rgba(255, 255, 255, 0.2)",
+              lineHeight: 1,
+            }}>
+              {value > 0 ? value.toFixed(2) : "—"}
+            </div>
+          </div>
+          <AllPressureAveragePieGraph
+            data={graphData}
+            options={doughnutOptions}
+          />
         </div>
-        <AllPressureAveragePieGraph
-          data={graphData}
-          options={doughnutOptions}
-        />
+        <span style={{
+          fontSize: 10,
+          fontWeight: 500,
+          color: "rgba(255, 255, 255, 0.3)",
+          marginTop: 4,
+        }}>
+          {getPressureLabel(value)}
+        </span>
       </div>
     </div>
   );

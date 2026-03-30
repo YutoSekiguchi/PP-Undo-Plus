@@ -168,6 +168,20 @@ export default function PPUndoEditor(props: Props) {
   const maxTime = 30000;
   const maxPressure = 1;
   const maxDistance = 1000;
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  const getPressureForRuntime = (pressure: number) => {
+    if (isDevelopment) {
+      // 開発環境では筆圧依存機能を検証しやすいように乱数を使う
+      return Math.max(Math.random(), 0.01);
+    }
+    if (!Number.isFinite(pressure)) return Math.max(Math.random(), 0.01);
+    // PCの場合（筆圧センサーなし）は pressure が 0 or 0.5 になるため、ランダムにする
+    if (pressure <= 0) return Math.max(Math.random(), 0.01);
+    if (pressure === 0.5) return Math.max(Math.random(), 0.01);
+    if (pressure >= 1) return 1;
+    return pressure;
+  };
 
   const {
     // strokeTimeInfo,
@@ -430,7 +444,7 @@ export default function PPUndoEditor(props: Props) {
       const segments = allRecords[allRecords.length - 1].props.segments;
       const points = segments[0].points;
       const lastPoints = points[points.length - 1];
-      const drawingPressure = lastPoints.z >= 1 ? 1 : lastPoints.z;
+      const drawingPressure = getPressureForRuntime(lastPoints.z);
       drawingStrokeId = allRecords[allRecords.length - 1].id;
       drawingPressureList.push(drawingPressure);
       setNowAvgPressure(getAverageOfNumberList(drawingPressureList));
@@ -835,9 +849,10 @@ export default function PPUndoEditor(props: Props) {
     };
 
     const handlePointerDownOfPPUndoBasic = (event: PointerEvent) => {
-      if (event.pressure > 0) {
+      const pressure = getPressureForRuntime(event.pressure);
+      if (pressure > 0) {
         // setPressureOfPPUndoBasic((prev) => [...prev, event.pressure]);
-        pressureListOfPPUndoBasic.push(event.pressure);
+        pressureListOfPPUndoBasic.push(pressure);
         const avgPressure = getAverageOfNumberList(pressureListOfPPUndoBasic);
         determineStrokesToDelete(avgPressure);
         // console.log("Pointer down pressure:", event.pressure);
@@ -845,11 +860,12 @@ export default function PPUndoEditor(props: Props) {
     };
 
     const handlePointerMoveOfPPUndoBasic = (event: PointerEvent) => {
-      if (event.pressure > 0) {
+      const pressure = getPressureForRuntime(event.pressure);
+      if (pressure > 0) {
         // setPressureOfPPUndoBasic((prev) => [...prev, event.pressure]);
         // 平均値を求める
         // const avgPressure = getAverageOfNumberList(pressureOfPPUndoBasic);
-        pressureListOfPPUndoBasic.push(event.pressure);
+        pressureListOfPPUndoBasic.push(pressure);
         const avgPressure = getAverageOfNumberList(pressureListOfPPUndoBasic);
         determineStrokesToDelete(avgPressure);
         // console.log("Pointer move pressure:", event.pressure);
